@@ -1,13 +1,28 @@
-FROM node:8
+FROM node:10-alpine
 
-WORKDIR /app-test
+WORKDIR /opt/app
 
-COPY package.json /app-test
+ENV PORT=80
 
-RUN npm install
+RUN touch /usr/bin/start.sh # this is the script which will run on start
 
-COPY . /app-test
+# if you need a build script, uncomment the line below
+# RUN echo 'sh mybuild.sh' >> /usr/bin/start.sh
 
-EXPOSE 3000
+# if you need redis, uncomment the lines below
+# RUN apk --update add redis
+# RUN echo 'redis-server &' >> /usr/bin/start.sh
 
-CMD [ "npm", "start" ]
+# daemon for cron jobs
+RUN echo 'echo will install crond...' >> /usr/bin/start.sh
+RUN echo 'crond' >> /usr/bin/start.sh
+
+npm install
+
+# Basic npm start verification
+RUN echo 'nb=`cat package.json | grep start | wc -l` && if test "$nb" = "0" ; then echo "*** Boot issue: No start command found in your package.json in the scripts. See https://docs.npmjs.com/cli/start" ; exit 1 ; fi' >> /usr/bin/start.sh
+
+RUN echo 'npm install --production' >> /usr/bin/start.sh
+
+# npm start, make sure to have a start attribute in "scripts" in package.json
+RUN echo 'npm start' >> /usr/bin/start.sh

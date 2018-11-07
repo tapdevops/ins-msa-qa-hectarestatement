@@ -1,13 +1,3 @@
-/**
- * Data Area
- * 
- * 
- *
- * @author Ferdinand
- * @version 1.0.0
- * @since 2014-10-24
- */
-
 // Import Express
 const express = require( 'express' );
 
@@ -18,13 +8,13 @@ const mongoose = require( 'mongoose' );
 const bodyParser = require( 'body-parser' );
 
 // Configuring the Database
-const dbConfig = require( './config/database.config.js' );
+const dbConfig = require( './config/database.js' );
+
+// Configuring configuration
+const config = require( './config/config.js' );
 
 // Define App
 const app = express();
-
-// Define Port
-const port = process.env.PORT || 3000;
 
 // Parse request of content-type - application/x-www-form-urlencoded
 app.use( bodyParser.urlencoded( { extended: true } ) )
@@ -46,14 +36,14 @@ mongoose.connect( dbConfig.url, {
 } );
 
 // Server Running Message
-app.listen( port, () => {
-	console.log( 'RESThub Mobile Inspection - Area running on ' + port )
+app.listen( config.app_port, () => {
+	console.log( config.app_name + ' running on ' + config.app_port )
 } );
 
 // Routes
 app.get( '/', ( req, res ) => {
-	res.json( { 'message': 'RESThub Mobile Inspection - Area' } )
+	res.json( { 'message': config.app_name } )
 } );
 
 // Require Bisnis Area Routes
-require( './app/routes/bisnisArea.route.js' )( app );
+require( './routes/route.js' )( app );
