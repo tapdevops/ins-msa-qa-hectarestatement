@@ -5,11 +5,6 @@ const yyyymmdd = require( 'yyyy-mm-dd' );
 var url = require( 'url' );
 const date = require( '../libraries/date.js' );
 
-
-
-
-
-
 // Create and Save new Data
 exports.create = ( req, res ) => {
 	
