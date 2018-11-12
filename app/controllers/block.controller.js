@@ -35,7 +35,6 @@ exports.create = ( req, res ) => {
 		UPDATE_TIME: ( req.body.UPDATE_TIME != '' ) ? date.parse( req.body.UPDATE_TIME, 'YYYY-MM-DD HH:mm:ss' ) : ""
 	});
 
-
 	block.save()
 	.then( data => {
 
