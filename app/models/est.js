@@ -19,7 +19,13 @@ const EstSchema = mongoose.Schema( {
 			return null;
 		}
 	},
-	CITY: String
+	CITY: String,
+	FLAG_UPDATE: {
+		type: String,
+		default: function() {
+			return null;
+		}
+	}
 });
 
 module.exports = mongoose.model( 'Est', EstSchema, 'TM_EST' );

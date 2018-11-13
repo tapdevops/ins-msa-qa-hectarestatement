@@ -36,6 +36,12 @@ const BlockSchema = mongoose.Schema( {
 		default: function() {
 			return null;
 		}
+	},
+	FLAG_UPDATE: {
+		type: String,
+		default: function() {
+			return null;
+		}
 	}
 });
 
