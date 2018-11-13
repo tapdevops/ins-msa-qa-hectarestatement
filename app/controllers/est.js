@@ -36,8 +36,6 @@ exports.createOrUpdate = ( req, res ) => {
 				START_VALID: ( req.body.START_VALID != '' ) ? date.parse( req.body.START_VALID, 'YYYY-MM-DD HH:mm:ss' ) : "",
 				END_VALID: ( req.body.END_VALID != '' ) ? date.parse( req.body.END_VALID, 'YYYY-MM-DD HH:mm:ss' ) : "",
 				CITY: req.body.CITY || "",
-				INSERT_TIME_DW: ( req.body.INSERT_TIME_DW != '' ) ? date.parse( req.body.INSERT_TIME_DW, 'YYYY-MM-DD HH:mm:ss' ) : "",
-				UPDATE_TIME_DW: ( req.body.UPDATE_TIME_DW != '' ) ? date.parse( req.body.UPDATE_TIME_DW, 'YYYY-MM-DD HH:mm:ss' ) : "",
 				FLAG_UPDATE: dateAndTimes.format( new Date(), 'YYYYMMDD' )
 			} );
 
@@ -68,8 +66,6 @@ exports.createOrUpdate = ( req, res ) => {
 					START_VALID: ( req.body.START_VALID != '' ) ? date.parse( req.body.START_VALID, 'YYYY-MM-DD HH:mm:ss' ) : "",
 					END_VALID: ( req.body.END_VALID != '' ) ? date.parse( req.body.END_VALID, 'YYYY-MM-DD HH:mm:ss' ) : "",
 					CITY: req.body.CITY || "",
-					INSERT_TIME_DW: ( req.body.INSERT_TIME_DW != '' ) ? date.parse( req.body.INSERT_TIME_DW, 'YYYY-MM-DD HH:mm:ss' ) : "",
-					UPDATE_TIME_DW: ( req.body.UPDATE_TIME_DW != '' ) ? date.parse( req.body.UPDATE_TIME_DW, 'YYYY-MM-DD HH:mm:ss' ) : "",
 					FLAG_UPDATE: dateAndTimes.format( new Date(), 'YYYYMMDD' )
 				}, { new: true } )
 				.then( data => {
