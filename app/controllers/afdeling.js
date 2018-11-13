@@ -1,4 +1,4 @@
-const afdelingModel = require( '../models/afdeling.model.js' );
+const afdelingModel = require( '../models/afdeling.js' );
 const dateFormat = require( 'dateformat' );
 var querystring = require('querystring');
 const yyyymmdd = require( 'yyyy-mm-dd' );

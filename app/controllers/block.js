@@ -1,14 +1,9 @@
-const blockModel = require( '../models/block.model.js' );
+const blockModel = require( '../models/block.js' );
 const dateFormat = require( 'dateformat' );
 var querystring = require('querystring');
 const yyyymmdd = require( 'yyyy-mm-dd' );
 const date = require( '../libraries/date.js' );
 var url = require( 'url' );
-
-
-
-
-
 
 // Create and Save new Data
 exports.create = ( req, res ) => {
