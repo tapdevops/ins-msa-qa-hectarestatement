@@ -20,6 +20,18 @@ const EstSchema = mongoose.Schema( {
 		}
 	},
 	CITY: String,
+	INSERT_TIME_DW: {
+		type: Date,
+		default: function() {
+			return null;
+		}
+	},
+	UPDATE_TIME_DW: {
+		type: Date,
+		default: function() {
+			return null;
+		}
+	},
 	FLAG_UPDATE: {
 		type: String,
 		default: function() {
