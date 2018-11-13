@@ -23,21 +23,9 @@ exports.createOrUpdate = ( req, res ) => {
 		WERKS: req.body.WERKS
 	} ).then( data => {
 
-		var client = new Client();
-		var url = config.url.sync_list;
-		var args = {
-			data: {
-				ID: dateAndTimes.format( new Date(), 'YYYYMMDD' ),
-				CODE: req.body.WERKS,
-				TABLE_NAME: 'TM_EST'
-			},
-			headers: { "Content-Type": "application/json" }
-		};
-
 		// Kondisi belum ada data, create baru dan insert ke Sync List
 		if( !data ) {
-			console.log('IF');
-			console.log( req.body );
+			
 			const est = new estModel( {
 				NATIONAL: req.body.NATIONAL || "",
 				REGION_CODE: req.body.REGION_CODE || "",
@@ -69,8 +57,7 @@ exports.createOrUpdate = ( req, res ) => {
 		}
 		// Kondisi data sudah ada, check value, jika sama tidak diupdate, jika beda diupdate dan dimasukkan ke Sync List
 		else {
-			console.log('ELSE');
-			console.log( req.body );
+
 			if ( data.EST_NAME != req.body.EST_NAME || data.CITY != req.body.CITY ) {
 				estModel.findOneAndUpdate( { 
 					WERKS: req.body.WERKS
