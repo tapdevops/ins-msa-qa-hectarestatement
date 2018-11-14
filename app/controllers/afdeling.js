@@ -18,7 +18,7 @@ exports.createOrUpdate = ( req, res ) => {
 	}
 
 	afdelingModel.findOne( { 
-		WERKS: req.body.WERKS
+		WERKS_AFD_CODE: req.body.WERKS_AFD_CODE
 	} ).then( data => {
 
 		// Kondisi belum ada data, create baru dan insert ke Sync List
