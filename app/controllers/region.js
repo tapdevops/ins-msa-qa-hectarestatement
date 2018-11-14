@@ -20,7 +20,7 @@ exports.createOrUpdate = ( req, res ) => {
 	}
 
 	regionModel.findOne( { 
-		WERKS: req.body.WERKS
+		REGION_CODE: req.body.REGION_CODE
 	} ).then( data => {
 		// Kondisi belum ada data, create baru dan insert ke Sync List
 		if( !data ) {
