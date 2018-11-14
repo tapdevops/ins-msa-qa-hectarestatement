@@ -20,7 +20,7 @@ exports.createOrUpdate = ( req, res ) => {
 	}
 
 	compModel.findOne( { 
-		WERKS: req.body.WERKS
+		COMP_CODE: req.body.COMP_CODE
 	} ).then( data => {
 
 		// Kondisi belum ada data, create baru dan insert ke Sync List
