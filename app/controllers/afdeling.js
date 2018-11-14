@@ -9,7 +9,8 @@ const dateAndTimes = require( 'date-and-time' );
 // Create or update data
 exports.createOrUpdate = ( req, res ) => {
 
-	if( !req.body.REGION_CODE || !req.body.COMP_CODE || !req.body.EST_CODE || !req.body.WERKS || !req.body.AFD_CODE  ) {
+	//if( !req.body.REGION_CODE || !req.body.COMP_CODE || !req.body.EST_CODE || !req.body.WERKS || !req.body.AFD_CODE  ) {
+	if( !req.body.REGION_CODE  ) {
 		return res.status( 400 ).send({
 			status: false,
 			message: 'Invalid input',
