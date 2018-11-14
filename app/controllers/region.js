@@ -25,7 +25,7 @@ exports.createOrUpdate = ( req, res ) => {
 		// Kondisi belum ada data, create baru dan insert ke Sync List
 		if( !data ) {
 
-			const est = new regionModel( {
+			const region = new regionModel( {
 				NATIONAL: req.body.NATIONAL || "",
 				REGION_CODE: req.body.REGION_CODE || "",
 				REGION_NAME: req.body.REGION_NAME || "",
@@ -34,7 +34,7 @@ exports.createOrUpdate = ( req, res ) => {
 				FLAG_UPDATE: dateAndTimes.format( new Date(), 'YYYYMMDD' )
 			} );
 
-			est.save()
+			region.save()
 			.then( data => {
 				console.log(data);
 				res.send({
