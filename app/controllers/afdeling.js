@@ -43,7 +43,7 @@ exports.createOrUpdate = ( req, res ) => {
 
 			afdeling.save()
 			.then( data => {
-				console.log(data);
+				console.log( data );
 				res.send({
 					status: true,
 					message: 'Success 2',
@@ -77,7 +77,7 @@ exports.createOrUpdate = ( req, res ) => {
 					if( !data ) {
 						return res.status( 404 ).send( {
 							status: false,
-							message: "Data error updating 2",
+							message: "Data error updating 2 " + req.body.WERKS_AFD_CODE,
 							data: {}
 						} );
 					}
