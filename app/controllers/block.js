@@ -4,6 +4,135 @@ var querystring = require('querystring');
 const yyyymmdd = require( 'yyyy-mm-dd' );
 const date = require( '../libraries/date.js' );
 var url = require( 'url' );
+const dateAndTimes = require( 'date-and-time' );
+
+// Create or update data
+exports.createOrUpdate = ( req, res ) => {
+
+	if( !req.body.REGION_CODE || !req.body.COMP_CODE || !req.body.EST_CODE || !req.body.WERKS || !req.body.AFD_CODE ) {
+		return res.status( 400 ).send({
+			status: false,
+			message: 'Invalid input',
+			data: {}
+		});
+	}
+
+	blockModel.findOne( { 
+		WERKS: req.body.WERKS
+	} ).then( data => {
+
+		// Kondisi belum ada data, create baru dan insert ke Sync List
+		if( !data ) {
+
+			const block = new blockModel( {
+				REGION_CODE: req.body.REGION_CODE || "",
+				COMP_CODE: req.body.COMP_CODE || "",
+				EST_CODE: req.body.EST_CODE || "",
+				WERKS: req.body.WERKS || "",
+				AFD_CODE: req.body.AFD_CODE || "",
+				BLOCK_CODE: req.body.BLOCK_CODE || "",
+				BLOCK_NAME: req.body.BLOCK_NAME || "",
+				WERKS_AFD_BLOCK_CODE: req.body.WERKS_AFD_BLOCK_CODE || "",
+				LATITUDE_BLOCK: req.body.LATITUDE_BLOCK || "",
+				LONGITUDE_BLOCK: req.body.LONGITUDE_BLOCK || "",
+				START_VALID: ( req.body.START_VALID != '' ) ? date.parse( req.body.START_VALID, 'YYYY-MM-DD' ) : "",
+				END_VALID: ( req.body.END_VALID != '' ) ? date.parse( req.body.END_VALID, 'YYYY-MM-DD' ) : "",
+				INSERT_USER: req.body.INSERT_USER || "",
+				INSERT_TIME: ( req.body.INSERT_TIME != '' ) ? date.parse( req.body.INSERT_TIME, 'YYYY-MM-DD HH:mm:ss' ) : "",
+				UPDATE_USER: req.body.UPDATE_USER || "",
+				UPDATE_TIME: ( req.body.UPDATE_TIME != '' ) ? date.parse( req.body.UPDATE_TIME, 'YYYY-MM-DD HH:mm:ss' ) : "",
+				FLAG_UPDATE: dateAndTimes.format( new Date(), 'YYYYMMDD' )
+			} );
+
+			block.save()
+			.then( data => {
+				console.log(data);
+				res.send({
+					status: true,
+					message: 'Success 2',
+					data: {}
+				});
+			} ).catch( err => {
+				res.status( 500 ).send( {
+					status: false,
+					message: 'Some error occurred while creating data',
+					data: {}
+				} );
+			} );
+		}
+		// Kondisi data sudah ada, check value, jika sama tidak diupdate, jika beda diupdate dan dimasukkan ke Sync List
+		else {
+			
+			if ( data.BLOCK_NAME != req.body.BLOCK_NAME || data.AFD_NAME != req.body.AFD_NAME ) {
+				blockModel.findOneAndUpdate( { 
+					WERKS_AFD_BLOCK_CODE: req.body.WERKS_AFD_BLOCK_CODE
+				}, {
+					BLOCK_NAME: req.body.BLOCK_NAME || "",
+					LATITUDE_BLOCK: req.body.LATITUDE_BLOCK || "",
+					LONGITUDE_BLOCK: req.body.LONGITUDE_BLOCK || "",
+					START_VALID: ( req.body.START_VALID != '' ) ? date.parse( req.body.START_VALID, 'YYYY-MM-DD' ) : "",
+					END_VALID: ( req.body.END_VALID != '' ) ? date.parse( req.body.END_VALID, 'YYYY-MM-DD' ) : "",
+					INSERT_USER: req.body.INSERT_USER || "",
+					INSERT_TIME: ( req.body.INSERT_TIME != '' ) ? date.parse( req.body.INSERT_TIME, 'YYYY-MM-DD HH:mm:ss' ) : "",
+					UPDATE_USER: req.body.UPDATE_USER || "",
+					UPDATE_TIME: ( req.body.UPDATE_TIME != '' ) ? date.parse( req.body.UPDATE_TIME, 'YYYY-MM-DD HH:mm:ss' ) : "",
+					FLAG_UPDATE: dateAndTimes.format( new Date(), 'YYYYMMDD' )
+				}, { new: true } )
+				.then( data => {
+					if( !data ) {
+						return res.status( 404 ).send( {
+							status: false,
+							message: "Data error updating 2",
+							data: {}
+						} );
+					}
+					else {
+						res.send({
+							status: true,
+							message: 'Success',
+							data: {}
+						});
+					}
+				}).catch( err => {
+					if( err.kind === 'ObjectId' ) {
+						return res.status( 404 ).send( {
+							status: false,
+							message: "Data not found 2",
+							data: {}
+						} );
+					}
+					return res.status( 500 ).send( {
+						status: false,
+						message: "Data error updating",
+						data: {}
+					} );
+				});
+			}
+			else {
+				res.send( {
+					status: true,
+					message: 'Skip Update',
+					data: {}
+				} );
+			}
+		}
+		
+	} ).catch( err => {
+		if( err.kind === 'ObjectId' ) {
+			return res.status( 404 ).send({
+				status: false,
+				message: "Data not found 1",
+				data: {}
+			});
+		}
+
+		return res.status( 500 ).send({
+			status: false,
+			message: "Error retrieving Data",
+			data: {}
+		} );
+	} );
+};
 
 // Create and Save new Data
 exports.create = ( req, res ) => {

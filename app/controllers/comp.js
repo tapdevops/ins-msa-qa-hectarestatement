@@ -1,4 +1,4 @@
-const estModel = require( '../models/est.js' );
+const compModel = require( '../models/comp.js' );
 const dateFormat = require( 'dateformat' );
 const dateAndTimes = require( 'date-and-time' );
 var querystring = require('querystring');
@@ -11,7 +11,7 @@ const config = require( '../../config/config.js' );
 // Create or update data
 exports.createOrUpdate = ( req, res ) => {
 
-	if( !req.body.NATIONAL || !req.body.REGION_CODE || !req.body.COMP_CODE || !req.body.EST_CODE || !req.body.WERKS || !req.body.EST_NAME  ) {
+	if( !req.body.NATIONAL || !req.body.REGION_CODE || !req.body.COMP_CODE ) {
 		return res.status( 400 ).send({
 			status: false,
 			message: 'Invalid input',
@@ -19,23 +19,19 @@ exports.createOrUpdate = ( req, res ) => {
 		});
 	}
 
-	estModel.findOne( { 
+	compModel.findOne( { 
 		WERKS: req.body.WERKS
 	} ).then( data => {
 
 		// Kondisi belum ada data, create baru dan insert ke Sync List
 		if( !data ) {
 
-			const est = new estModel( {
+			const est = new compModel( {
 				NATIONAL: req.body.NATIONAL || "",
 				REGION_CODE: req.body.REGION_CODE || "",
 				COMP_CODE: req.body.COMP_CODE || "",
-				EST_CODE: req.body.EST_CODE || "",
-				WERKS: req.body.WERKS || "",
-				EST_NAME: req.body.EST_NAME || "",
-				START_VALID: ( req.body.START_VALID != '' ) ? date.parse( req.body.START_VALID, 'YYYY-MM-DD HH:mm:ss' ) : "",
-				END_VALID: ( req.body.END_VALID != '' ) ? date.parse( req.body.END_VALID, 'YYYY-MM-DD HH:mm:ss' ) : "",
-				CITY: req.body.CITY || "",
+				COMP_NAME: req.body.COMP_NAME || "",
+				ADDRESS: req.body.ADDRESS || "",
 				INSERT_TIME_DW: ( req.body.INSERT_TIME_DW != '' ) ? date.parse( req.body.INSERT_TIME_DW, 'YYYY-MM-DD HH:mm:ss' ) : "",
 				UPDATE_TIME_DW: ( req.body.UPDATE_TIME_DW != '' ) ? date.parse( req.body.UPDATE_TIME_DW, 'YYYY-MM-DD HH:mm:ss' ) : "",
 				FLAG_UPDATE: dateAndTimes.format( new Date(), 'YYYYMMDD' )
@@ -59,16 +55,15 @@ exports.createOrUpdate = ( req, res ) => {
 		}
 		// Kondisi data sudah ada, check value, jika sama tidak diupdate, jika beda diupdate dan dimasukkan ke Sync List
 		else {
-
-			if ( data.EST_NAME != req.body.EST_NAME || data.CITY != req.body.CITY ) {
-				estModel.findOneAndUpdate( { 
-					WERKS: req.body.WERKS
+			
+			if ( data.COMP_NAME != req.body.COMP_NAME || data.ADDRESS != req.body.ADDRESS ) {
+				compModel.findOneAndUpdate( { 
+					COMP_CODE: req.body.COMP_CODE
 				}, {
-					EST_NAME: req.body.EST_NAME || "",
-					START_VALID: ( req.body.START_VALID != '' ) ? date.parse( req.body.START_VALID, 'YYYY-MM-DD HH:mm:ss' ) : "",
-					END_VALID: ( req.body.END_VALID != '' ) ? date.parse( req.body.END_VALID, 'YYYY-MM-DD HH:mm:ss' ) : "",
-					CITY: req.body.CITY || "",
+					COMP_NAME: req.body.COMP_NAME || "",
+					ADDRESS: req.body.ADDRESS || "",
 					INSERT_TIME_DW: ( req.body.INSERT_TIME_DW != '' ) ? date.parse( req.body.INSERT_TIME_DW, 'YYYY-MM-DD HH:mm:ss' ) : "",
+					UPDATE_TIME_DW: ( req.body.UPDATE_TIME_DW != '' ) ? date.parse( req.body.UPDATE_TIME_DW, 'YYYY-MM-DD HH:mm:ss' ) : "",
 					FLAG_UPDATE: dateAndTimes.format( new Date(), 'YYYYMMDD' )
 				}, { new: true } )
 				.then( data => {
@@ -108,6 +103,7 @@ exports.createOrUpdate = ( req, res ) => {
 					data: {}
 				} );
 			}
+			
 		}
 		
 	} ).catch( err => {
@@ -125,5 +121,4 @@ exports.createOrUpdate = ( req, res ) => {
 			data: {}
 		} );
 	} );
-
 };
