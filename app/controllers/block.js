@@ -82,7 +82,7 @@ exports.createOrUpdate = ( req, res ) => {
 					if( !data ) {
 						return res.status( 404 ).send( {
 							status: false,
-							message: "Data error updating 2",
+							message: "Data error updating 2 " + req.body.WERKS_AFD_BLOCK_CODEs,
 							data: {}
 						} );
 					}
