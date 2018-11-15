@@ -18,9 +18,6 @@ exports.createOrUpdate = ( req, res ) => {
 		});
 	}
 
-
-	
-
 	afdelingModel.findOne( { 
 		WERKS_AFD_CODE: req.body.WERKS_AFD_CODE
 	} ).then( data => {
