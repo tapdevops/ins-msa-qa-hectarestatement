@@ -1,6 +1,6 @@
 FROM node:8.12.0-alpine
 
-WORKDIR /opt/app
+WORKDIR /
 
 ENV PORT=3006
 
