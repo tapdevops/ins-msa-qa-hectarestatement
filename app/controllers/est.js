@@ -33,11 +33,11 @@ exports.createOrUpdate = ( req, res ) => {
 				EST_CODE: req.body.EST_CODE || "",
 				WERKS: req.body.WERKS || "",
 				EST_NAME: req.body.EST_NAME || "",
-				START_VALID: ( req.body.START_VALID != '' ) ? date.parse( req.body.START_VALID, 'YYYY-MM-DD HH:mm:ss' ) : "",
-				END_VALID: ( req.body.END_VALID != '' ) ? date.parse( req.body.END_VALID, 'YYYY-MM-DD HH:mm:ss' ) : "",
+				START_VALID: req.body.START_VALID || "",
+				END_VALID: req.body.END_VALID || "",
 				CITY: req.body.CITY || "",
-				INSERT_TIME_DW: ( req.body.INSERT_TIME_DW != '' ) ? date.parse( req.body.INSERT_TIME_DW, 'YYYY-MM-DD HH:mm:ss' ) : "",
-				UPDATE_TIME_DW: ( req.body.UPDATE_TIME_DW != '' ) ? date.parse( req.body.UPDATE_TIME_DW, 'YYYY-MM-DD HH:mm:ss' ) : "",
+				INSERT_TIME_DW: req.body.INSERT_TIME_DW || "",
+				UPDATE_TIME_DW: req.body.UPDATE_TIME_DW || "",
 				FLAG_UPDATE: dateAndTimes.format( new Date(), 'YYYYMMDD' )
 			} );
 
@@ -65,10 +65,11 @@ exports.createOrUpdate = ( req, res ) => {
 					WERKS: req.body.WERKS
 				}, {
 					EST_NAME: req.body.EST_NAME || "",
-					START_VALID: ( req.body.START_VALID != '' ) ? date.parse( req.body.START_VALID, 'YYYY-MM-DD HH:mm:ss' ) : "",
-					END_VALID: ( req.body.END_VALID != '' ) ? date.parse( req.body.END_VALID, 'YYYY-MM-DD HH:mm:ss' ) : "",
+					START_VALID: req.body.START_VALID || "",
+					END_VALID: req.body.END_VALID || "",
 					CITY: req.body.CITY || "",
-					INSERT_TIME_DW: ( req.body.INSERT_TIME_DW != '' ) ? date.parse( req.body.INSERT_TIME_DW, 'YYYY-MM-DD HH:mm:ss' ) : "",
+					INSERT_TIME_DW: req.body.INSERT_TIME_DW || "",
+					UPDATE_TIME_DW: req.body.UPDATE_TIME_DW || "",
 					FLAG_UPDATE: dateAndTimes.format( new Date(), 'YYYYMMDD' )
 				}, { new: true } )
 				.then( data => {
