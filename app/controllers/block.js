@@ -35,12 +35,12 @@ exports.createOrUpdate = ( req, res ) => {
 				WERKS_AFD_BLOCK_CODE: req.body.WERKS_AFD_BLOCK_CODE || "",
 				LATITUDE_BLOCK: req.body.LATITUDE_BLOCK || "",
 				LONGITUDE_BLOCK: req.body.LONGITUDE_BLOCK || "",
-				START_VALID: ( req.body.START_VALID != '' ) ? date.parse( req.body.START_VALID, 'YYYY-MM-DD HH:mm:ss' ) : "",
-				END_VALID: ( req.body.END_VALID != '' ) ? date.parse( req.body.END_VALID, 'YYYY-MM-DD HH:mm:ss' ) : "",
+				START_VALID: req.body.START_VALID || "",
+				END_VALID: req.body.END_VALID || "",
 				INSERT_USER: req.body.INSERT_USER || "",
-				INSERT_TIME: ( req.body.INSERT_TIME != '' ) ? date.parse( req.body.INSERT_TIME, 'YYYY-MM-DD HH:mm:ss' ) : "",
+				INSERT_TIME: req.body.INSERT_TIME || "",
 				UPDATE_USER: req.body.UPDATE_USER || "",
-				UPDATE_TIME: ( req.body.UPDATE_TIME != '' ) ? date.parse( req.body.UPDATE_TIME, 'YYYY-MM-DD HH:mm:ss' ) : "",
+				UPDATE_TIME: req.body.UPDATE_TIME || "",
 				FLAG_UPDATE: dateAndTimes.format( new Date(), 'YYYYMMDD' )
 			} );
 
@@ -70,12 +70,12 @@ exports.createOrUpdate = ( req, res ) => {
 					BLOCK_NAME: req.body.BLOCK_NAME || "",
 					LATITUDE_BLOCK: req.body.LATITUDE_BLOCK || "",
 					LONGITUDE_BLOCK: req.body.LONGITUDE_BLOCK || "",
-					START_VALID: ( req.body.START_VALID != '' ) ? date.parse( req.body.START_VALID, 'YYYY-MM-DD' ) : "",
-					END_VALID: ( req.body.END_VALID != '' ) ? date.parse( req.body.END_VALID, 'YYYY-MM-DD' ) : "",
+					START_VALID: req.body.START_VALID || "",
+					END_VALID: req.body.END_VALID || "",
 					INSERT_USER: req.body.INSERT_USER || "",
-					INSERT_TIME: ( req.body.INSERT_TIME != '' ) ? date.parse( req.body.INSERT_TIME, 'YYYY-MM-DD HH:mm:ss' ) : "",
+					INSERT_TIME: req.body.INSERT_TIME || "",
 					UPDATE_USER: req.body.UPDATE_USER || "",
-					UPDATE_TIME: ( req.body.UPDATE_TIME != '' ) ? date.parse( req.body.UPDATE_TIME, 'YYYY-MM-DD HH:mm:ss' ) : "",
+					UPDATE_TIME: req.body.UPDATE_TIME || "",
 					FLAG_UPDATE: dateAndTimes.format( new Date(), 'YYYYMMDD' )
 				}, { new: true } )
 				.then( data => {
