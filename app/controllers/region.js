@@ -14,7 +14,7 @@ exports.createOrUpdate = ( req, res ) => {
 	if( !req.body.NATIONAL || !req.body.REGION_CODE ) {
 		return res.status( 400 ).send({
 			status: false,
-			message: 'Invalid inputs',
+			message: 'Invalid input',
 			data: {}
 		});
 	}
@@ -29,8 +29,8 @@ exports.createOrUpdate = ( req, res ) => {
 				NATIONAL: req.body.NATIONAL || "",
 				REGION_CODE: req.body.REGION_CODE || "",
 				REGION_NAME: req.body.REGION_NAME || "",
-				INSERT_TIME_DW: ( req.body.INSERT_TIME_DW != '' ) ? date.parse( req.body.INSERT_TIME_DW, 'YYYY-MM-DD HH:mm:ss' ) : "",
-				UPDATE_TIME_DW: ( req.body.UPDATE_TIME_DW != '' ) ? date.parse( req.body.UPDATE_TIME_DW, 'YYYY-MM-DD HH:mm:ss' ) : "",
+				INSERT_TIME_DW: req.body.INSERT_TIME_DW || "",
+				UPDATE_TIME_DW: req.body.UPDATE_TIME_DW || "",
 				FLAG_UPDATE: dateAndTimes.format( new Date(), 'YYYYMMDD' )
 			} );
 
@@ -55,11 +55,11 @@ exports.createOrUpdate = ( req, res ) => {
 			
 			if ( data.REGION_NAME != req.body.REGION_NAME ) {
 				regionModel.findOneAndUpdate( { 
-					COMP_CODE: req.body.COMP_CODE
+					REGION_CODE: req.body.REGION_CODE
 				}, {
 					REGION_NAME: req.body.REGION_NAME || "",
-					INSERT_TIME_DW: ( req.body.INSERT_TIME_DW != '' ) ? date.parse( req.body.INSERT_TIME_DW, 'YYYY-MM-DD HH:mm:ss' ) : "",
-					UPDATE_TIME_DW: ( req.body.UPDATE_TIME_DW != '' ) ? date.parse( req.body.UPDATE_TIME_DW, 'YYYY-MM-DD HH:mm:ss' ) : "",
+					INSERT_TIME_DW: req.body.INSERT_TIME_DW || "",
+					UPDATE_TIME_DW: req.body.UPDATE_TIME_DW || "",
 					FLAG_UPDATE: dateAndTimes.format( new Date(), 'YYYYMMDD' )
 				}, { new: true } )
 				.then( data => {
