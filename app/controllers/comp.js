@@ -32,8 +32,8 @@ exports.createOrUpdate = ( req, res ) => {
 				COMP_CODE: req.body.COMP_CODE || "",
 				COMP_NAME: req.body.COMP_NAME || "",
 				ADDRESS: req.body.ADDRESS || "",
-				INSERT_TIME_DW: ( req.body.INSERT_TIME_DW != '' ) ? date.parse( req.body.INSERT_TIME_DW, 'YYYY-MM-DD HH:mm:ss' ) : "",
-				UPDATE_TIME_DW: ( req.body.UPDATE_TIME_DW != '' ) ? date.parse( req.body.UPDATE_TIME_DW, 'YYYY-MM-DD HH:mm:ss' ) : "",
+				INSERT_TIME_DW: req.body.INSERT_TIME_DW || "",
+				UPDATE_TIME_DW: req.body.UPDATE_TIME_DW || "",
 				FLAG_UPDATE: dateAndTimes.format( new Date(), 'YYYYMMDD' )
 			} );
 
@@ -62,8 +62,8 @@ exports.createOrUpdate = ( req, res ) => {
 				}, {
 					COMP_NAME: req.body.COMP_NAME || "",
 					ADDRESS: req.body.ADDRESS || "",
-					INSERT_TIME_DW: ( req.body.INSERT_TIME_DW != '' ) ? date.parse( req.body.INSERT_TIME_DW, 'YYYY-MM-DD HH:mm:ss' ) : "",
-					UPDATE_TIME_DW: ( req.body.UPDATE_TIME_DW != '' ) ? date.parse( req.body.UPDATE_TIME_DW, 'YYYY-MM-DD HH:mm:ss' ) : "",
+					INSERT_TIME_DW: req.body.INSERT_TIME_DW || "",
+					UPDATE_TIME_DW: req.body.UPDATE_TIME_DW || "",
 					FLAG_UPDATE: dateAndTimes.format( new Date(), 'YYYYMMDD' )
 				}, { new: true } )
 				.then( data => {
