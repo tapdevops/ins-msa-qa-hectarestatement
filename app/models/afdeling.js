@@ -28,7 +28,7 @@ const AfdelingSchema = mongoose.Schema( {
 			return null;
 		}
 	},
-	DELETE_TIME_DW: {
+	UPDATE_TIME_DW: {
 		type: Date,
 		default: function() {
 			return null;
