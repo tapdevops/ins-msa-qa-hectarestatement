@@ -20,6 +20,21 @@ const AfdelingSchema = mongoose.Schema( {
 			return null;
 		}
 	},
+
+
+	INSERT_TIME_DW: {
+		type: Date,
+		default: function() {
+			return null;
+		}
+	},
+	DELETE_TIME_DW: {
+		type: Date,
+		default: function() {
+			return null;
+		}
+	},
+
 	INSERT_USER: String,
 	INSERT_TIME: {
 		type: Date,
