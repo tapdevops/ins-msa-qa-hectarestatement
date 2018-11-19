@@ -63,7 +63,7 @@ exports.createOrUpdate = ( req, res ) => {
 		// Kondisi data sudah ada, check value, jika sama tidak diupdate, jika beda diupdate dan dimasukkan ke Sync List
 		else {
 			
-			if ( data.BLOCK_NAME != req.body.BLOCK_NAME || data.AFD_NAME != req.body.AFD_NAME ) {
+			if ( data.BLOCK_NAME != req.body.BLOCK_NAME ) {
 				blockModel.findOneAndUpdate( { 
 					WERKS_AFD_BLOCK_CODE: req.body.WERKS_AFD_BLOCK_CODE
 				}, {
