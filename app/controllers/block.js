@@ -247,12 +247,12 @@ exports.find = ( req, res ) => {
 // Find a single data with a ID
 exports.findOne = ( req, res ) => {
 	blockModel.findOne( { 
-		WERKS_AFD_BLOCK_CODE: req.params.GET_WERKS_AFD_BLOCK_CODE 
+		WERKS_AFD_BLOCK_CODE: req.params.id 
 	} ).then( data => {
 		if( !data ) {
 			return res.status(404).send({
 				status: false,
-				message: "Data not found 2 with id " + req.params.GET_WERKS_AFD_BLOCK_CODE,
+				message: "Data not found 2 with id " + req.params.id,
 				data: {}
 			});
 		}
@@ -265,13 +265,13 @@ exports.findOne = ( req, res ) => {
 		if( err.kind === 'ObjectId' ) {
 			return res.status( 404 ).send({
 				status: false,
-				message: "Data not found 1 with id " + req.params.GET_WERKS_AFD_BLOCK_CODE,
+				message: "Data not found 1 with id " + req.params.id,
 				data: {}
 			});
 		}
 		return res.status( 500 ).send({
 			status: false,
-			message: "Error retrieving Data with id " + req.params.GET_WERKS_AFD_BLOCK_CODE,
+			message: "Error retrieving Data with id " + req.params.id,
 			data: {}
 		} );
 	} );
@@ -290,7 +290,7 @@ exports.update = ( req, res ) => {
 	}
 	
 	blockModel.findOneAndUpdate( { 
-		WERKS_AFD_BLOCK_CODE : req.params.GET_WERKS_AFD_BLOCK_CODE 
+		WERKS_AFD_BLOCK_CODE : req.params.id 
 	}, {
 		REGION_CODE: req.body.REGION_CODE || "",
 		COMP_CODE: req.body.COMP_CODE || "",
@@ -311,7 +311,7 @@ exports.update = ( req, res ) => {
 		if( !data ) {
 			return res.status( 404 ).send( {
 				status: false,
-				message: "Data not found 1 with id " + req.params.GET_WERKS_AFD_BLOCK_CODE,
+				message: "Data not found 1 with id " + req.params.id,
 				data: {}
 			} );
 		}
@@ -324,13 +324,13 @@ exports.update = ( req, res ) => {
 		if( err.kind === 'ObjectId' ) {
 			return res.status( 404 ).send( {
 				status: false,
-				message: "Data not found 2 with id " + req.params.GET_WERKS_AFD_BLOCK_CODE,
+				message: "Data not found 2 with id " + req.params.id,
 				data: {}
 			} );
 		}
 		return res.status( 500 ).send( {
 			status: false,
-			message: "Data error updating with id " + req.params.GET_WERKS_AFD_BLOCK_CODE,
+			message: "Data error updating with id " + req.params.id,
 			data: {}
 		} );
 	});
@@ -338,12 +338,12 @@ exports.update = ( req, res ) => {
 
 // Delete data with the specified ID in the request
 exports.delete = ( req, res ) => {
-	blockModel.findOneAndRemove( { WERKS_AFD_BLOCK_CODE : req.params.GET_WERKS_AFD_BLOCK_CODE } )
+	blockModel.findOneAndRemove( { WERKS_AFD_BLOCK_CODE : req.params.id } )
 	.then( data => {
 		if( !data ) {
 			return res.status( 404 ).send( {
 				status: false,
-				message: "Data not found 2 with id " + req.params.GET_WERKS_AFD_BLOCK_CODE,
+				message: "Data not found 2 with id " + req.params.id,
 				data: {}
 			} );
 		}
@@ -356,13 +356,13 @@ exports.delete = ( req, res ) => {
 		if( err.kind === 'ObjectId' || err.name === 'NotFound' ) {
 			return res.status(404).send({
 				status: false,
-				message: "Data not found 1 with id " + req.params.GET_WERKS_AFD_BLOCK_CODE,
+				message: "Data not found 1 with id " + req.params.id,
 				data: {}
 			} );
 		}
 		return res.status( 500 ).send( {
 			status: false,
-			message: "Could not delete data with id " + req.params.GET_WERKS_AFD_BLOCK_CODE,
+			message: "Could not delete data with id " + req.params.id,
 			data: {}
 		} );
 	} );

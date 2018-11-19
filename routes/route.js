@@ -11,17 +11,17 @@ module.exports = ( app ) => {
 	app.post( '/sync/afdeling', afdeling.createOrUpdate );
 	app.post( '/afdeling', afdeling.create );
 	app.get( '/afdeling', afdeling.find );
-	app.get( '/afdeling/:GET_WERKS_AFD_CODE', afdeling.findOne );
-	app.put( '/afdeling/:GET_WERKS_AFD_CODE', afdeling.update );
-	app.delete( '/afdeling/:GET_WERKS_AFD_CODE', afdeling.delete );
+	app.get( '/afdeling/:id', afdeling.findOne );
+	app.put( '/afdeling/:id', afdeling.update );
+	app.delete( '/afdeling/:id', afdeling.delete );
 
 	// Routing: Block
 	app.post( '/sync/block', block.createOrUpdate );
 	app.post( '/block', block.create );
 	app.get( '/block', block.find );
-	app.get( '/block/:GET_WERKS_AFD_BLOCK_CODE', block.findOne );
-	app.put( '/block/:GET_WERKS_AFD_BLOCK_CODE', block.update );
-	app.delete( '/block/:GET_WERKS_AFD_BLOCK_CODE', block.delete );
+	app.get( '/block/:id', block.findOne );
+	app.put( '/block/:id', block.update );
+	app.delete( '/block/:id', block.delete );
 
 	// Routing: Comp
 	app.post( '/sync/comp', comp.createOrUpdate );
