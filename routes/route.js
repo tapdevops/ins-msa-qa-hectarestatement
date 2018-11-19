@@ -15,6 +15,12 @@ module.exports = ( app ) => {
 	app.put( '/afdeling/:id', afdeling.update );
 	app.delete( '/afdeling/:id', afdeling.delete );
 
+
+
+
+
+
+
 	// Routing: Block
 	app.post( '/sync/block', block.createOrUpdate );
 	app.post( '/block', block.create );
