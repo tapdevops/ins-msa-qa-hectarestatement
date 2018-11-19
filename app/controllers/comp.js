@@ -122,3 +122,213 @@ exports.createOrUpdate = ( req, res ) => {
 		} );
 	} );
 };
+
+// Create and Save new Data
+exports.create = ( req, res ) => {
+	
+	if( !req.body.NATIONAL || !req.body.REGION_CODE || !req.body.COMP_CODE ) {
+		return res.status( 400 ).send({
+			status: false,
+			message: 'Invalid inputz',
+			data: {}
+		});
+	}
+
+	const set = new compModel({
+		NATIONAL: req.body.NATIONAL || "",
+		REGION_CODE: req.body.REGION_CODE || "",
+		COMP_CODE: req.body.COMP_CODE || "",
+		COMP_NAME: req.body.COMP_NAME || "",
+		ADDRESS: req.body.ADDRESS || "",
+		INSERT_TIME_DW: req.body.INSERT_TIME_DW || "",
+		UPDATE_TIME_DW: req.body.UPDATE_TIME_DW || "",
+		FLAG_UPDATE: dateAndTimes.format( new Date(), 'YYYYMMDD' )
+	});
+
+	set.save()
+	.then( data => {
+		res.send({
+			status: true,
+			message: 'Success',
+			data: {}
+		});
+	} ).catch( err => {
+		res.status( 500 ).send( {
+			status: false,
+			message: 'Some error occurred while creating data',
+			data: {}
+		} );
+	} );
+	
+};
+
+// Retrieve and return all notes from the database.
+exports.find = ( req, res ) => {
+
+	url_query = req.query;
+	var url_query_length = Object.keys( url_query ).length;
+	
+	if ( url_query_length > 0 ) {
+
+		compModel.find( url_query )
+		.then( data => {
+			if( !data ) {
+				return res.status( 404 ).send( {
+					status: false,
+					message: 'Data not found 2',
+					data: {}
+				} );
+			}
+			res.send( {
+				status: true,
+				message: 'Success',
+				data: data
+			} );
+		} ).catch( err => {
+			if( err.kind === 'ObjectId' ) {
+				return res.status( 404 ).send( {
+					status: false,
+					message: 'Data not found 1',
+					data: {}
+				} );
+			}
+			return res.status( 500 ).send( {
+				status: false,
+				message: 'Error retrieving data',
+				data: {}
+			} );
+		} );
+	}
+	else {
+		compModel.find()
+		.then( data => {
+			res.send( {
+				status: true,
+				message: 'Success',
+				data: data
+			} );
+		} ).catch( err => {
+			res.status( 500 ).send( {
+				status: false,
+				message: err.message || "Some error occurred while retrieving data.",
+				data: {}
+			} );
+		} );
+	}
+
+};
+
+// Find a single data with a ID
+exports.findOne = ( req, res ) => {
+	compModel.findOne( { 
+		COMP_CODE: req.params.id 
+	} ).then( data => {
+		if( !data ) {
+			return res.status(404).send({
+				status: false,
+				message: "Data not found 2 with id " + req.params.id,
+				data: {}
+			});
+		}
+		res.send( {
+			status: true,
+			message: 'Success',
+			data: data
+		} );
+	} ).catch( err => {
+		if( err.kind === 'ObjectId' ) {
+			return res.status( 404 ).send({
+				status: false,
+				message: "Data not found 1 with id " + req.params.id,
+				data: {}
+			});
+		}
+		return res.status( 500 ).send({
+			status: false,
+			message: "Error retrieving Data with id " + req.params.id,
+			data: {}
+		} );
+	} );
+};
+
+// Update single data with ID
+exports.update = ( req, res ) => {
+
+	// Validation
+	if( !req.body.COMP_NAME || !req.body.ADDRESS  ) {
+		return res.status( 400 ).send( {
+			status: false,
+			message: 'Invalid Input',
+			data: {}
+		});
+	}
+	
+	compModel.findOneAndUpdate( { 
+		COMP_CODE : req.params.id 
+	}, {
+		COMP_NAME: req.body.COMP_NAME || "",
+		ADDRESS: req.body.ADDRESS || "",
+		INSERT_TIME_DW: req.body.INSERT_TIME_DW || "",
+		UPDATE_TIME_DW: req.body.UPDATE_TIME_DW || "",
+		FLAG_UPDATE: dateAndTimes.format( new Date(), 'YYYYMMDD' )
+	}, { new: true } )
+	.then( data => {
+		if( !data ) {
+			return res.status( 404 ).send( {
+				status: false,
+				message: "Data not found 1 with id " + req.params.id,
+				data: {}
+			} );
+		}
+		res.send( {
+			status: true,
+			message: 'Success',
+			data: data
+		} );
+	}).catch( err => {
+		if( err.kind === 'ObjectId' ) {
+			return res.status( 404 ).send( {
+				status: false,
+				message: "Data not found 2 with id " + req.params.id,
+				data: {}
+			} );
+		}
+		return res.status( 500 ).send( {
+			status: false,
+			message: "Data error updating with id " + req.params.id,
+			data: {}
+		} );
+	});
+};
+
+// Delete data with the specified ID in the request
+exports.delete = ( req, res ) => {
+	compModel.findOneAndRemove( { COMP_CODE : req.params.id } )
+	.then( data => {
+		if( !data ) {
+			return res.status( 404 ).send( {
+				status: false,
+				message: "Data not found 2 with id " + req.params.id,
+				data: {}
+			} );
+		}
+		res.send( {
+			status: true,
+			message: 'Success',
+			data: {}
+		} );
+	}).catch( err => {
+		if( err.kind === 'ObjectId' || err.name === 'NotFound' ) {
+			return res.status(404).send({
+				status: false,
+				message: "Data not found 1 with id " + req.params.id,
+				data: {}
+			} );
+		}
+		return res.status( 500 ).send( {
+			status: false,
+			message: "Could not delete data with id " + req.params.id,
+			data: {}
+		} );
+	} );
+};
