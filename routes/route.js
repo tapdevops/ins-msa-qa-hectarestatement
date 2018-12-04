@@ -15,12 +15,6 @@ module.exports = ( app ) => {
 	app.put( '/afdeling/:id', afdeling.update );
 	app.delete( '/afdeling/:id', afdeling.delete );
 
-
-
-
-
-
-
 	// Routing: Block
 	app.post( '/sync/block', block.createOrUpdate );
 	app.post( '/block', block.create );
@@ -52,5 +46,8 @@ module.exports = ( app ) => {
 	app.get( '/region/:id', region.findOne );
 	app.put( '/region/:id', region.update );
 	app.delete( '/region/:id', region.delete );
+
+	const test = require( '../app/controllers/test.js' );
+	app.get( '/test', test.test );
 
 }

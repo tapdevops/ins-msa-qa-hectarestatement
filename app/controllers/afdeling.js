@@ -11,7 +11,7 @@ exports.createOrUpdate = ( req, res ) => {
 
 	//if( !req.body.REGION_CODE || !req.body.COMP_CODE || !req.body.EST_CODE || !req.body.WERKS || !req.body.AFD_CODE  ) {
 	if( !req.body.REGION_CODE  ) {
-		return res.status( 400 ).send({
+		return res.send({
 			status: false,
 			message: 'Invalid input',
 			data: {}
@@ -53,7 +53,7 @@ exports.createOrUpdate = ( req, res ) => {
 					data: {}
 				});
 			} ).catch( err => {
-				res.status( 500 ).send( {
+				res.send( {
 					status: false,
 					message: 'Some error occurred while creating data',
 					data: {}
@@ -193,12 +193,11 @@ exports.find = ( req, res ) => {
 	var url_query_length = Object.keys( url_query ).length;
 	
 	if ( url_query_length > 0 ) {
-		console.log( req.query );
 
 		afdelingModel.find( url_query )
 		.then( data => {
 			if(!data) {
-				return res.status( 404 ).send({
+				return res.send({
 					status: false,
 					message: 'Data not found 2',
 					data: {}
@@ -211,7 +210,7 @@ exports.find = ( req, res ) => {
 			} );
 		} ).catch( err => {
 			if( err.kind === 'ObjectId' ) {
-				return res.status( 404 ).send( {
+				return res.send( {
 					status: false,
 					message: 'Data not found 1',
 					data: {}
@@ -233,7 +232,7 @@ exports.find = ( req, res ) => {
 				data: data
 			} );
 		}).catch( err => {
-			res.status( 500 ).send( {
+			res.send( {
 				status: false,
 				message: err.message || "Some error occurred while retrieving data.",
 				data: {}
@@ -249,7 +248,7 @@ exports.findOne = ( req, res ) => {
 		WERKS_AFD_CODE: req.params.id 
 	} ).then( data => {
 		if( !data ) {
-			return res.status(404).send({
+			return res.send({
 				status: false,
 				message: "Data not found 2 with id " + req.params.id,
 				data: {}
@@ -262,13 +261,13 @@ exports.findOne = ( req, res ) => {
 		} );
 	} ).catch( err => {
 		if( err.kind === 'ObjectId' ) {
-			return res.status( 404 ).send({
+			return res.send({
 				status: false,
 				message: "Data not found 1 with id " + req.params.id,
 				data: {}
 			});
 		}
-		return res.status( 500 ).send({
+		return res.send({
 			status: false,
 			message: "Error retrieving Data with id " + req.params.id,
 			data: {}
@@ -281,7 +280,7 @@ exports.update = ( req, res ) => {
 
 	// Validation
 	if( !req.body.COMP_CODE ) {
-		return res.status( 400 ).send( {
+		return res.send( {
 			status: false,
 			message: 'Invalid Input',
 			data: {}
@@ -305,7 +304,7 @@ exports.update = ( req, res ) => {
 	}, { new: true } )
 	.then( data => {
 		if( !data ) {
-			return res.status( 404 ).send( {
+			return res.send( {
 				status: false,
 				message: "Data not found 1 with id " + req.params.id,
 				data: {}
@@ -318,13 +317,13 @@ exports.update = ( req, res ) => {
 		} );
 	}).catch( err => {
 		if( err.kind === 'ObjectId' ) {
-			return res.status( 404 ).send( {
+			return res.send( {
 				status: false,
 				message: "Data not found 2 with id " + req.params.id,
 				data: {}
 			} );
 		}
-		return res.status( 500 ).send( {
+		return res.send( {
 			status: false,
 			message: "Data error updating with id " + req.params.id,
 			data: {}
@@ -337,7 +336,7 @@ exports.delete = ( req, res ) => {
 	afdelingModel.findOneAndRemove( { WERKS_AFD_CODE : req.params.id } )
 	.then( data => {
 		if( !data ) {
-			return res.status( 404 ).send( {
+			return res.send( {
 				status: false,
 				message: "Data not found 2 with id " + req.params.id,
 				data: {}
@@ -350,13 +349,13 @@ exports.delete = ( req, res ) => {
 		} );
 	}).catch( err => {
 		if( err.kind === 'ObjectId' || err.name === 'NotFound' ) {
-			return res.status(404).send({
+			return res.send({
 				status: false,
 				message: "Data not found 1 with id " + req.params.id,
 				data: {}
 			} );
 		}
-		return res.status( 500 ).send( {
+		return res.send( {
 			status: false,
 			message: "Could not delete data with id " + req.params.id,
 			data: {}
