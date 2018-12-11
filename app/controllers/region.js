@@ -8,10 +8,253 @@ var url = require( 'url' );
 const Client = require('node-rest-client').Client; 	
 const config = require( '../../config/config.js' );
 
+let moment = require( 'moment-timezone' );
 let jwt = require( 'jsonwebtoken' );
 const uuid = require( 'uuid' );
 const nJwt = require( 'njwt' );
 const jwtDecode = require( 'jwt-decode' );
+
+exports.syncMobile1 = ( req, res ) => {
+
+	console.log( today );
+	console.log( tomorrow );
+
+	var today = moment( "11/12/2018", "DD/MM/YYYY" ).startOf( 'day' );
+	var tomorrow = moment( today ).endOf( 'day' );
+	var data_sync = [];
+
+	// Select All (Insert Update Delete)
+	/*
+	regionModel.find( { 
+		$and: [
+			{
+				$or: [
+					{
+						INSERT_TIME: {
+							$gte: today.toDate(),
+							$lt: tomorrow.toDate()
+						}
+					},
+					{
+						UPDATE_TIME: {
+							$gte: today.toDate(),
+							$lt: tomorrow.toDate()
+						}
+					},
+					{
+						DELETE_TIME: {
+							$gte: today.toDate(),
+							$lt: tomorrow.toDate()
+						}
+					}
+				]
+			}
+		]
+	} )
+	*/
+
+	regionModel.find( { 
+		$and: [
+			{
+				$or: [
+					{
+						INSERT_TIME: {
+							$gte: today.toDate(),
+							$lt: tomorrow.toDate()
+						}
+					}
+				]
+			}
+		]
+	} ).then( data_insert => {
+
+		data_sync.insert = data_insert;
+
+		regionModel.find( { 
+			$and: [
+				{
+					$or: [
+						{
+							UPDATE_TIME: {
+								$gte: today.toDate(),
+								$lt: tomorrow.toDate()
+							}
+						}
+					]
+				}
+			]
+		} ).then( data_update => {
+			data_sync.update = data_update;
+			regionModel.find( { 
+				$and: [
+					{
+						$or: [
+							{
+								DELETE_TIME: {
+									$gte: today.toDate(),
+									$lt: tomorrow.toDate()
+								}
+							}
+						]
+					}
+				]
+			} ).then( data_delete => {
+				data_sync.delete = data_delete;
+				res.send({
+					status: false,
+					message: "X",
+					data: data_sync
+				});
+		} ).catch( err => {
+			if( err.kind === 'ObjectId' ) {
+				return res.status( 404 ).send({
+					status: false,
+					message: "Data not found 1",
+					data: {}
+				});
+			}
+
+			return res.status( 500 ).send({
+				status: false,
+				message: "Error retrieving Data",
+				data: {}
+			} );
+		} );
+
+		} ).catch( err => {
+			if( err.kind === 'ObjectId' ) {
+				return res.status( 404 ).send({
+					status: false,
+					message: "Data not found 1",
+					data: {}
+				});
+			}
+
+			return res.status( 500 ).send({
+				status: false,
+				message: "Error retrieving Data",
+				data: {}
+			} );
+		} );
+
+	} ).catch( err => {
+		if( err.kind === 'ObjectId' ) {
+			return res.status( 404 ).send({
+				status: false,
+				message: "Data not found 1",
+				data: {}
+			});
+		}
+
+		return res.status( 500 ).send({
+			status: false,
+			message: "Error retrieving Data",
+			data: {}
+		} );
+	} );
+	
+}
+
+exports.syncMobile = ( req, res ) => {
+
+	console.log( today );
+	console.log( tomorrow );
+	var date_target = req.params.id;
+	var today = moment( date_target, "YYYY-MM-DD" ).startOf( 'day' );
+	var tomorrow = moment( today ).endOf( 'day' );
+	var data_sync = [];
+
+	// Select All (Insert Update Delete)
+	regionModel.find( { 
+		$and: [
+			{
+				$or: [
+					{
+						INSERT_TIME: {
+							$gte: today.toDate(),
+							$lt: tomorrow.toDate()
+						}
+					},
+					{
+						UPDATE_TIME: {
+							$gte: today.toDate(),
+							$lt: tomorrow.toDate()
+						}
+					},
+					{
+						DELETE_TIME: {
+							$gte: today.toDate(),
+							$lt: tomorrow.toDate()
+						}
+					}
+				]
+			}
+		]
+	} ).then( data_insert => {
+
+		var temp_insert = [];
+		var temp_update = [];
+		var temp_delete = [];
+
+		data_insert.forEach( function( data ) {
+			var convert_date = {
+				INSERT_TIME: moment( data.INSERT_TIME ).format( "YYYY-MM-DD" ),
+				UPDATE_TIME: moment( data.UPDATE_TIME ).format( "YYYY-MM-DD" ),
+				DELETE_TIME: moment( data.DELETE_TIME ).format( "YYYY-MM-DD" ),
+			};
+
+			if ( convert_date.INSERT_TIME == date_target ) {
+				temp_insert.push( {
+					NATIONAL: data.NATIONAL,
+					REGION_CODE: data.REGION_CODE,
+					REGION_NAME: data.REGION_NAME
+				} );
+			}
+
+			if ( convert_date.UPDATE_TIME == date_target ) {
+				temp_update.push( {
+					NATIONAL: data.NATIONAL,
+					REGION_CODE: data.REGION_CODE,
+					REGION_NAME: data.REGION_NAME
+				} );
+			}
+
+			if ( convert_date.DELETE_TIME == date_target ) {
+				temp_delete.push( {
+					NATIONAL: data.NATIONAL,
+					REGION_CODE: data.REGION_CODE,
+					REGION_NAME: data.REGION_NAME
+				} );
+			}
+
+		} );
+
+		res.json( {
+			status: true,
+			message: "Success",
+			data: {
+				"insert": temp_insert,
+				"update": temp_update,
+				"delete": temp_delete
+			}
+		} );
+	} ).catch( err => {
+		if( err.kind === 'ObjectId' ) {
+			return res.status( 404 ).send({
+				status: false,
+				message: "Data not found 1",
+				data: {}
+			});
+		}
+
+		return res.status( 500 ).send({
+			status: false,
+			message: "Error retrieving Data",
+			data: {}
+		} );
+	} );
+	
+}
 
 // Create or update data
 exports.createOrUpdate = ( req, res ) => {

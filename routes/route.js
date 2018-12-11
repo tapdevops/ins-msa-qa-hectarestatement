@@ -41,6 +41,8 @@ module.exports = ( app ) => {
 
 	// Routing: Region
 	app.post( '/sync/region', region.createOrUpdate );
+	app.get( '/sync-mobile/region/:id', region.syncMobile );
+
 	app.post( '/region', region.create );
 	app.get( '/region', region.find );
 	app.get( '/region/:id', region.findOne );
