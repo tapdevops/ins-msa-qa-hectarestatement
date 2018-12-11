@@ -8,9 +8,7 @@ var url = require( 'url' );
 const Client = require('node-rest-client').Client; 	
 const config = require( '../../config/config.js' );
 
-
 let jwt = require( 'jsonwebtoken' );
-const config = require( '../../config/config.js' );
 const uuid = require( 'uuid' );
 const nJwt = require( 'njwt' );
 const jwtDecode = require( 'jwt-decode' );
