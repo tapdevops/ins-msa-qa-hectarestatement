@@ -29,9 +29,9 @@ exports.createOrUpdate = ( req, res ) => {
 				NATIONAL: req.body.NATIONAL || "",
 				REGION_CODE: req.body.REGION_CODE || "",
 				REGION_NAME: req.body.REGION_NAME || "",
-				INSERT_TIME: new Date(),
-				DELETE_TIME: null,
-				UPDATE_TIME: null
+				INSERT_TIME_DW: req.body.INSERT_TIME_DW || "",
+				UPDATE_TIME_DW: req.body.UPDATE_TIME_DW || "",
+				FLAG_UPDATE: dateAndTimes.format( new Date(), 'YYYYMMDD' )
 			} );
 
 			region.save()
@@ -133,9 +133,9 @@ exports.create = ( req, res ) => {
 		NATIONAL: req.body.NATIONAL || "",
 		REGION_CODE: req.body.REGION_CODE || "",
 		REGION_NAME: req.body.REGION_NAME || "",
-		INSERT_TIME: req.body.INSERT_TIME_DW || "",
-		DELETE_TIME: req.body.UPDATE_TIME_DW || "",
-		UPDATE_TIME: req.body.UPDATE_TIME_DW || ""
+		INSERT_TIME_DW: req.body.INSERT_TIME_DW || "",
+		UPDATE_TIME_DW: req.body.UPDATE_TIME_DW || "",
+		FLAG_UPDATE: dateAndTimes.format( new Date(), 'YYYYMMDD' )
 	});
 
 	set.save()
