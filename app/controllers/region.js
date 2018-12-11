@@ -8,6 +8,13 @@ var url = require( 'url' );
 const Client = require('node-rest-client').Client; 	
 const config = require( '../../config/config.js' );
 
+
+let jwt = require( 'jsonwebtoken' );
+const config = require( '../../config/config.js' );
+const uuid = require( 'uuid' );
+const nJwt = require( 'njwt' );
+const jwtDecode = require( 'jwt-decode' );
+
 // Create or update data
 exports.createOrUpdate = ( req, res ) => {
 	
@@ -300,6 +307,45 @@ exports.update = ( req, res ) => {
 
 // Delete data with the specified ID in the request
 exports.delete = ( req, res ) => {
+	regionModel.findOneAndUpdate( { 
+		REGION_CODE: req.body.REGION_CODE
+	}, {
+		DELETE_TIME: new Date()
+	}, { new: true } )
+	.then( data => {
+		if( !data ) {
+			return res.status( 404 ).send( {
+				status: false,
+				message: "Data failed to delete",
+				data: {}
+			} );
+		}
+		else {
+			res.send({
+				status: true,
+				message: 'Data successfully deleted',
+				data: {}
+			});
+		}
+	}).catch( err => {
+		if( err.kind === 'ObjectId' ) {
+			return res.status( 404 ).send( {
+				status: false,
+				message: "ObjectID Error",
+				data: {}
+			} );
+		}
+		return res.status( 500 ).send( {
+			status: false,
+			message: "Error",
+			data: {}
+		} );
+	});
+};
+
+// Delete data with the specified ID in the request
+/*
+exports.delete = ( req, res ) => {
 	regionModel.findOneAndRemove( { REGION_CODE : req.params.id } )
 	.then( data => {
 		if( !data ) {
@@ -328,4 +374,4 @@ exports.delete = ( req, res ) => {
 			data: {}
 		} );
 	} );
-};
+};*/
