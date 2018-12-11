@@ -306,7 +306,7 @@ exports.update = ( req, res ) => {
 // Delete data with the specified ID in the request
 exports.delete = ( req, res ) => {
 	regionModel.findOneAndUpdate( { 
-		REGION_CODE: req.body.REGION_CODE
+		REGION_CODE: req.params.id
 	}, {
 		DELETE_TIME: new Date()
 	}, { new: true } )
@@ -319,7 +319,7 @@ exports.delete = ( req, res ) => {
 			} );
 		}
 		else {
-			res.send({
+			return res.send({
 				status: true,
 				message: 'Data successfully deleted',
 				data: {}
