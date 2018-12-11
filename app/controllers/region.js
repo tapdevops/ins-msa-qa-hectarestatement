@@ -58,9 +58,7 @@ exports.createOrUpdate = ( req, res ) => {
 					REGION_CODE: req.body.REGION_CODE
 				}, {
 					REGION_NAME: req.body.REGION_NAME || "",
-					INSERT_TIME_DW: req.body.INSERT_TIME_DW || "",
-					UPDATE_TIME_DW: req.body.UPDATE_TIME_DW || "",
-					FLAG_UPDATE: dateAndTimes.format( new Date(), 'YYYYMMDD' )
+					UPDATE_TIME: new Date()
 				}, { new: true } )
 				.then( data => {
 					if( !data ) {
