@@ -14,146 +14,49 @@ const uuid = require( 'uuid' );
 const nJwt = require( 'njwt' );
 const jwtDecode = require( 'jwt-decode' );
 
-exports.syncMobile1 = ( req, res ) => {
+exports.findAll = ( req, res ) => {
 
-	console.log( today );
-	console.log( tomorrow );
+	var url_query = req.query;
+	var url_query_length = Object.keys( url_query ).length;
+	
+	url_query.DELETE_TIME = "";
 
-	var today = moment( "11/12/2018", "DD/MM/YYYY" ).startOf( 'day' );
-	var tomorrow = moment( today ).endOf( 'day' );
-	var data_sync = [];
-
-	// Select All (Insert Update Delete)
-	/*
-	regionModel.find( { 
-		$and: [
-			{
-				$or: [
-					{
-						INSERT_TIME: {
-							$gte: today.toDate(),
-							$lt: tomorrow.toDate()
-						}
-					},
-					{
-						UPDATE_TIME: {
-							$gte: today.toDate(),
-							$lt: tomorrow.toDate()
-						}
-					},
-					{
-						DELETE_TIME: {
-							$gte: today.toDate(),
-							$lt: tomorrow.toDate()
-						}
-					}
-				]
-			}
-		]
+	regionModel.find( url_query )
+	.select( {
+		_id: 0,
+		NATIONAL: 1,
+		REGION_CODE: 1,
+		REGION_NAME: 1
 	} )
-	*/
-
-	regionModel.find( { 
-		$and: [
-			{
-				$or: [
-					{
-						INSERT_TIME: {
-							$gte: today.toDate(),
-							$lt: tomorrow.toDate()
-						}
-					}
-				]
-			}
-		]
-	} ).then( data_insert => {
-
-		data_sync.insert = data_insert;
-
-		regionModel.find( { 
-			$and: [
-				{
-					$or: [
-						{
-							UPDATE_TIME: {
-								$gte: today.toDate(),
-								$lt: tomorrow.toDate()
-							}
-						}
-					]
-				}
-			]
-		} ).then( data_update => {
-			data_sync.update = data_update;
-			regionModel.find( { 
-				$and: [
-					{
-						$or: [
-							{
-								DELETE_TIME: {
-									$gte: today.toDate(),
-									$lt: tomorrow.toDate()
-								}
-							}
-						]
-					}
-				]
-			} ).then( data_delete => {
-				data_sync.delete = data_delete;
-				res.send({
-					status: false,
-					message: "X",
-					data: data_sync
-				});
-		} ).catch( err => {
-			if( err.kind === 'ObjectId' ) {
-				return res.status( 404 ).send({
-					status: false,
-					message: "Data not found 1",
-					data: {}
-				});
-			}
-
-			return res.status( 500 ).send({
+	.then( data => {
+		if( !data ) {
+			return res.status( 404 ).send( {
 				status: false,
-				message: "Error retrieving Data",
+				message: 'Data not found 2',
 				data: {}
 			} );
+		}
+		res.send( {
+			status: true,
+			message: 'Success',
+			data: data
 		} );
-
-		} ).catch( err => {
-			if( err.kind === 'ObjectId' ) {
-				return res.status( 404 ).send({
-					status: false,
-					message: "Data not found 1",
-					data: {}
-				});
-			}
-
-			return res.status( 500 ).send({
-				status: false,
-				message: "Error retrieving Data",
-				data: {}
-			} );
-		} );
-
 	} ).catch( err => {
 		if( err.kind === 'ObjectId' ) {
-			return res.status( 404 ).send({
+			return res.status( 404 ).send( {
 				status: false,
-				message: "Data not found 1",
+				message: 'Data not found 1',
 				data: {}
-			});
+			} );
 		}
-
-		return res.status( 500 ).send({
+		return res.status( 500 ).send( {
 			status: false,
-			message: "Error retrieving Data",
+			message: 'Error retrieving data',
 			data: {}
 		} );
 	} );
-	
-}
+
+};
 
 exports.syncMobile = ( req, res ) => {
 

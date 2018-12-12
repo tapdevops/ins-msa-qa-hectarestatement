@@ -1,17 +1,22 @@
-const regionModel = require( '../models/region.js' );
+const estModel = require( '../models/est.js' );
 const dateFormat = require( 'dateformat' );
 const dateAndTimes = require( 'date-and-time' );
-var querystring = require('querystring');
+const querystring = require('querystring');
 const yyyymmdd = require( 'yyyy-mm-dd' );
 const date = require( '../libraries/date.js' );
-var url = require( 'url' );
+const url = require( 'url' );
 const Client = require('node-rest-client').Client; 	
 const config = require( '../../config/config.js' );
+const moment = require( 'moment-timezone' );
+const jwt = require( 'jsonwebtoken' );
+const uuid = require( 'uuid' );
+const nJwt = require( 'njwt' );
+const jwtDecode = require( 'jwt-decode' );
 
 // Create or update data
 exports.createOrUpdate = ( req, res ) => {
-	
-	if( !req.body.NATIONAL || !req.body.REGION_CODE ) {
+
+	if( !req.body.NATIONAL || !req.body.REGION_CODE || !req.body.COMP_CODE || !req.body.EST_CODE || !req.body.WERKS || !req.body.EST_NAME  ) {
 		return res.status( 400 ).send({
 			status: false,
 			message: 'Invalid input',
@@ -19,22 +24,29 @@ exports.createOrUpdate = ( req, res ) => {
 		});
 	}
 
-	regionModel.findOne( { 
-		REGION_CODE: req.body.REGION_CODE
+	estModel.findOne( { 
+		WERKS: req.body.WERKS
 	} ).then( data => {
+
 		// Kondisi belum ada data, create baru dan insert ke Sync List
 		if( !data ) {
 
-			const region = new regionModel( {
+			const est = new estModel( {
 				NATIONAL: req.body.NATIONAL || "",
 				REGION_CODE: req.body.REGION_CODE || "",
-				REGION_NAME: req.body.REGION_NAME || "",
+				COMP_CODE: req.body.COMP_CODE || "",
+				EST_CODE: req.body.EST_CODE || "",
+				WERKS: req.body.WERKS || "",
+				EST_NAME: req.body.EST_NAME || "",
+				START_VALID: req.body.START_VALID || "",
+				END_VALID: req.body.END_VALID || "",
+				CITY: req.body.CITY || "",
 				INSERT_TIME_DW: req.body.INSERT_TIME_DW || "",
 				UPDATE_TIME_DW: req.body.UPDATE_TIME_DW || "",
 				FLAG_UPDATE: dateAndTimes.format( new Date(), 'YYYYMMDD' )
 			} );
 
-			region.save()
+			est.save()
 			.then( data => {
 				console.log(data);
 				res.send({
@@ -52,12 +64,15 @@ exports.createOrUpdate = ( req, res ) => {
 		}
 		// Kondisi data sudah ada, check value, jika sama tidak diupdate, jika beda diupdate dan dimasukkan ke Sync List
 		else {
-			
-			if ( data.REGION_NAME != req.body.REGION_NAME ) {
-				regionModel.findOneAndUpdate( { 
-					REGION_CODE: req.body.REGION_CODE
+
+			if ( data.EST_NAME != req.body.EST_NAME || data.CITY != req.body.CITY ) {
+				estModel.findOneAndUpdate( { 
+					WERKS: req.body.WERKS
 				}, {
-					REGION_NAME: req.body.REGION_NAME || "",
+					EST_NAME: req.body.EST_NAME || "",
+					START_VALID: req.body.START_VALID || "",
+					END_VALID: req.body.END_VALID || "",
+					CITY: req.body.CITY || "",
 					INSERT_TIME_DW: req.body.INSERT_TIME_DW || "",
 					UPDATE_TIME_DW: req.body.UPDATE_TIME_DW || "",
 					FLAG_UPDATE: dateAndTimes.format( new Date(), 'YYYYMMDD' )
@@ -99,8 +114,8 @@ exports.createOrUpdate = ( req, res ) => {
 					data: {}
 				} );
 			}
-			
 		}
+		
 	} ).catch( err => {
 		if( err.kind === 'ObjectId' ) {
 			return res.status( 404 ).send({
@@ -116,12 +131,13 @@ exports.createOrUpdate = ( req, res ) => {
 			data: {}
 		} );
 	} );
+
 };
 
 // Create and Save new Data
 exports.create = ( req, res ) => {
-	
-	if( !req.body.NATIONAL || !req.body.REGION_CODE ) {
+
+	if( !req.body.NATIONAL || !req.body.REGION_CODE || !req.body.COMP_CODE || !req.body.EST_CODE || !req.body.WERKS || !req.body.EST_NAME  ) {
 		return res.status( 400 ).send({
 			status: false,
 			message: 'Invalid input',
@@ -129,10 +145,16 @@ exports.create = ( req, res ) => {
 		});
 	}
 
-	const set = new regionModel({
+	const set = new estModel({
 		NATIONAL: req.body.NATIONAL || "",
 		REGION_CODE: req.body.REGION_CODE || "",
-		REGION_NAME: req.body.REGION_NAME || "",
+		COMP_CODE: req.body.COMP_CODE || "",
+		EST_CODE: req.body.EST_CODE || "",
+		WERKS: req.body.WERKS || "",
+		EST_NAME: req.body.EST_NAME || "",
+		START_VALID: req.body.START_VALID || "",
+		END_VALID: req.body.END_VALID || "",
+		CITY: req.body.CITY || "",
 		INSERT_TIME_DW: req.body.INSERT_TIME_DW || "",
 		UPDATE_TIME_DW: req.body.UPDATE_TIME_DW || "",
 		FLAG_UPDATE: dateAndTimes.format( new Date(), 'YYYYMMDD' )
@@ -149,8 +171,8 @@ exports.create = ( req, res ) => {
 		}
 		res.send({
 			status: true,
-			message: 'Success',
-			data: {}
+			message: 'Successs',
+			data: data
 		});
 	} ).catch( err => {
 		res.status( 500 ).send( {
@@ -170,7 +192,7 @@ exports.find = ( req, res ) => {
 	
 	if ( url_query_length > 0 ) {
 
-		regionModel.find( url_query )
+		estModel.find( url_query )
 		.then( data => {
 			if( !data ) {
 				return res.status( 404 ).send( {
@@ -200,7 +222,7 @@ exports.find = ( req, res ) => {
 		} );
 	}
 	else {
-		regionModel.find()
+		estModel.find()
 		.then( data => {
 			res.send( {
 				status: true,
@@ -220,8 +242,8 @@ exports.find = ( req, res ) => {
 
 // Find a single data with a ID
 exports.findOne = ( req, res ) => {
-	regionModel.findOne( { 
-		REGION_CODE: req.params.id 
+	estModel.findOne( { 
+		WERKS: req.params.id 
 	} ).then( data => {
 		if( !data ) {
 			return res.status(404).send({
@@ -255,7 +277,7 @@ exports.findOne = ( req, res ) => {
 exports.update = ( req, res ) => {
 
 	// Validation
-	if( !req.body.REGION_NAME  ) {
+	if( !req.body.EST_NAME || !req.body.CITY  ) {
 		return res.status( 400 ).send( {
 			status: false,
 			message: 'Invalid Input',
@@ -263,10 +285,13 @@ exports.update = ( req, res ) => {
 		});
 	}
 	
-	regionModel.findOneAndUpdate( { 
-		REGION_CODE : req.params.id 
+	estModel.findOneAndUpdate( { 
+		WERKS : req.params.id 
 	}, {
-		REGION_NAME: req.body.REGION_NAME || "",
+		EST_NAME: req.body.EST_NAME || "",
+		START_VALID: req.body.START_VALID || "",
+		END_VALID: req.body.END_VALID || "",
+		CITY: req.body.CITY || "",
 		INSERT_TIME_DW: req.body.INSERT_TIME_DW || "",
 		UPDATE_TIME_DW: req.body.UPDATE_TIME_DW || "",
 		FLAG_UPDATE: dateAndTimes.format( new Date(), 'YYYYMMDD' )
@@ -302,7 +327,7 @@ exports.update = ( req, res ) => {
 
 // Delete data with the specified ID in the request
 exports.delete = ( req, res ) => {
-	regionModel.findOneAndRemove( { REGION_CODE : req.params.id } )
+	estModel.findOneAndRemove( { WERKS : req.params.id } )
 	.then( data => {
 		if( !data ) {
 			return res.status( 404 ).send( {

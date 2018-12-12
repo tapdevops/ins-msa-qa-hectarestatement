@@ -62,11 +62,11 @@ module.exports = ( app ) => {
 
 	app.post( '/region', region.create );
 	app.get( '/region', verifyToken, region.find );
+	app.get( '/region/all', region.findAll );
+	app.get( '/region/q', region.findAll );
 	app.get( '/region/:id', region.findOne );
 	app.put( '/region/:id', region.update );
 	app.delete( '/region/:id', region.delete );
 
-	const test = require( '../app/controllers/test.js' );
-	app.get( '/test', test.test );
 
 }

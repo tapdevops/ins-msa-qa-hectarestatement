@@ -7,6 +7,37 @@ const EstSchema = mongoose.Schema( {
 	EST_CODE: String,
 	WERKS: String,
 	EST_NAME: String,
+	INSERT_TIME: {
+		type: Date,
+		default: function() {
+			return null;
+		}
+	},
+	UPDATE_TIME: {
+		type: Date,
+		default: function() {
+			return null;
+		}
+	},
+	DELETE_TIME: {
+		type: Date,
+		default: function() {
+			return null;
+		}
+	}
+});
+
+module.exports = mongoose.model( 'Est', EstSchema, 'TM_EST' );
+/*
+const mongoose = require( 'mongoose' );
+
+const EstSchema = mongoose.Schema( {
+	NATIONAL: String,
+	REGION_CODE: String,
+	COMP_CODE: String,
+	EST_CODE: String,
+	WERKS: String,
+	EST_NAME: String,
 	START_VALID: {
 		type: Date,
 		default: function() {
@@ -41,3 +72,4 @@ const EstSchema = mongoose.Schema( {
 });
 
 module.exports = mongoose.model( 'Est', EstSchema, 'TM_EST' );
+*/
