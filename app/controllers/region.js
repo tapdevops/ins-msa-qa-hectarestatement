@@ -429,6 +429,84 @@ exports.create = ( req, res ) => {
 // Retrieve and return all notes from the database.
 exports.find = ( req, res ) => {
 
+	nJwt.verify( req.token, config.secret_key, config.token_algorithm, ( err, authData ) => {
+		if ( err ) {
+			res.sendStatus( 403 );
+		}
+		else {
+			var auth = jwtDecode( req.token );
+			var location_code = auth.LOCATION_CODE;
+			var location_code = location_code.split( ',' );
+			var location_code_final = [];
+			var location_code_final_2 = [];
+			var url_query = req.query;
+			var url_query_length = Object.keys( url_query ).length;
+
+			location_code.forEach( function( data ) {
+				location_code_final.push( '0' + data.substr( 0, 1 ) );
+			} );
+
+			if ( url_query_length > 0 ) {
+				/*
+				console.log(url_query);
+
+				regionModel.find( { url_query, REGION_CODE: { $in: location_code_final } } )
+				.then( data => {
+					if( !data ) {
+						return res.status( 404 ).send( {
+							status: false,
+							message: 'Data not found 2',
+							data: {}
+						} );
+					}
+					res.send( {
+						status: true,
+						message: 'Success',
+						data: data
+					} );
+				} ).catch( err => {
+					if( err.kind === 'ObjectId' ) {
+						return res.status( 404 ).send( {
+							status: false,
+							message: 'Data not found 1',
+							data: {}
+						} );
+					}
+					return res.status( 500 ).send( {
+						status: false,
+						message: 'Error retrieving data',
+						data: {}
+					} );
+				} );
+				*/
+				res.json({mes:'OP'})
+			}
+			else {
+				regionModel.find( {REGION_CODE: { $in: location_code_final }} )
+				.select( {
+					_id: 0,
+					NATIONAL: 1,
+					REGION_CODE: 1,
+					REGION_NAME: 1
+				} )
+				.then( data => {
+					res.send( {
+						status: true,
+						message: 'Success',
+						data: data
+					} );
+				} ).catch( err => {
+					res.status( 500 ).send( {
+						status: false,
+						message: err.message || "Some error occurred while retrieving data.",
+						data: {}
+					} );
+				} );
+			}
+		}
+	} );
+
+	/*
 	url_query = req.query;
 	var url_query_length = Object.keys( url_query ).length;
 	
@@ -478,7 +556,7 @@ exports.find = ( req, res ) => {
 				data: {}
 			} );
 		} );
-	}
+	}*/
 
 };
 

@@ -61,7 +61,7 @@ module.exports = ( app ) => {
 	app.get( '/sync-mobile/region/:id', verifyToken, region.syncMobile );
 
 	app.post( '/region', region.create );
-	app.get( '/region', region.find );
+	app.get( '/region', verifyToken, region.find );
 	app.get( '/region/:id', region.findOne );
 	app.put( '/region/:id', region.update );
 	app.delete( '/region/:id', region.delete );
