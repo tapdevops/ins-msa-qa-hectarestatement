@@ -1,3 +1,20 @@
+function verifyToken( req, res, next ) {
+	// Get auth header value
+	const bearerHeader = req.headers['authorization'];
+
+	if ( typeof bearerHeader !== 'undefined' ) {
+		const bearer = bearerHeader.split( ' ' );
+		const bearerToken = bearer[1];
+
+		req.token = bearerToken;
+		next();
+	}
+	else {
+		// Forbidden
+		res.sendStatus( 403 );
+	}
+}
+
 module.exports = ( app ) => {
 
 	// Declare Controllers
@@ -41,7 +58,7 @@ module.exports = ( app ) => {
 
 	// Routing: Region
 	app.post( '/sync/region', region.createOrUpdate );
-	app.get( '/sync-mobile/region/:id', region.syncMobile );
+	app.get( '/sync-mobile/region/:id', verifyToken, region.syncMobile );
 
 	app.post( '/region', region.create );
 	app.get( '/region', region.find );

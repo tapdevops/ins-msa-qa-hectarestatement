@@ -157,101 +157,119 @@ exports.syncMobile1 = ( req, res ) => {
 
 exports.syncMobile = ( req, res ) => {
 
-	console.log( today );
-	console.log( tomorrow );
-	var date_target = req.params.id;
-	var today = moment( date_target, "YYYY-MM-DD" ).startOf( 'day' );
-	var tomorrow = moment( today ).endOf( 'day' );
-	var data_sync = [];
+	nJwt.verify( req.token, config.secret_key, config.token_algorithm, ( err, authData ) => {
+		if ( err ) {
+			res.sendStatus( 403 );
+		}
+		else {
+			var auth = jwtDecode( req.token );
+			var location_code = auth.LOCATION_CODE;
+			var location_code = location_code.split( ',' );
+			var location_code_final = [];
+			var location_code_final_2 = [];
 
-	// Select All (Insert Update Delete)
-	regionModel.find( { 
-		$and: [
-			{
-				$or: [
+			location_code.forEach( function( data ) {
+				console.log( '0' + data.substr( 0, 1 ) );
+				location_code_final.push( { REGION_CODE: '0' + data.substr( 0, 1 ) } );
+				location_code_final_2.push( '0' + data.substr( 0, 1 ) );
+			} );
+
+			var date_target = req.params.id;
+			var today = moment( date_target, "YYYY-MM-DD" ).startOf( 'day' );
+			var tomorrow = moment( today ).endOf( 'day' );
+			var data_sync = [];
+
+			// Select All (Insert Update Delete)
+			regionModel.find( { 
+				REGION_CODE: { $in: location_code_final_2 },
+				$and: [
 					{
-						INSERT_TIME: {
-							$gte: today.toDate(),
-							$lt: tomorrow.toDate()
-						}
-					},
-					{
-						UPDATE_TIME: {
-							$gte: today.toDate(),
-							$lt: tomorrow.toDate()
-						}
-					},
-					{
-						DELETE_TIME: {
-							$gte: today.toDate(),
-							$lt: tomorrow.toDate()
-						}
+						$or: [
+							{
+								INSERT_TIME: {
+									$gte: today.toDate(),
+									$lt: tomorrow.toDate()
+								}
+							},
+							{
+								UPDATE_TIME: {
+									$gte: today.toDate(),
+									$lt: tomorrow.toDate()
+								}
+							},
+							{
+								DELETE_TIME: {
+									$gte: today.toDate(),
+									$lt: tomorrow.toDate()
+								}
+							}
+						]
 					}
 				]
-			}
-		]
-	} ).then( data_insert => {
+			} ).then( data_insert => {
 
-		var temp_insert = [];
-		var temp_update = [];
-		var temp_delete = [];
+				var temp_insert = [];
+				var temp_update = [];
+				var temp_delete = [];
 
-		data_insert.forEach( function( data ) {
-			var convert_date = {
-				INSERT_TIME: moment( data.INSERT_TIME ).format( "YYYY-MM-DD" ),
-				UPDATE_TIME: moment( data.UPDATE_TIME ).format( "YYYY-MM-DD" ),
-				DELETE_TIME: moment( data.DELETE_TIME ).format( "YYYY-MM-DD" ),
-			};
+				data_insert.forEach( function( data ) {
+					var convert_date = {
+						INSERT_TIME: moment( data.INSERT_TIME ).format( "YYYY-MM-DD" ),
+						UPDATE_TIME: moment( data.UPDATE_TIME ).format( "YYYY-MM-DD" ),
+						DELETE_TIME: moment( data.DELETE_TIME ).format( "YYYY-MM-DD" ),
+					};
 
-			if ( convert_date.INSERT_TIME == date_target ) {
-				temp_insert.push( {
-					NATIONAL: data.NATIONAL,
-					REGION_CODE: data.REGION_CODE,
-					REGION_NAME: data.REGION_NAME
+					if ( convert_date.INSERT_TIME == date_target ) {
+						temp_insert.push( {
+							NATIONAL: data.NATIONAL,
+							REGION_CODE: data.REGION_CODE,
+							REGION_NAME: data.REGION_NAME
+						} );
+					}
+
+					if ( convert_date.UPDATE_TIME == date_target ) {
+						temp_update.push( {
+							NATIONAL: data.NATIONAL,
+							REGION_CODE: data.REGION_CODE,
+							REGION_NAME: data.REGION_NAME
+						} );
+					}
+
+					if ( convert_date.DELETE_TIME == date_target ) {
+						temp_delete.push( {
+							NATIONAL: data.NATIONAL,
+							REGION_CODE: data.REGION_CODE,
+							REGION_NAME: data.REGION_NAME
+						} );
+					}
+
 				} );
-			}
 
-			if ( convert_date.UPDATE_TIME == date_target ) {
-				temp_update.push( {
-					NATIONAL: data.NATIONAL,
-					REGION_CODE: data.REGION_CODE,
-					REGION_NAME: data.REGION_NAME
+				res.json( {
+					status: true,
+					message: "Success",
+					data: {
+						"insert": temp_insert,
+						"update": temp_update,
+						"delete": temp_delete
+					}
 				} );
-			}
+			} ).catch( err => {
+				if( err.kind === 'ObjectId' ) {
+					return res.status( 404 ).send({
+						status: false,
+						message: "Data not found 1",
+						data: {}
+					});
+				}
 
-			if ( convert_date.DELETE_TIME == date_target ) {
-				temp_delete.push( {
-					NATIONAL: data.NATIONAL,
-					REGION_CODE: data.REGION_CODE,
-					REGION_NAME: data.REGION_NAME
+				return res.status( 500 ).send({
+					status: false,
+					message: "Error retrieving Data",
+					data: {}
 				} );
-			}
-
-		} );
-
-		res.json( {
-			status: true,
-			message: "Success",
-			data: {
-				"insert": temp_insert,
-				"update": temp_update,
-				"delete": temp_delete
-			}
-		} );
-	} ).catch( err => {
-		if( err.kind === 'ObjectId' ) {
-			return res.status( 404 ).send({
-				status: false,
-				message: "Data not found 1",
-				data: {}
-			});
+			} );
 		}
-
-		return res.status( 500 ).send({
-			status: false,
-			message: "Error retrieving Data",
-			data: {}
-		} );
 	} );
 	
 }
