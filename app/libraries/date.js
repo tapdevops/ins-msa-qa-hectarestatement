@@ -2,16 +2,12 @@ const moment = require( 'moment-timezone' );
 module.exports.convert = function ( value, format ) { 
 	var result = '';
 
+	value = value.replace( /-/g, "" );
+	value = value.replace( /:/g, "" );
+	value = value.replace( / /g, "" );
+
 	if ( value == 'now' ) {
 		value = moment( new Date() ).format( "YYYYMMDDhhmmss" );
-	}
-	else {
-		if ( value.length == 8 ) {
-			value = value + '000000';
-		}
-		else {
-			value = value;
-		}
 	}
 
 	switch ( format ) {

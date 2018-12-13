@@ -81,48 +81,41 @@ exports.syncMobile = ( req, res ) => {
 				location_code_final_2.push( '0' + data.substr( 0, 1 ) );
 			} );
 
-			var start_date = req.params.start_date;
-			var end_date = req.params.end_date;
-			//var start_time = moment( start_date, "YYYY-MM-DD" ).startOf( 'day' );
-			//var end_time = moment( end_date, "YYYY-MM-DD" ).endOf( 'day' );
+			var start_date = date.convert( req.params.start_date, 'YYYYMMDD' ) + '000000';
+			var end_date = date.convert( req.params.end_date, 'YYYYMMDD' ) + '235959';
 
-			var today = moment( start_date, "YYYY-MM-DD" ).startOf( 'day' );
-			var tomorrow = moment( today, "YYYY-MM-DD" ).endOf( 'day' );
 			var data_sync = [];
 
-			console.log( start_date + '/' + end_date );
+			console.log( parseInt( start_date ) + '/' + parseInt( end_date ) );
 			
 
-			var start_time = moment( "2018-01-01", "YYYY-MM-DD" ).startOf( 'day' );
-			var end_time = moment( new Date(), "YYYY-MM-DD" ).endOf( 'day' );
-			console.log( start_time + '/' + end_time );
 			// Select All (Insert Update Delete)
 			regionModel.find( { 
 				REGION_CODE: { $in: location_code_final_2 },
-				//$and: [
-				//	{
+				$and: [
+					{
 						$or: [
 							{
 								INSERT_TIME: {
-									$gte: start_time.toDate(),
-									$lt: end_time.toDate()
+									$gte: parseInt( start_date ),
+									$lt: parseInt( end_date )
 								}
 							},
-							//{
-							//	UPDATE_TIME: {
-							//		$gte: start_time.toDate(),
-							//		$lt: end_time.toDate()
-							//	}
-							//},
-							//{
-							//	DELETE_TIME: {
-							//		$gte: start_time.toDate(),
-							//		$lt: end_time.toDate()
-							//	}
-							//}
+							{
+								UPDATE_TIME: {
+									$gte: parseInt( start_date ),
+									$lt: parseInt( end_date )
+								}
+							},
+							{
+								DELETE_TIME: {
+									$gte: parseInt( start_date ),
+									$lt: parseInt( end_date )
+								}
+							}
 						]
-					//}
-				//]
+					}
+				]
 			} ).then( data_insert => {
 				console.log( data_insert );
 
@@ -132,24 +125,20 @@ exports.syncMobile = ( req, res ) => {
 
 				data_insert.forEach( function( data ) {
 					var convert_date = {
-						INSERT_TIME: moment( data.INSERT_TIME ).format( "YYYY-MM-DD" ),
-						UPDATE_TIME: moment( data.UPDATE_TIME ).format( "YYYY-MM-DD" ),
-						DELETE_TIME: moment( data.DELETE_TIME ).format( "YYYY-MM-DD" ),
+						INSERT_TIME: parseInt( date.convert( String( data.INSERT_TIME ), 'YYYYMMDD' ) ),
+						UPDATE_TIME: parseInt( date.convert( String( data.UPDATE_TIME ), 'YYYYMMDD' ) ),
+						DELETE_TIME: parseInt( date.convert( String( data.DELETE_TIME ), 'YYYYMMDD' ) ),
 					};
-					console.log( convert_date.INSERT_TIME );
-					console.log( convert_date.UPDATE_TIME );
-					console.log( convert_date.DELETE_TIME );
-
+					console.log( convert_date );
+					
 					if ( convert_date.INSERT_TIME <= end_date && convert_date.INSERT_TIME >= start_date ) {
-
-						console.log( '# ' + convert_date.INSERT_TIME + '/' + start_date + '/' + end_date );
 						temp_insert.push( {
 							NATIONAL: data.NATIONAL,
 							REGION_CODE: data.REGION_CODE,
 							REGION_NAME: data.REGION_NAME
 						} );
 					}
-
+					
 					if ( convert_date.UPDATE_TIME <= end_date && convert_date.UPDATE_TIME >= start_date ) {
 						temp_update.push( {
 							NATIONAL: data.NATIONAL,
@@ -179,16 +168,16 @@ exports.syncMobile = ( req, res ) => {
 				} );
 			} ).catch( err => {
 				if( err.kind === 'ObjectId' ) {
-					return res.status( 404 ).send({
+					return res.send({
 						status: false,
 						message: "Data not found 1",
 						data: {}
 					});
 				}
 
-				return res.status( 500 ).send({
+				return res.send({
 					status: false,
-					message: "Error retrieving Datas",
+					message: "Error retrieving Data",
 					data: {}
 				} );
 			} );
