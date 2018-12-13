@@ -1,59 +1,65 @@
 const regionModel = require( '../models/region.js' );
 const dateFormat = require( 'dateformat' );
 const dateAndTimes = require( 'date-and-time' );
-var querystring = require('querystring');
+const querystring = require('querystring');
 const yyyymmdd = require( 'yyyy-mm-dd' );
 const date = require( '../libraries/date.js' );
-var url = require( 'url' );
+const url = require( 'url' );
 const Client = require('node-rest-client').Client; 	
 const config = require( '../../config/config.js' );
-
-let moment = require( 'moment-timezone' );
-let jwt = require( 'jsonwebtoken' );
+const moment = require( 'moment-timezone' );
+const jwt = require( 'jsonwebtoken' );
 const uuid = require( 'uuid' );
 const nJwt = require( 'njwt' );
 const jwtDecode = require( 'jwt-decode' );
 
 exports.findAll = ( req, res ) => {
 
-	var url_query = req.query;
-	var url_query_length = Object.keys( url_query ).length;
-	
-	url_query.DELETE_TIME = "";
+	nJwt.verify( req.token, config.secret_key, config.token_algorithm, ( err, authData ) => {
+		if ( err ) {
+			res.sendStatus( 403 );
+		}
+		else {
+			var url_query = req.query;
+			var url_query_length = Object.keys( url_query ).length;
+			
+			url_query.DELETE_TIME = "";
 
-	regionModel.find( url_query )
-	.select( {
-		_id: 0,
-		NATIONAL: 1,
-		REGION_CODE: 1,
-		REGION_NAME: 1
-	} )
-	.then( data => {
-		if( !data ) {
-			return res.status( 404 ).send( {
-				status: false,
-				message: 'Data not found 2',
-				data: {}
+			regionModel.find( url_query )
+			.select( {
+				_id: 0,
+				NATIONAL: 1,
+				REGION_CODE: 1,
+				REGION_NAME: 1
+			} )
+			.then( data => {
+				if( !data ) {
+					return res.status( 404 ).send( {
+						status: false,
+						message: 'Data not found 2',
+						data: {}
+					} );
+				}
+				res.send( {
+					status: true,
+					message: 'Success',
+					data: data
+				} );
+			} ).catch( err => {
+				if( err.kind === 'ObjectId' ) {
+					return res.status( 404 ).send( {
+						status: false,
+						message: 'Data not found 1',
+						data: {}
+					} );
+				}
+				return res.status( 500 ).send( {
+					status: false,
+					message: 'Error retrieving data',
+					data: {}
+				} );
 			} );
 		}
-		res.send( {
-			status: true,
-			message: 'Success',
-			data: data
-		} );
-	} ).catch( err => {
-		if( err.kind === 'ObjectId' ) {
-			return res.status( 404 ).send( {
-				status: false,
-				message: 'Data not found 1',
-				data: {}
-			} );
-		}
-		return res.status( 500 ).send( {
-			status: false,
-			message: 'Error retrieving data',
-			data: {}
-		} );
 	} );
 
 };
@@ -77,39 +83,50 @@ exports.syncMobile = ( req, res ) => {
 				location_code_final_2.push( '0' + data.substr( 0, 1 ) );
 			} );
 
-			var date_target = req.params.id;
-			var today = moment( date_target, "YYYY-MM-DD" ).startOf( 'day' );
-			var tomorrow = moment( today ).endOf( 'day' );
+			var start_date = req.params.start_date;
+			var end_date = req.params.end_date;
+			//var start_time = moment( start_date, "YYYY-MM-DD" ).startOf( 'day' );
+			//var end_time = moment( end_date, "YYYY-MM-DD" ).endOf( 'day' );
+
+			var today = moment( start_date, "YYYY-MM-DD" ).startOf( 'day' );
+			var tomorrow = moment( today, "YYYY-MM-DD" ).endOf( 'day' );
 			var data_sync = [];
 
+			console.log( start_date + '/' + end_date );
+			
+
+			var start_time = moment( "2018-01-01", "YYYY-MM-DD" ).startOf( 'day' );
+			var end_time = moment( new Date(), "YYYY-MM-DD" ).endOf( 'day' );
+			console.log( start_time + '/' + end_time );
 			// Select All (Insert Update Delete)
 			regionModel.find( { 
 				REGION_CODE: { $in: location_code_final_2 },
-				$and: [
-					{
+				//$and: [
+				//	{
 						$or: [
 							{
 								INSERT_TIME: {
-									$gte: today.toDate(),
-									$lt: tomorrow.toDate()
+									$gte: start_time.toDate(),
+									$lt: end_time.toDate()
 								}
 							},
-							{
-								UPDATE_TIME: {
-									$gte: today.toDate(),
-									$lt: tomorrow.toDate()
-								}
-							},
-							{
-								DELETE_TIME: {
-									$gte: today.toDate(),
-									$lt: tomorrow.toDate()
-								}
-							}
+							//{
+							//	UPDATE_TIME: {
+							//		$gte: start_time.toDate(),
+							//		$lt: end_time.toDate()
+							//	}
+							//},
+							//{
+							//	DELETE_TIME: {
+							//		$gte: start_time.toDate(),
+							//		$lt: end_time.toDate()
+							//	}
+							//}
 						]
-					}
-				]
+					//}
+				//]
 			} ).then( data_insert => {
+				console.log( data_insert );
 
 				var temp_insert = [];
 				var temp_update = [];
@@ -121,8 +138,13 @@ exports.syncMobile = ( req, res ) => {
 						UPDATE_TIME: moment( data.UPDATE_TIME ).format( "YYYY-MM-DD" ),
 						DELETE_TIME: moment( data.DELETE_TIME ).format( "YYYY-MM-DD" ),
 					};
+					console.log( convert_date.INSERT_TIME );
+					console.log( convert_date.UPDATE_TIME );
+					console.log( convert_date.DELETE_TIME );
 
-					if ( convert_date.INSERT_TIME == date_target ) {
+					if ( convert_date.INSERT_TIME <= end_date && convert_date.INSERT_TIME >= start_date ) {
+
+						console.log( '# ' + convert_date.INSERT_TIME + '/' + start_date + '/' + end_date );
 						temp_insert.push( {
 							NATIONAL: data.NATIONAL,
 							REGION_CODE: data.REGION_CODE,
@@ -130,7 +152,7 @@ exports.syncMobile = ( req, res ) => {
 						} );
 					}
 
-					if ( convert_date.UPDATE_TIME == date_target ) {
+					if ( convert_date.UPDATE_TIME <= end_date && convert_date.UPDATE_TIME >= start_date ) {
 						temp_update.push( {
 							NATIONAL: data.NATIONAL,
 							REGION_CODE: data.REGION_CODE,
@@ -138,7 +160,7 @@ exports.syncMobile = ( req, res ) => {
 						} );
 					}
 
-					if ( convert_date.DELETE_TIME == date_target ) {
+					if ( convert_date.DELETE_TIME <= end_date && convert_date.DELETE_TIME >= start_date ) {
 						temp_delete.push( {
 							NATIONAL: data.NATIONAL,
 							REGION_CODE: data.REGION_CODE,
@@ -150,7 +172,7 @@ exports.syncMobile = ( req, res ) => {
 
 				res.json( {
 					status: true,
-					message: "Success",
+					message: "Start date: " + start_date + ", End date: " + end_date,
 					data: {
 						"insert": temp_insert,
 						"update": temp_update,
@@ -168,7 +190,7 @@ exports.syncMobile = ( req, res ) => {
 
 				return res.status( 500 ).send({
 					status: false,
-					message: "Error retrieving Data",
+					message: "Error retrieving Datas",
 					data: {}
 				} );
 			} );
@@ -180,35 +202,156 @@ exports.syncMobile = ( req, res ) => {
 // Create or update data
 exports.createOrUpdate = ( req, res ) => {
 	
-	if( !req.body.NATIONAL || !req.body.REGION_CODE ) {
-		return res.status( 400 ).send({
-			status: false,
-			message: 'Invalid input',
-			data: {}
-		});
-	}
+	nJwt.verify( req.token, config.secret_key, config.token_algorithm, ( err, authData ) => {
+		if ( err ) {
+			res.sendStatus( 403 );
+		}
+		else {
+			if( !req.body.NATIONAL || !req.body.REGION_CODE ) {
+				return res.status( 400 ).send({
+					status: false,
+					message: 'Invalid input',
+					data: {}
+				});
+			}
 
-	regionModel.findOne( { 
-		REGION_CODE: req.body.REGION_CODE
-	} ).then( data => {
-		// Kondisi belum ada data, create baru dan insert ke Sync List
-		if( !data ) {
+			regionModel.findOne( { 
+				REGION_CODE: req.body.REGION_CODE
+			} ).then( data => {
+				// Kondisi belum ada data, create baru dan insert ke Sync List
+				if( !data ) {
 
-			const region = new regionModel( {
+					const region = new regionModel( {
+						NATIONAL: req.body.NATIONAL || "",
+						REGION_CODE: req.body.REGION_CODE || "",
+						REGION_NAME: req.body.REGION_NAME || "",
+						INSERT_TIME: new Date(),
+						DELETE_TIME: null,
+						UPDATE_TIME: null
+					} );
+
+					region.save()
+					.then( data => {
+						console.log(data);
+						res.send({
+							status: true,
+							message: 'Success 2',
+							data: {}
+						});
+					} ).catch( err => {
+						res.status( 500 ).send( {
+							status: false,
+							message: 'Some error occurred while creating data',
+							data: {}
+						} );
+					} );
+				}
+				// Kondisi data sudah ada, check value, jika sama tidak diupdate, jika beda diupdate dan dimasukkan ke Sync List
+				else {
+					
+					if ( data.REGION_NAME != req.body.REGION_NAME ) {
+						regionModel.findOneAndUpdate( { 
+							REGION_CODE: req.body.REGION_CODE
+						}, {
+							REGION_NAME: req.body.REGION_NAME || "",
+							UPDATE_TIME: new Date()
+						}, { new: true } )
+						.then( data => {
+							if( !data ) {
+								return res.status( 404 ).send( {
+									status: false,
+									message: "Data error updating 2",
+									data: {}
+								} );
+							}
+							else {
+								res.send({
+									status: true,
+									message: 'Success',
+									data: {}
+								});
+							}
+						}).catch( err => {
+							if( err.kind === 'ObjectId' ) {
+								return res.status( 404 ).send( {
+									status: false,
+									message: "Data not found 2",
+									data: {}
+								} );
+							}
+							return res.status( 500 ).send( {
+								status: false,
+								message: "Data error updating",
+								data: {}
+							} );
+						});
+					}
+					else {
+						res.send( {
+							status: true,
+							message: 'Skip Update',
+							data: {}
+						} );
+					}
+					
+				}
+			} ).catch( err => {
+				if( err.kind === 'ObjectId' ) {
+					return res.status( 404 ).send({
+						status: false,
+						message: "Data not found 1",
+						data: {}
+					});
+				}
+
+				return res.status( 500 ).send({
+					status: false,
+					message: "Error retrieving Data",
+					data: {}
+				} );
+			} );
+		}
+	} );
+};
+
+// Create and Save new Data
+exports.create = ( req, res ) => {
+
+	nJwt.verify( req.token, config.secret_key, config.token_algorithm, ( err, authData ) => {
+		if ( err ) {
+			res.sendStatus( 403 );
+		}
+		else {
+	
+			if( !req.body.NATIONAL || !req.body.REGION_CODE ) {
+				return res.status( 400 ).send({
+					status: false,
+					message: 'Invalid input',
+					data: {}
+				});
+			}
+
+			const set = new regionModel({
 				NATIONAL: req.body.NATIONAL || "",
 				REGION_CODE: req.body.REGION_CODE || "",
 				REGION_NAME: req.body.REGION_NAME || "",
-				INSERT_TIME: new Date(),
-				DELETE_TIME: null,
-				UPDATE_TIME: null
-			} );
+				INSERT_TIME: req.body.INSERT_TIME_DW || "",
+				DELETE_TIME: req.body.UPDATE_TIME_DW || "",
+				UPDATE_TIME: req.body.UPDATE_TIME_DW || ""
+			});
 
-			region.save()
+			set.save()
 			.then( data => {
-				console.log(data);
+				if ( !data ) {
+					res.send({
+						status: false,
+						message: 'Failed',
+						data: {}
+					});
+				}
 				res.send({
 					status: true,
-					message: 'Success 2',
+					message: 'Success',
 					data: {}
 				});
 			} ).catch( err => {
@@ -219,112 +362,6 @@ exports.createOrUpdate = ( req, res ) => {
 				} );
 			} );
 		}
-		// Kondisi data sudah ada, check value, jika sama tidak diupdate, jika beda diupdate dan dimasukkan ke Sync List
-		else {
-			
-			if ( data.REGION_NAME != req.body.REGION_NAME ) {
-				regionModel.findOneAndUpdate( { 
-					REGION_CODE: req.body.REGION_CODE
-				}, {
-					REGION_NAME: req.body.REGION_NAME || "",
-					UPDATE_TIME: new Date()
-				}, { new: true } )
-				.then( data => {
-					if( !data ) {
-						return res.status( 404 ).send( {
-							status: false,
-							message: "Data error updating 2",
-							data: {}
-						} );
-					}
-					else {
-						res.send({
-							status: true,
-							message: 'Success',
-							data: {}
-						});
-					}
-				}).catch( err => {
-					if( err.kind === 'ObjectId' ) {
-						return res.status( 404 ).send( {
-							status: false,
-							message: "Data not found 2",
-							data: {}
-						} );
-					}
-					return res.status( 500 ).send( {
-						status: false,
-						message: "Data error updating",
-						data: {}
-					} );
-				});
-			}
-			else {
-				res.send( {
-					status: true,
-					message: 'Skip Update',
-					data: {}
-				} );
-			}
-			
-		}
-	} ).catch( err => {
-		if( err.kind === 'ObjectId' ) {
-			return res.status( 404 ).send({
-				status: false,
-				message: "Data not found 1",
-				data: {}
-			});
-		}
-
-		return res.status( 500 ).send({
-			status: false,
-			message: "Error retrieving Data",
-			data: {}
-		} );
-	} );
-};
-
-// Create and Save new Data
-exports.create = ( req, res ) => {
-	
-	if( !req.body.NATIONAL || !req.body.REGION_CODE ) {
-		return res.status( 400 ).send({
-			status: false,
-			message: 'Invalid input',
-			data: {}
-		});
-	}
-
-	const set = new regionModel({
-		NATIONAL: req.body.NATIONAL || "",
-		REGION_CODE: req.body.REGION_CODE || "",
-		REGION_NAME: req.body.REGION_NAME || "",
-		INSERT_TIME: req.body.INSERT_TIME_DW || "",
-		DELETE_TIME: req.body.UPDATE_TIME_DW || "",
-		UPDATE_TIME: req.body.UPDATE_TIME_DW || ""
-	});
-
-	set.save()
-	.then( data => {
-		if ( !data ) {
-			res.send({
-				status: false,
-				message: 'Failed',
-				data: {}
-			});
-		}
-		res.send({
-			status: true,
-			message: 'Success',
-			data: {}
-		});
-	} ).catch( err => {
-		res.status( 500 ).send( {
-			status: false,
-			message: 'Some error occurred while creating data',
-			data: {}
-		} );
 	} );
 	
 };
@@ -350,42 +387,16 @@ exports.find = ( req, res ) => {
 			} );
 
 			if ( url_query_length > 0 ) {
-				/*
-				console.log(url_query);
-
-				regionModel.find( { url_query, REGION_CODE: { $in: location_code_final } } )
-				.then( data => {
-					if( !data ) {
-						return res.status( 404 ).send( {
-							status: false,
-							message: 'Data not found 2',
-							data: {}
-						} );
-					}
-					res.send( {
-						status: true,
-						message: 'Success',
-						data: data
-					} );
-				} ).catch( err => {
-					if( err.kind === 'ObjectId' ) {
-						return res.status( 404 ).send( {
-							status: false,
-							message: 'Data not found 1',
-							data: {}
-						} );
-					}
-					return res.status( 500 ).send( {
-						status: false,
-						message: 'Error retrieving data',
-						data: {}
-					} );
-				} );
-				*/
-				res.json({mes:'OP'})
+				res.json({
+					status: false,
+					message: "URL Salah"
+				});
 			}
 			else {
-				regionModel.find( {REGION_CODE: { $in: location_code_final }} )
+				regionModel.find( {
+					REGION_CODE: { $in: location_code_final },
+					DELETE_TIME: ""
+				} )
 				.select( {
 					_id: 0,
 					NATIONAL: 1,
@@ -467,7 +478,14 @@ exports.find = ( req, res ) => {
 exports.findOne = ( req, res ) => {
 	regionModel.findOne( { 
 		REGION_CODE: req.params.id 
-	} ).then( data => {
+	} ).
+	select( {
+		_id: 0,
+		NATIONAL: 1,
+		REGION_CODE: 1,
+		REGION_NAME: 1
+	} )
+	.then( data => {
 		if( !data ) {
 			return res.status(404).send({
 				status: false,
@@ -511,11 +529,15 @@ exports.update = ( req, res ) => {
 	regionModel.findOneAndUpdate( { 
 		REGION_CODE : req.params.id 
 	}, {
-		REGION_NAME: req.body.REGION_NAME || "",
-		INSERT_TIME_DW: req.body.INSERT_TIME_DW || "",
-		UPDATE_TIME_DW: req.body.UPDATE_TIME_DW || "",
-		FLAG_UPDATE: dateAndTimes.format( new Date(), 'YYYYMMDD' )
+		NATIONAL: req.body.NATIONAL || "",
+		REGION_NAME: req.body.REGION_NAME || ""
 	}, { new: true } )
+	.select( {
+		_id: 0,
+		NATIONAL: 1,
+		REGION_CODE: 1,
+		REGION_NAME: 1
+	} )
 	.then( data => {
 		if( !data ) {
 			return res.status( 404 ).send( {
