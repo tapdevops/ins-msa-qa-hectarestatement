@@ -5,22 +5,22 @@ const RegionSchema = mongoose.Schema( {
 	REGION_CODE: String,
 	REGION_NAME: String,
 	INSERT_TIME: {
-		type: Date,
-		default: function() {
-			return null;
-		}
+		type: Number,
+		get: v => Math.floor( v ),
+		set: v => Math.floor( v ),
+		alias: 'i'
 	},
 	UPDATE_TIME: {
-		type: Date,
-		default: function() {
-			return null;
-		}
+		type: Number,
+		get: v => Math.floor( v ),
+		set: v => Math.floor( v ),
+		alias: 'i'
 	},
 	DELETE_TIME: {
-		type: Date,
-		default: function() {
-			return null;
-		}
+		type: Number,
+		get: v => Math.floor( v ),
+		set: v => Math.floor( v ),
+		alias: 'i'
 	}
 });
 

@@ -1,17 +1,15 @@
 const regionModel = require( '../models/region.js' );
-const dateFormat = require( 'dateformat' );
-const dateAndTimes = require( 'date-and-time' );
 const querystring = require('querystring');
-const yyyymmdd = require( 'yyyy-mm-dd' );
-const date = require( '../libraries/date.js' );
 const url = require( 'url' );
-const Client = require('node-rest-client').Client; 	
-const config = require( '../../config/config.js' );
-const moment = require( 'moment-timezone' );
 const jwt = require( 'jsonwebtoken' );
+const config = require( '../../config/config.js' );
 const uuid = require( 'uuid' );
 const nJwt = require( 'njwt' );
 const jwtDecode = require( 'jwt-decode' );
+const Client = require('node-rest-client').Client; 
+const moment_pure = require( 'moment' );
+const moment = require( 'moment-timezone' );
+const date = require( '../libraries/date.js' );
 
 exports.findAll = ( req, res ) => {
 
@@ -34,7 +32,7 @@ exports.findAll = ( req, res ) => {
 			} )
 			.then( data => {
 				if( !data ) {
-					return res.status( 404 ).send( {
+					return res.send( {
 						status: false,
 						message: 'Data not found 2',
 						data: {}
@@ -47,13 +45,13 @@ exports.findAll = ( req, res ) => {
 				} );
 			} ).catch( err => {
 				if( err.kind === 'ObjectId' ) {
-					return res.status( 404 ).send( {
+					return res.send( {
 						status: false,
 						message: 'Data not found 1',
 						data: {}
 					} );
 				}
-				return res.status( 500 ).send( {
+				return res.send( {
 					status: false,
 					message: 'Error retrieving data',
 					data: {}
@@ -225,7 +223,7 @@ exports.createOrUpdate = ( req, res ) => {
 						NATIONAL: req.body.NATIONAL || "",
 						REGION_CODE: req.body.REGION_CODE || "",
 						REGION_NAME: req.body.REGION_NAME || "",
-						INSERT_TIME: new Date(),
+						INSERT_TIME: date.convert( 'now', 'YYYYMMDDhhmmss' ),
 						DELETE_TIME: null,
 						UPDATE_TIME: null
 					} );
@@ -239,7 +237,7 @@ exports.createOrUpdate = ( req, res ) => {
 							data: {}
 						});
 					} ).catch( err => {
-						res.status( 500 ).send( {
+						res.send( {
 							status: false,
 							message: 'Some error occurred while creating data',
 							data: {}
@@ -254,7 +252,7 @@ exports.createOrUpdate = ( req, res ) => {
 							REGION_CODE: req.body.REGION_CODE
 						}, {
 							REGION_NAME: req.body.REGION_NAME || "",
-							UPDATE_TIME: new Date()
+							UPDATE_TIME: date.convert( 'now', 'YYYYMMDDhhmmss' )
 						}, { new: true } )
 						.then( data => {
 							if( !data ) {
@@ -404,6 +402,13 @@ exports.find = ( req, res ) => {
 					REGION_NAME: 1
 				} )
 				.then( data => {
+					if( !data ) {
+				return res.status( 404 ).send( {
+					status: false,
+					message: 'Data not found 2',
+					data: {}
+				} );
+			}
 					res.send( {
 						status: true,
 						message: 'Success',
@@ -572,7 +577,7 @@ exports.delete = ( req, res ) => {
 	regionModel.findOneAndUpdate( { 
 		REGION_CODE: req.params.id
 	}, {
-		DELETE_TIME: new Date()
+		DELETE_TIME: date.convert( 'now', 'YYYYMMDDhhmmss' )
 	}, { new: true } )
 	.then( data => {
 		if( !data ) {
