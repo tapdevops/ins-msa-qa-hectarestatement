@@ -478,14 +478,6 @@ exports.findOne = ( req, res ) => {
 exports.update = ( req, res ) => {
 
 	// Validation
-	if( !req.body.EST_NAME || !req.body.CITY  ) {
-		return res.status( 400 ).send( {
-			status: false,
-			message: 'Invalid Input',
-			data: {}
-		});
-	}
-	
 	estModel.findOneAndUpdate( { 
 		WERKS : req.params.id 
 	}, {
