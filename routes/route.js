@@ -49,6 +49,9 @@ module.exports = ( app ) => {
 	app.delete( '/comp/:id', comp.delete );
 
 	// Routing: Est
+	app.get( '/est/all', verifyToken, est.findAll );
+	app.get( '/est/q', verifyToken, est.findAll );
+	app.post( '/sync-tap/est', verifyToken, est.createOrUpdate );
 	app.post( '/sync/est', est.createOrUpdate );
 	app.post( '/est', est.create );
 	app.get( '/est', est.find );
@@ -57,12 +60,12 @@ module.exports = ( app ) => {
 	app.delete( '/est/:id', est.delete );
 
 	// Routing: Region
+	app.get( '/region/all', verifyToken, region.findAll );
+	app.get( '/region/q', verifyToken, region.findAll );
 	app.post( '/sync-tap/region', verifyToken, region.createOrUpdate );
 	app.get( '/sync-mobile/region/:start_date/:end_date', verifyToken, region.syncMobile );
 	app.post( '/region', verifyToken, region.create );
 	app.get( '/region', verifyToken, region.find );
-	app.get( '/region/all', verifyToken, region.findAll );
-	app.get( '/region/q', verifyToken, region.findAll );
 	app.get( '/region/:id', verifyToken, region.findOne );
 	app.put( '/region/:id', verifyToken, region.update );
 	app.delete( '/region/:id', verifyToken, region.delete );

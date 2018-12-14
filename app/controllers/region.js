@@ -15,7 +15,11 @@ exports.findAll = ( req, res ) => {
 
 	nJwt.verify( req.token, config.secret_key, config.token_algorithm, ( err, authData ) => {
 		if ( err ) {
-			res.sendStatus( 403 );
+			res.send({
+				status: false,
+				message: "Invalid Token",
+				data: {}
+			} );
 		}
 		else {
 			var url_query = req.query;
@@ -66,19 +70,20 @@ exports.syncMobile = ( req, res ) => {
 
 	nJwt.verify( req.token, config.secret_key, config.token_algorithm, ( err, authData ) => {
 		if ( err ) {
-			res.sendStatus( 403 );
+			res.send({
+				status: false,
+				message: "Invalid Token",
+				data: {}
+			} );
 		}
 		else {
 			var auth = jwtDecode( req.token );
 			var location_code = auth.LOCATION_CODE;
 			var location_code = location_code.split( ',' );
 			var location_code_final = [];
-			var location_code_final_2 = [];
 
 			location_code.forEach( function( data ) {
-				console.log( '0' + data.substr( 0, 1 ) );
-				location_code_final.push( { REGION_CODE: '0' + data.substr( 0, 1 ) } );
-				location_code_final_2.push( '0' + data.substr( 0, 1 ) );
+				location_code_final.push( '0' + data.substr( 0, 1 ) );
 			} );
 
 			var start_date = date.convert( req.params.start_date, 'YYYYMMDD' ) + '000000';
@@ -91,7 +96,7 @@ exports.syncMobile = ( req, res ) => {
 
 			// Select All (Insert Update Delete)
 			regionModel.find( { 
-				REGION_CODE: { $in: location_code_final_2 },
+				REGION_CODE: { $in: location_code_final },
 				$and: [
 					{
 						$or: [
@@ -157,9 +162,12 @@ exports.syncMobile = ( req, res ) => {
 
 				} );
 
+				start_date = date.convert( String( start_date ), 'YYYY-MM-DD' );
+				end_date = date.convert( String( end_date ), 'YYYY-MM-DD' );
+
 				res.json( {
 					status: true,
-					message: "Start date: " + start_date + ", End date: " + end_date,
+					message: "Data sync dari tanggal " + start_date + " s/d " + end_date,
 					data: {
 						"insert": temp_insert,
 						"update": temp_update,
@@ -306,12 +314,16 @@ exports.create = ( req, res ) => {
 
 	nJwt.verify( req.token, config.secret_key, config.token_algorithm, ( err, authData ) => {
 		if ( err ) {
-			res.sendStatus( 403 );
+			res.send({
+				status: false,
+				message: "Invalid Token",
+				data: {}
+			} );
 		}
 		else {
 	
 			if( !req.body.NATIONAL || !req.body.REGION_CODE ) {
-				return res.status( 400 ).send({
+				return res.send({
 					status: false,
 					message: 'Invalid input',
 					data: {}
@@ -365,7 +377,6 @@ exports.find = ( req, res ) => {
 			var location_code = auth.LOCATION_CODE;
 			var location_code = location_code.split( ',' );
 			var location_code_final = [];
-			var location_code_final_2 = [];
 			var url_query = req.query;
 			var url_query_length = Object.keys( url_query ).length;
 
@@ -392,12 +403,12 @@ exports.find = ( req, res ) => {
 				} )
 				.then( data => {
 					if( !data ) {
-				return res.status( 404 ).send( {
-					status: false,
-					message: 'Data not found 2',
-					data: {}
-				} );
-			}
+						return res.status( 404 ).send( {
+							status: false,
+							message: 'Data not found 2',
+							data: {}
+						} );
+					}
 					res.send( {
 						status: true,
 						message: 'Success',

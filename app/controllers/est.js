@@ -1,17 +1,70 @@
 const estModel = require( '../models/est.js' );
-const dateFormat = require( 'dateformat' );
-const dateAndTimes = require( 'date-and-time' );
 const querystring = require('querystring');
-const yyyymmdd = require( 'yyyy-mm-dd' );
-const date = require( '../libraries/date.js' );
 const url = require( 'url' );
-const Client = require('node-rest-client').Client; 	
-const config = require( '../../config/config.js' );
-const moment = require( 'moment-timezone' );
 const jwt = require( 'jsonwebtoken' );
+const config = require( '../../config/config.js' );
 const uuid = require( 'uuid' );
 const nJwt = require( 'njwt' );
 const jwtDecode = require( 'jwt-decode' );
+const Client = require('node-rest-client').Client; 
+const moment_pure = require( 'moment' );
+const moment = require( 'moment-timezone' );
+const date = require( '../libraries/date.js' );
+
+exports.findAll = ( req, res ) => {
+
+	nJwt.verify( req.token, config.secret_key, config.token_algorithm, ( err, authData ) => {
+		if ( err ) {
+			res.send({
+				status: false,
+				message: "Invalid Token",
+				data: {}
+			} );
+		}
+		else {
+			var url_query = req.query;
+			var url_query_length = Object.keys( url_query ).length;
+			
+			url_query.DELETE_TIME = "";
+
+			estModel.find( url_query )
+			.select( {
+				_id: 0,
+				NATIONAL: 1,
+				REGION_CODE: 1,
+				REGION_NAME: 1
+			} )
+			.then( data => {
+				if( !data ) {
+					return res.send( {
+						status: false,
+						message: 'Data not found 2',
+						data: {}
+					} );
+				}
+				res.send( {
+					status: true,
+					message: 'Success',
+					data: data
+				} );
+			} ).catch( err => {
+				if( err.kind === 'ObjectId' ) {
+					return res.send( {
+						status: false,
+						message: 'Data not found 1',
+						data: {}
+					} );
+				}
+				return res.send( {
+					status: false,
+					message: 'Error retrieving data',
+					data: {}
+				} );
+			} );
+		}
+	} );
+
+};
 
 exports.syncMobile = ( req, res ) => {
 
@@ -134,6 +187,130 @@ exports.syncMobile = ( req, res ) => {
 
 // Create or update data
 exports.createOrUpdate = ( req, res ) => {
+	
+	nJwt.verify( req.token, config.secret_key, config.token_algorithm, ( err, authData ) => {
+		if ( err ) {
+			res.sendStatus( 403 );
+		}
+		else {
+			if( !req.body.NATIONAL || !req.body.REGION_CODE || !req.body.COMP_CODE || !req.body.EST_CODE || !req.body.WERKS || !req.body.EST_NAME  ) {
+				return res.send({
+					status: false,
+					message: 'Invalid input',
+					data: {}
+				});
+			}
+
+			estModel.findOne( { 
+				WERKS: req.body.WERKS
+			} ).then( data => {
+				// Kondisi belum ada data, create baru dan insert ke Sync List
+				if( !data ) {
+
+					const region = new estModel( {
+						NATIONAL: req.body.NATIONAL || "",
+						REGION_CODE: req.body.REGION_CODE || "",
+						COMP_CODE: req.body.COMP_CODE || "",
+						EST_CODE: req.body.EST_CODE || "",
+						WERKS: req.body.WERKS || "",
+						EST_NAME: req.body.EST_NAME || "",
+						CITY: req.body.CITY || "",
+						INSERT_TIME: date.convert( 'now', 'YYYYMMDDhhmmss' ),
+						DELETE_TIME: null,
+						UPDATE_TIME: null
+					} );
+
+					region.save()
+					.then( data => {
+						console.log(data);
+						res.send({
+							status: true,
+							message: 'Success 2',
+							data: {}
+						});
+					} ).catch( err => {
+						res.send( {
+							status: false,
+							message: 'Some error occurred while creating data',
+							data: {}
+						} );
+					} );
+				}
+				// Kondisi data sudah ada, check value, jika sama tidak diupdate, jika beda diupdate dan dimasukkan ke Sync List
+				else {
+					
+					if ( data.EST_NAME != req.body.EST_NAME || data.CITY != req.body.CITY || data.REGION_CODE != req.body.REGION_CODE || data.COMP_CODE != req.body.COMP_CODE || data.NATIONAL != req.body.NATIONAL ) {
+						estModel.findOneAndUpdate( { 
+							REGION_CODE: req.body.REGION_CODE
+						}, {
+							NATIONAL: req.body.NATIONAL || "",
+							REGION_CODE: req.body.REGION_CODE || "",
+							COMP_CODE: req.body.COMP_CODE || "",
+							EST_CODE: req.body.EST_CODE || "",
+							EST_NAME: req.body.EST_NAME || "",
+							CITY: req.body.CITY || "",
+							UPDATE_TIME: date.convert( 'now', 'YYYYMMDDhhmmss' )
+						}, { new: true } )
+						.then( data => {
+							if( !data ) {
+								return res.status( 404 ).send( {
+									status: false,
+									message: "Data error updating 2",
+									data: {}
+								} );
+							}
+							else {
+								res.send({
+									status: true,
+									message: 'Success',
+									data: {}
+								});
+							}
+						}).catch( err => {
+							if( err.kind === 'ObjectId' ) {
+								return res.status( 404 ).send( {
+									status: false,
+									message: "Data not found 2",
+									data: {}
+								} );
+							}
+							return res.status( 500 ).send( {
+								status: false,
+								message: "Data error updating",
+								data: {}
+							} );
+						});
+					}
+					else {
+						res.send( {
+							status: true,
+							message: 'Skip Update',
+							data: {}
+						} );
+					}
+					
+				}
+			} ).catch( err => {
+				if( err.kind === 'ObjectId' ) {
+					return res.status( 404 ).send({
+						status: false,
+						message: "Data not found 1",
+						data: {}
+					});
+				}
+
+				return res.status( 500 ).send({
+					status: false,
+					message: "Error retrieving Data",
+					data: {}
+				} );
+			} );
+		}
+	} );
+};
+
+// Create or update data
+exports.createOrUpdate2 = ( req, res ) => {
 
 	if( !req.body.NATIONAL || !req.body.REGION_CODE || !req.body.COMP_CODE || !req.body.EST_CODE || !req.body.WERKS || !req.body.EST_NAME  ) {
 		return res.status( 400 ).send({
