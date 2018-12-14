@@ -620,32 +620,38 @@ exports.update = ( req, res ) => {
 
 // Delete data with the specified ID in the request
 exports.delete = ( req, res ) => {
-	estModel.findOneAndRemove( { WERKS : req.params.id } )
+	estModel.findOneAndUpdate( { 
+		WERKS: req.params.id
+	}, {
+		DELETE_TIME: date.convert( 'now', 'YYYYMMDDhhmmss' )
+	}, { new: true } )
 	.then( data => {
 		if( !data ) {
-			return res.status( 404 ).send( {
+			return res.send( {
 				status: false,
-				message: "Data not found 2 with id " + req.params.id,
+				message: "Data failed to delete",
 				data: {}
 			} );
 		}
-		res.send( {
-			status: true,
-			message: 'Success',
-			data: {}
-		} );
+		else {
+			return res.send({
+				status: true,
+				message: 'Data successfully deleted',
+				data: {}
+			});
+		}
 	}).catch( err => {
-		if( err.kind === 'ObjectId' || err.name === 'NotFound' ) {
-			return res.status(404).send({
+		if( err.kind === 'ObjectId' ) {
+			return res.send( {
 				status: false,
-				message: "Data not found 1 with id " + req.params.id,
+				message: "ObjectID Error",
 				data: {}
 			} );
 		}
-		return res.status( 500 ).send( {
+		return res.send( {
 			status: false,
-			message: "Could not delete data with id " + req.params.id,
+			message: "Error",
 			data: {}
 		} );
-	} );
+	});
 };
