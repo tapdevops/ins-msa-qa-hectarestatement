@@ -32,7 +32,11 @@ exports.findAll = ( req, res ) => {
 				_id: 0,
 				NATIONAL: 1,
 				REGION_CODE: 1,
-				REGION_NAME: 1
+				COMP_CODE: 1,
+				EST_CODE: 1,
+				WERKS: 1,
+				EST_NAME: 1,
+				CITY: 1
 			} )
 			.then( data => {
 				if( !data ) {
@@ -70,19 +74,20 @@ exports.syncMobile = ( req, res ) => {
 
 	nJwt.verify( req.token, config.secret_key, config.token_algorithm, ( err, authData ) => {
 		if ( err ) {
-			res.sendStatus( 403 );
+			res.send({
+				status: false,
+				message: "Invalid Token",
+				data: {}
+			} );
 		}
 		else {
 			var auth = jwtDecode( req.token );
 			var location_code = auth.LOCATION_CODE;
 			var location_code = location_code.split( ',' );
 			var location_code_final = [];
-			var location_code_final_2 = [];
 
 			location_code.forEach( function( data ) {
-				console.log( '0' + data.substr( 0, 1 ) );
-				location_code_final.push( { REGION_CODE: '0' + data.substr( 0, 1 ) } );
-				location_code_final_2.push( '0' + data.substr( 0, 1 ) );
+				location_code_final.push( '0' + data.substr( 0, 1 ) );
 			} );
 
 			var date_target = req.params.id;
@@ -92,7 +97,7 @@ exports.syncMobile = ( req, res ) => {
 
 			// Select All (Insert Update Delete)
 			estModel.find( { 
-				REGION_CODE: { $in: location_code_final_2 },
+				REGION_CODE: { $in: location_code_final },
 				$and: [
 					{
 						$or: [
@@ -309,124 +314,6 @@ exports.createOrUpdate = ( req, res ) => {
 	} );
 };
 
-// Create or update data
-exports.createOrUpdate2 = ( req, res ) => {
-
-	if( !req.body.NATIONAL || !req.body.REGION_CODE || !req.body.COMP_CODE || !req.body.EST_CODE || !req.body.WERKS || !req.body.EST_NAME  ) {
-		return res.status( 400 ).send({
-			status: false,
-			message: 'Invalid input',
-			data: {}
-		});
-	}
-
-	estModel.findOne( { 
-		WERKS: req.body.WERKS
-	} ).then( data => {
-
-		// Kondisi belum ada data, create baru dan insert ke Sync List
-		if( !data ) {
-
-			const est = new estModel( {
-				NATIONAL: req.body.NATIONAL || "",
-				REGION_CODE: req.body.REGION_CODE || "",
-				COMP_CODE: req.body.COMP_CODE || "",
-				EST_CODE: req.body.EST_CODE || "",
-				WERKS: req.body.WERKS || "",
-				EST_NAME: req.body.EST_NAME || "",
-				CITY: req.body.CITY || "",
-				INSERT_TIME: new Date(),
-				DELETE_TIME: null,
-				UPDATE_TIME: null
-			} );
-
-			est.save()
-			.then( data => {
-				console.log(data);
-				res.send({
-					status: true,
-					message: 'Success 2',
-					data: {}
-				});
-			} ).catch( err => {
-				res.status( 500 ).send( {
-					status: false,
-					message: 'Some error occurred while creating data',
-					data: {}
-				} );
-			} );
-		}
-		// Kondisi data sudah ada, check value, jika sama tidak diupdate, jika beda diupdate dan dimasukkan ke Sync List
-		else {
-
-			if ( data.EST_NAME != req.body.EST_NAME || data.CITY != req.body.CITY  || data.REGION_CODE != req.body.REGION_CODE || data.COMP_CODE != req.body.COMP_CODE ) {
-				estModel.findOneAndUpdate( { 
-					WERKS: req.body.WERKS
-				}, {
-					NATIONAL: req.body.NATIONAL || "",
-					REGION_CODE: req.body.REGION_CODE || "",
-					COMP_CODE: req.body.COMP_CODE || "",
-					EST_NAME: req.body.EST_NAME || "",
-					CITY: req.body.CITY || "",
-					UPDATE_TIME: new Date()
-				}, { new: true } )
-				.then( data => {
-					if( !data ) {
-						return res.status( 404 ).send( {
-							status: false,
-							message: "Data error updating 2",
-							data: {}
-						} );
-					}
-					else {
-						res.send({
-							status: true,
-							message: 'Success',
-							data: {}
-						});
-					}
-				}).catch( err => {
-					if( err.kind === 'ObjectId' ) {
-						return res.status( 404 ).send( {
-							status: false,
-							message: "Data not found 2",
-							data: {}
-						} );
-					}
-					return res.status( 500 ).send( {
-						status: false,
-						message: "Data error updating",
-						data: {}
-					} );
-				});
-			}
-			else {
-				res.send( {
-					status: true,
-					message: 'Skip Update',
-					data: {}
-				} );
-			}
-		}
-		
-	} ).catch( err => {
-		if( err.kind === 'ObjectId' ) {
-			return res.status( 404 ).send({
-				status: false,
-				message: "Data not found 1",
-				data: {}
-			});
-		}
-
-		return res.status( 500 ).send({
-			status: false,
-			message: "Error retrieving Data",
-			data: {}
-		} );
-	} );
-
-};
-
 // Create and Save new Data
 exports.create = ( req, res ) => {
 
@@ -486,6 +373,16 @@ exports.find = ( req, res ) => {
 	if ( url_query_length > 0 ) {
 
 		estModel.find( url_query )
+		.select( {
+			_id: 0,
+			NATIONAL: 1,
+			REGION_CODE: 1,
+			COMP_CODE: 1,
+			EST_CODE: 1,
+			WERKS: 1,
+			EST_NAME: 1,
+			CITY: 1
+		} )
 		.then( data => {
 			if( !data ) {
 				return res.status( 404 ).send( {
@@ -537,7 +434,18 @@ exports.find = ( req, res ) => {
 exports.findOne = ( req, res ) => {
 	estModel.findOne( { 
 		WERKS: req.params.id 
-	} ).then( data => {
+	} )
+	.select( {
+		_id: 0,
+		NATIONAL: 1,
+		REGION_CODE: 1,
+		COMP_CODE: 1,
+		EST_CODE: 1,
+		WERKS: 1,
+		EST_NAME: 1,
+		CITY: 1
+	} )
+	.then( data => {
 		if( !data ) {
 			return res.status(404).send({
 				status: false,
@@ -581,14 +489,24 @@ exports.update = ( req, res ) => {
 	estModel.findOneAndUpdate( { 
 		WERKS : req.params.id 
 	}, {
+		NATIONAL: req.body.NATIONAL || "",
+		REGION_CODE: req.body.REGION_CODE || "",
+		COMP_CODE: req.body.COMP_CODE || "",
+		EST_CODE: req.body.EST_CODE || "",
 		EST_NAME: req.body.EST_NAME || "",
-		START_VALID: req.body.START_VALID || "",
-		END_VALID: req.body.END_VALID || "",
 		CITY: req.body.CITY || "",
-		INSERT_TIME_DW: req.body.INSERT_TIME_DW || "",
-		UPDATE_TIME_DW: req.body.UPDATE_TIME_DW || "",
-		FLAG_UPDATE: dateAndTimes.format( new Date(), 'YYYYMMDD' )
+		UPDATE_TIME: date.convert( 'now', 'YYYYMMDDhhmmss' )
 	}, { new: true } )
+	.select( {
+		_id: 0,
+		NATIONAL: 1,
+		REGION_CODE: 1,
+		COMP_CODE: 1,
+		EST_CODE: 1,
+		WERKS: 1,
+		EST_NAME: 1,
+		CITY: 1
+	} )
 	.then( data => {
 		if( !data ) {
 			return res.status( 404 ).send( {
