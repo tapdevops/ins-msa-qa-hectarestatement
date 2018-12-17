@@ -77,6 +77,7 @@ exports.syncMobile = ( req, res ) => {
 			} );
 		}
 		else {
+			
 			var auth = jwtDecode( req.token );
 			var location_code = auth.LOCATION_CODE;
 			var location_code = location_code.split( ',' );
@@ -97,6 +98,7 @@ exports.syncMobile = ( req, res ) => {
 			// Select All (Insert Update Delete)
 			regionModel.find( { 
 				REGION_CODE: { $in: location_code_final },
+				/*
 				$and: [
 					{
 						$or: [
@@ -120,7 +122,7 @@ exports.syncMobile = ( req, res ) => {
 							}
 						]
 					}
-				]
+				]*/
 			} ).then( data_insert => {
 				console.log( data_insert );
 
@@ -134,7 +136,6 @@ exports.syncMobile = ( req, res ) => {
 						UPDATE_TIME: parseInt( date.convert( String( data.UPDATE_TIME ), 'YYYYMMDD' ) ),
 						DELETE_TIME: parseInt( date.convert( String( data.DELETE_TIME ), 'YYYYMMDD' ) ),
 					};
-					console.log( convert_date );
 					
 					if ( convert_date.INSERT_TIME <= end_date && convert_date.INSERT_TIME >= start_date ) {
 						temp_insert.push( {
@@ -165,6 +166,7 @@ exports.syncMobile = ( req, res ) => {
 				start_date = date.convert( String( start_date ), 'YYYY-MM-DD' );
 				end_date = date.convert( String( end_date ), 'YYYY-MM-DD' );
 
+				/*
 				res.json( {
 					status: true,
 					message: "Data sync dari tanggal " + start_date + " s/d " + end_date,
@@ -172,6 +174,16 @@ exports.syncMobile = ( req, res ) => {
 						"insert": temp_insert,
 						"update": temp_update,
 						"delete": temp_delete
+					}
+				} );
+				*/
+				res.json( {
+					status: true,
+					message: "Data sync dari tanggal " + start_date + " s/d " + end_date,
+					data: {
+						"insert": temp_insert,
+						"update": temp_insert,
+						"delete": temp_insert
 					}
 				} );
 			} ).catch( err => {
@@ -250,7 +262,9 @@ exports.createOrUpdate = ( req, res ) => {
 						}, {
 							REGION_NAME: req.body.REGION_NAME || "",
 							UPDATE_TIME: date.convert( 'now', 'YYYYMMDDhhmmss' )
-						}, { new: true } )
+						}, { 
+							new: true 
+						} )
 						.then( data => {
 							if( !data ) {
 								return res.status( 404 ).send( {

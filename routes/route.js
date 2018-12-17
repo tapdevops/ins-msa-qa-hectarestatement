@@ -1,3 +1,9 @@
+const jwt = require( 'jsonwebtoken' );
+const config = require( '../config/config.js' );
+const uuid = require( 'uuid' );
+const nJwt = require( 'njwt' );
+const jwtDecode = require( 'jwt-decode' );
+
 function verifyToken( req, res, next ) {
 	// Get auth header value
 	const bearerHeader = req.headers['authorization'];
@@ -15,6 +21,39 @@ function verifyToken( req, res, next ) {
 	}
 }
 
+function token_verify( req, res, next ) {
+	// Get auth header value
+	const bearerHeader = req.headers['authorization'];
+
+	if ( typeof bearerHeader !== 'undefined' ) {
+		const bearer = bearerHeader.split( ' ' );
+		const bearer_token = bearer[1];
+
+		req.token = bearer_token;
+
+		nJwt.verify( bearer_token, config.secret_key, config.token_algorithm, ( err, authData ) => {
+			if ( err ) {
+				res.send({
+					status: false,
+					message: "Invalid Token",
+					data: []
+				} );
+			}
+			else {
+				req.auth = jwtDecode( req.token );
+				req.auth.LOCATION_CODE_GROUP = req.auth.LOCATION_CODE.split( ',' );
+				req.config = config;
+				next();
+			}
+		} );
+		
+	}
+	else {
+		// Forbidden
+		res.sendStatus( 403 );
+	}
+}
+
 module.exports = ( app ) => {
 
 	// Declare Controllers
@@ -23,6 +62,10 @@ module.exports = ( app ) => {
 	const comp = require( '../app/controllers/comp.js' );
 	const est = require( '../app/controllers/est.js' );
 	const region = require( '../app/controllers/region.js' );
+	const testut = require( '../app/controllers/testut.js' );
+
+	app.get( '/testut', token_verify, testut.find );
+	app.post( '/testut', token_verify, testut.createOrUpdate );
 
 	// Routing: Afdeling
 	app.post( '/sync/afdeling', afdeling.createOrUpdate );
