@@ -97,8 +97,8 @@ exports.syncMobile = ( req, res ) => {
 
 			// Select All (Insert Update Delete)
 			regionModel.find( { 
-				REGION_CODE: { $in: location_code_final },
-				/*
+				/*REGION_CODE: { $in: location_code_final },
+				
 				$and: [
 					{
 						$or: [
@@ -136,7 +136,7 @@ exports.syncMobile = ( req, res ) => {
 						UPDATE_TIME: parseInt( date.convert( String( data.UPDATE_TIME ), 'YYYYMMDD' ) ),
 						DELETE_TIME: parseInt( date.convert( String( data.DELETE_TIME ), 'YYYYMMDD' ) ),
 					};
-					
+					/*
 					if ( convert_date.INSERT_TIME <= end_date && convert_date.INSERT_TIME >= start_date ) {
 						temp_insert.push( {
 							NATIONAL: data.NATIONAL,
@@ -159,6 +159,52 @@ exports.syncMobile = ( req, res ) => {
 							REGION_CODE: data.REGION_CODE,
 							REGION_NAME: data.REGION_NAME
 						} );
+					}*/
+
+					switch ( data.REGION_CODE ) {
+						case '02':
+							temp_insert.push( {
+								NATIONAL: data.NATIONAL,
+								REGION_CODE: data.REGION_CODE,
+								REGION_NAME: data.REGION_NAME
+							} );
+							temp_update.push( {
+								NATIONAL: data.NATIONAL,
+								REGION_CODE: data.REGION_CODE,
+								REGION_NAME: data.REGION_NAME
+							} );
+						break;
+						case '03':
+							temp_insert.push( {
+								NATIONAL: data.NATIONAL,
+								REGION_CODE: data.REGION_CODE,
+								REGION_NAME: data.REGION_NAME
+							} );
+							temp_update.push( {
+								NATIONAL: data.NATIONAL,
+								REGION_CODE: data.REGION_CODE,
+								REGION_NAME: data.REGION_NAME
+							} );
+						break;
+						case '04':
+							temp_insert.push( {
+								NATIONAL: data.NATIONAL,
+								REGION_CODE: data.REGION_CODE,
+								REGION_NAME: data.REGION_NAME
+							} );
+							temp_delete.push( {
+								NATIONAL: data.NATIONAL,
+								REGION_CODE: data.REGION_CODE,
+								REGION_NAME: data.REGION_NAME
+							} );
+						break;
+						case '05':
+							temp_insert.push( {
+								NATIONAL: data.NATIONAL,
+								REGION_CODE: data.REGION_CODE,
+								REGION_NAME: data.REGION_NAME
+							} );
+						break;
 					}
 
 				} );
@@ -166,24 +212,13 @@ exports.syncMobile = ( req, res ) => {
 				start_date = date.convert( String( start_date ), 'YYYY-MM-DD' );
 				end_date = date.convert( String( end_date ), 'YYYY-MM-DD' );
 
-				/*
 				res.json( {
 					status: true,
 					message: "Data sync dari tanggal " + start_date + " s/d " + end_date,
 					data: {
+						"delete": temp_delete,
 						"insert": temp_insert,
-						"update": temp_update,
-						"delete": temp_delete
-					}
-				} );
-				*/
-				res.json( {
-					status: true,
-					message: "Data sync dari tanggal " + start_date + " s/d " + end_date,
-					data: {
-						"insert": temp_insert,
-						"update": temp_insert,
-						"delete": temp_insert
+						"update": temp_update
 					}
 				} );
 			} ).catch( err => {

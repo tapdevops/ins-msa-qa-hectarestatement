@@ -76,7 +76,9 @@ module.exports = ( app ) => {
 	app.delete( '/afdeling/:id', afdeling.delete );
 
 	// Routing: Block
-	app.post( '/sync/block', block.createOrUpdate );
+	app.post( '/sync-tap/block', block.createOrUpdate );
+
+	
 	app.post( '/block', block.create );
 	app.get( '/block', block.find );
 	app.get( '/block/:id', block.findOne );
