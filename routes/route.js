@@ -105,13 +105,13 @@ module.exports = ( app ) => {
 	app.post( '/sync-tap/comp', token_verify, comp.createOrUpdate );
 	app.get( '/sync-mobile/comp/:start_date/:end_date', token_verify, comp.syncMobile );
 	app.delete( '/comp/:id', token_verify, comp.delete );
-
+	app.get( '/comp', token_verify, comp.find );
 
 
 
 
 	app.post( '/comp', comp.create );
-	app.get( '/comp', comp.find );
+	
 	app.get( '/comp/:id', comp.findOne );
 	app.put( '/comp/:id', comp.update );
 

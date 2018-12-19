@@ -48,8 +48,10 @@ exports.create = ( req, res ) => {
 	
 };
 
+
+
 // Retrieve and return all notes from the database.
-exports.find = ( req, res ) => {
+exports.find2 = ( req, res ) => {
 
 	url_query = req.query;
 	var url_query_length = Object.keys( url_query ).length;
@@ -562,3 +564,106 @@ exports.update = ( req, res ) => {
 		});
 		
 	}
+
+	// Retrieve and return all notes from the database.
+	exports.find = ( req, res ) => {
+		url_query = req.query;
+		var url_query_length = Object.keys( url_query ).length;
+
+		// Auth Data
+		var auth = req.auth;
+		console.log(auth);
+
+		// Data Dummy
+		//auth.REFFERENCE_ROLE = 'AFD_CODE';
+		//auth.LOCATION_CODE = '2121D,2121C';
+
+		var location_code_group = auth.LOCATION_CODE.split( ',' );
+		var ref_role = auth.REFFERENCE_ROLE;
+		var location_code_final = [];
+		var key = [];
+		var query = {};
+		
+		if ( ref_role != 'ALL' ) {
+			location_code_group.forEach( function( data ) {
+				switch ( ref_role ) {
+					case 'REGION_CODE':
+						location_code_final.push( data.substr( 0, 2 ) );
+					break;
+					case 'COMP_CODE':
+						location_code_final.push( data.substr( 0, 2 ) );
+					break;
+					case 'AFD_CODE':
+						location_code_final.push( data.substr( 0, 2 ) );
+					break;
+					case 'BA_CODE':
+						location_code_final.push( data.substr( 0, 2 ) );
+					break;
+				}
+			} );
+		}
+
+		switch ( ref_role ) {
+			case 'REGION_CODE':
+				key = ref_role;
+				query[key] = location_code_final;
+			break;
+			case 'COMP_CODE':
+				key = ref_role;
+				query[key] = location_code_final;
+			break;
+			case 'AFD_CODE':
+				key = 'COMP_CODE';
+				query[key] = location_code_final;
+			break;
+			case 'BA_CODE':
+				key = 'COMP_CODE';
+				query[key] = location_code_final;
+			break;
+			case 'NATIONAL':
+				key = 'NATIONAL';
+				query[key] = 'NATIONAL';
+			break;
+		}
+		console.log(query)
+
+		compModel
+		.find( {COMP_CODE:'41'} )
+		.select( {
+			_id: 0,
+			NATIONAL: 1,
+			REGION_CODE: 1,
+			COMP_CODE: 1,
+			COMP_NAME: 1,
+			ADDRESS: 1
+		} )
+		.then( data => {
+			console.log(data);
+			if( !data ) {
+				return res.send( {
+					status: false,
+					message: 'Data not found 2',
+					data: {}
+				} );
+			}
+			res.send( {
+				status: true,
+				message: 'Success',
+				data: data
+			} );
+		} ).catch( err => {
+			if( err.kind === 'ObjectId' ) {
+				return res.send( {
+					status: false,
+					message: 'Data not found 1',
+					data: {}
+				} );
+			}
+			return res.send( {
+				status: false,
+				message: 'Error retrieving data',
+				data: {}
+			} );
+		} );
+
+	};
