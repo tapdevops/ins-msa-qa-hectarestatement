@@ -68,19 +68,28 @@ module.exports = ( app ) => {
 	app.post( '/testut', token_verify, testut.createOrUpdate );
 
 	// Routing: Afdeling
-	app.post( '/sync/afdeling', afdeling.createOrUpdate );
+	app.get( '/afdeling/all', token_verify, afdeling.findAll );
+	app.get( '/afdeling/q', token_verify, afdeling.findAll );
+	app.post( '/sync-tap/afdeling', afdeling.createOrUpdate );
+	app.get( '/sync-mobile/afdeling/:start_date/:end_date', token_verify, afdeling.syncMobile );
+	app.get( '/afdeling', token_verify, afdeling.find );
+
+
 	app.post( '/afdeling', afdeling.create );
-	app.get( '/afdeling', afdeling.find );
+	
 	app.get( '/afdeling/:id', afdeling.findOne );
 	app.put( '/afdeling/:id', afdeling.update );
 	app.delete( '/afdeling/:id', afdeling.delete );
 
 	// Routing: Block
+	app.get( '/block/all', token_verify, block.findAll );
+	app.get( '/block/q', token_verify, block.findAll );
 	app.post( '/sync-tap/block', block.createOrUpdate );
+	app.get( '/sync-mobile/block/:start_date/:end_date', token_verify, block.syncMobile );
+	app.get( '/block', token_verify, block.find );
 
 	
 	app.post( '/block', block.create );
-	app.get( '/block', block.find );
 	app.get( '/block/:id', block.findOne );
 	app.put( '/block/:id', block.update );
 	app.delete( '/block/:id', block.delete );
@@ -94,12 +103,15 @@ module.exports = ( app ) => {
 	app.delete( '/comp/:id', comp.delete );
 
 	// Routing: Est
-	app.get( '/est/all', verifyToken, est.findAll );
-	app.get( '/est/q', verifyToken, est.findAll );
+	app.get( '/est/all', token_verify, est.findAll );
+	app.get( '/est/q', token_verify, est.findAll );
 	app.post( '/sync-tap/est', verifyToken, est.createOrUpdate );
-	app.post( '/sync/est', est.createOrUpdate );
+
+	app.get( '/sync-mobile/est/:start_date/:end_date', token_verify, est.syncMobile );
+	app.get( '/est', token_verify, est.find );
+
 	app.post( '/est', est.create );
-	app.get( '/est', est.find );
+	
 	app.get( '/est/:id', est.findOne );
 	app.put( '/est/:id', est.update );
 	app.delete( '/est/:id', est.delete );
@@ -108,6 +120,8 @@ module.exports = ( app ) => {
 	app.get( '/region/all', verifyToken, region.findAll );
 	app.get( '/region/q', verifyToken, region.findAll );
 	app.post( '/sync-tap/region', verifyToken, region.createOrUpdate );
+
+
 	app.get( '/sync-mobile/region/:start_date/:end_date', verifyToken, region.syncMobile );
 	app.post( '/region', verifyToken, region.create );
 	app.get( '/region', verifyToken, region.find );

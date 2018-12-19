@@ -9,6 +9,7 @@ const BlockSchema = mongoose.Schema( {
 	AFD_CODE: String,
 	BLOCK_CODE: String,
 	BLOCK_NAME: String,
+	WERKS_AFD_CODE: String,
 	WERKS_AFD_BLOCK_CODE: String,
 	LATITUDE_BLOCK: String,
 	LONGITUDE_BLOCK: String,

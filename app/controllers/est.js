@@ -11,184 +11,7 @@ const moment_pure = require( 'moment' );
 const moment = require( 'moment-timezone' );
 const date = require( '../libraries/date.js' );
 
-exports.findAll = ( req, res ) => {
 
-	nJwt.verify( req.token, config.secret_key, config.token_algorithm, ( err, authData ) => {
-		if ( err ) {
-			res.send({
-				status: false,
-				message: "Invalid Token",
-				data: {}
-			} );
-		}
-		else {
-			var url_query = req.query;
-			var url_query_length = Object.keys( url_query ).length;
-			
-			url_query.DELETE_TIME = "";
-
-			estModel.find( url_query )
-			.select( {
-				_id: 0,
-				NATIONAL: 1,
-				REGION_CODE: 1,
-				COMP_CODE: 1,
-				EST_CODE: 1,
-				WERKS: 1,
-				EST_NAME: 1,
-				CITY: 1
-			} )
-			.then( data => {
-				if( !data ) {
-					return res.send( {
-						status: false,
-						message: 'Data not found 2',
-						data: {}
-					} );
-				}
-				res.send( {
-					status: true,
-					message: 'Success',
-					data: data
-				} );
-			} ).catch( err => {
-				if( err.kind === 'ObjectId' ) {
-					return res.send( {
-						status: false,
-						message: 'Data not found 1',
-						data: {}
-					} );
-				}
-				return res.send( {
-					status: false,
-					message: 'Error retrieving data',
-					data: {}
-				} );
-			} );
-		}
-	} );
-
-};
-
-exports.syncMobile = ( req, res ) => {
-
-	nJwt.verify( req.token, config.secret_key, config.token_algorithm, ( err, authData ) => {
-		if ( err ) {
-			res.send({
-				status: false,
-				message: "Invalid Token",
-				data: {}
-			} );
-		}
-		else {
-			var auth = jwtDecode( req.token );
-			var location_code = auth.LOCATION_CODE;
-			var location_code = location_code.split( ',' );
-			var location_code_final = [];
-
-			location_code.forEach( function( data ) {
-				location_code_final.push( '0' + data.substr( 0, 1 ) );
-			} );
-
-			var date_target = req.params.id;
-			var today = moment( date_target, "YYYY-MM-DD" ).startOf( 'day' );
-			var tomorrow = moment( today ).endOf( 'day' );
-			var data_sync = [];
-
-			// Select All (Insert Update Delete)
-			estModel.find( { 
-				REGION_CODE: { $in: location_code_final },
-				$and: [
-					{
-						$or: [
-							{
-								INSERT_TIME: {
-									$gte: today.toDate(),
-									$lt: tomorrow.toDate()
-								}
-							},
-							{
-								UPDATE_TIME: {
-									$gte: today.toDate(),
-									$lt: tomorrow.toDate()
-								}
-							},
-							{
-								DELETE_TIME: {
-									$gte: today.toDate(),
-									$lt: tomorrow.toDate()
-								}
-							}
-						]
-					}
-				]
-			} ).then( data_insert => {
-
-				var temp_insert = [];
-				var temp_update = [];
-				var temp_delete = [];
-
-				data_insert.forEach( function( data ) {
-					var convert_date = {
-						INSERT_TIME: moment( data.INSERT_TIME ).format( "YYYY-MM-DD" ),
-						UPDATE_TIME: moment( data.UPDATE_TIME ).format( "YYYY-MM-DD" ),
-						DELETE_TIME: moment( data.DELETE_TIME ).format( "YYYY-MM-DD" ),
-					};
-
-					if ( convert_date.INSERT_TIME == date_target ) {
-						temp_insert.push( {
-							NATIONAL: data.NATIONAL,
-							REGION_CODE: data.REGION_CODE,
-							REGION_NAME: data.REGION_NAME
-						} );
-					}
-
-					if ( convert_date.UPDATE_TIME == date_target ) {
-						temp_update.push( {
-							NATIONAL: data.NATIONAL,
-							REGION_CODE: data.REGION_CODE,
-							REGION_NAME: data.REGION_NAME
-						} );
-					}
-
-					if ( convert_date.DELETE_TIME == date_target ) {
-						temp_delete.push( {
-							NATIONAL: data.NATIONAL,
-							REGION_CODE: data.REGION_CODE,
-							REGION_NAME: data.REGION_NAME
-						} );
-					}
-
-				} );
-
-				res.json( {
-					status: true,
-					message: "Success",
-					data: {
-						"insert": temp_insert,
-						"update": temp_update,
-						"delete": temp_delete
-					}
-				} );
-			} ).catch( err => {
-				if( err.kind === 'ObjectId' ) {
-					return res.status( 404 ).send({
-						status: false,
-						message: "Data not found 1",
-						data: {}
-					});
-				}
-
-				return res.status( 500 ).send({
-					status: false,
-					message: "Error retrieving Data",
-					data: {}
-				} );
-			} );
-		}
-	} );
-	
-}
 
 
 
@@ -240,72 +63,6 @@ exports.create = ( req, res ) => {
 		} );
 	} );
 	
-};
-
-// Retrieve and return all notes from the database.
-exports.find = ( req, res ) => {
-
-	url_query = req.query;
-	var url_query_length = Object.keys( url_query ).length;
-	
-	if ( url_query_length > 0 ) {
-
-		estModel.find( url_query )
-		.select( {
-			_id: 0,
-			NATIONAL: 1,
-			REGION_CODE: 1,
-			COMP_CODE: 1,
-			EST_CODE: 1,
-			WERKS: 1,
-			EST_NAME: 1,
-			CITY: 1
-		} )
-		.then( data => {
-			if( !data ) {
-				return res.status( 404 ).send( {
-					status: false,
-					message: 'Data not found 2',
-					data: {}
-				} );
-			}
-			res.send( {
-				status: true,
-				message: 'Success',
-				data: data
-			} );
-		} ).catch( err => {
-			if( err.kind === 'ObjectId' ) {
-				return res.status( 404 ).send( {
-					status: false,
-					message: 'Data not found 1',
-					data: {}
-				} );
-			}
-			return res.status( 500 ).send( {
-				status: false,
-				message: 'Error retrieving data',
-				data: {}
-			} );
-		} );
-	}
-	else {
-		estModel.find()
-		.then( data => {
-			res.send( {
-				status: true,
-				message: 'Success',
-				data: data
-			} );
-		} ).catch( err => {
-			res.status( 500 ).send( {
-				status: false,
-				message: err.message || "Some error occurred while retrieving data.",
-				data: {}
-			} );
-		} );
-	}
-
 };
 
 // Find a single data with a ID
@@ -612,4 +369,326 @@ exports.delete = ( req, res ) => {
 				} );
 			}
 		} );
+	};
+
+	// Find All
+	exports.findAll = ( req, res ) => {
+		var url_query = req.query;
+		var url_query_length = Object.keys( url_query ).length;
+		
+		url_query.END_VALID = 99991231;
+
+		estModel.find( url_query )
+		.select( {
+			_id: 0,
+			NATIONAL: 1,
+			REGION_CODE: 1,
+			COMP_CODE: 1,
+			EST_CODE: 1,
+			WERKS: 1,
+			EST_NAME: 1,
+			CITY: 1
+		} )
+		.then( data => {
+			if( !data ) {
+				return res.send( {
+					status: false,
+					message: 'Data not found 2',
+					data: {}
+				} );
+			}
+			res.send( {
+				status: true,
+				message: 'Success',
+				data: data
+			} );
+		} ).catch( err => {
+			if( err.kind === 'ObjectId' ) {
+				return res.send( {
+					status: false,
+					message: 'Data not found 1',
+					data: {}
+				} );
+			}
+			return res.send( {
+				status: false,
+				message: 'Error retrieving data',
+				data: {}
+			} );
+		} );
+	}
+
+	// Sync Mobile
+	exports.syncMobile = ( req, res ) => {
+
+		// Auth Data
+		var auth = req.auth;
+		//auth.REFFERENCE_ROLE = 'BA_CODE';
+		//auth.LOCATION_CODE = '4121';
+
+		var start_date = date.convert( req.params.start_date, 'YYYYMMDDhhmmss' );
+		var end_date = date.convert( req.params.end_date, 'YYYYMMDDhhmmss' );
+		var location_code_group = auth.LOCATION_CODE.split( ',' );
+		var ref_role = auth.REFFERENCE_ROLE;
+		var location_code_final = [];
+		var key = [];
+		var query = {};
+			query["END_VALID"] = 99991231;
+		
+		if ( ref_role != 'ALL' ) {
+			location_code_group.forEach( function( data ) {
+				switch ( ref_role ) {
+					case 'REGION_CODE':
+						location_code_final.push( data.substr( 0, 2 ) );
+					break;
+					case 'COMP_CODE':
+						location_code_final.push( data.substr( 0, 2 ) );
+					break;
+					case 'AFD_CODE':
+						location_code_final.push( data.substr( 0, 4 ) );
+					break;
+					case 'BA_CODE':
+						location_code_final.push( data.substr( 0, 4 ) );
+					break;
+				}
+			} );
+		}
+
+		switch ( ref_role ) {
+			case 'REGION_CODE':
+				key = ref_role;
+				query[key] = location_code_final;
+			break;
+			case 'COMP_CODE':
+				key = ref_role;
+				query[key] = location_code_final;
+			break;
+			case 'AFD_CODE':
+				key = 'WERKS';
+				query[key] = location_code_final;
+			break;
+			case 'BA_CODE':
+				key = 'WERKS';
+				query[key] = location_code_final;
+			break;
+			case 'NATIONAL':
+				key = 'NATIONAL';
+				query[key] = 'NATIONAL';
+			break;
+		}
+
+		console.log(auth);
+		console.log(query);
+		
+		// Set Data
+		estModel
+		.find( 
+			query,
+			{
+				$and: [
+					{
+						$or: [
+							{
+								INSERT_TIME: {
+									$gte: start_date,
+									$lte: end_date
+								}
+							},
+							{
+								UPDATE_TIME: {
+									$gte: start_date,
+									$lte: end_date
+								}
+							},
+							{
+								DELETE_TIME: {
+									$gte: start_date,
+									$lte: end_date
+								}
+							}
+						]
+					}
+				]
+			}
+		)
+		.select( {
+			_id: 0,
+			REGION_CODE: 1,
+			COMP_CODE: 1,
+			EST_CODE: 1,
+			EST_NAME: 1,
+			WERKS: 1,
+			CITY: 1,
+			DELETE_TIME: 1,
+			INSERT_TIME: 1,
+			UPDATE_TIME: 1
+		} )
+		.then( data_insert => {
+			var temp_insert = [];
+			var temp_update = [];
+			var temp_delete = [];
+
+			data_insert.forEach( function( data ) {
+
+				if ( data.DELETE_TIME >= start_date && data.DELETE_TIME <= end_date ) {
+					temp_delete.push( {
+						REGION_CODE: data.REGION_CODE,
+						COMP_CODE: data.COMP_CODE,
+						EST_CODE: data.EST_CODE,
+						EST_NAME: data.EST_NAME,
+						WERKS: data.WERKS,
+						CITY: data.CITY
+					} );
+				}
+
+				if ( data.INSERT_TIME >= start_date && data.INSERT_TIME <= end_date ) {
+					temp_insert.push( {
+						REGION_CODE: data.REGION_CODE,
+						COMP_CODE: data.COMP_CODE,
+						EST_CODE: data.EST_CODE,
+						EST_NAME: data.EST_NAME,
+						WERKS: data.WERKS,
+						CITY: data.CITY
+					} );
+				}
+
+				if ( data.UPDATE_TIME >= start_date && data.UPDATE_TIME <= end_date ) {
+					temp_update.push( {
+						REGION_CODE: data.REGION_CODE,
+						COMP_CODE: data.COMP_CODE,
+						EST_CODE: data.EST_CODE,
+						EST_NAME: data.EST_NAME,
+						WERKS: data.WERKS,
+						CITY: data.CITY
+					} );
+				}
+
+			} );
+
+			res.json({
+				status: true,
+				message: 'Data Sync tanggal ' + date.convert( req.params.start_date, 'YYYY-MM-DD' ) + ' s/d ' + date.convert( req.params.end_date, 'YYYY-MM-DD' ),
+				data: {
+					"insert": temp_insert,
+					"update": temp_update,
+					"delete": temp_delete
+				}
+			});
+		} ).catch( err => {
+			if( err.kind === 'ObjectId' ) {
+				return res.send({
+					status: false,
+					message: "ObjectId Error",
+					data: {}
+				});
+			}
+
+			return res.send({
+				status: false,
+				message: "Error",
+				data: {}
+			} );
+		});
+	}
+
+	// Retrieve and return all notes from the database.
+	exports.find = ( req, res ) => {
+
+		url_query = req.query;
+		var url_query_length = Object.keys( url_query ).length;
+
+		// Auth Data
+		var auth = req.auth;
+
+		//auth.REFFERENCE_ROLE = 'COMP_CODE';
+		//auth.LOCATION_CODE = '21';
+
+		var location_code_group = auth.LOCATION_CODE.split( ',' );
+		var ref_role = auth.REFFERENCE_ROLE;
+		var location_code_final = [];
+		var key = [];
+		var query = {};
+			query["END_VALID"] = 99991231;
+		
+		if ( ref_role != 'ALL' ) {
+			location_code_group.forEach( function( data ) {
+				switch ( ref_role ) {
+					case 'REGION_CODE':
+						location_code_final.push( data.substr( 0, 2 ) );
+					break;
+					case 'COMP_CODE':
+						location_code_final.push( data.substr( 0, 2 ) );
+					break;
+					case 'AFD_CODE':
+						location_code_final.push( data.substr( 0, 4 ) );
+					break;
+					case 'BA_CODE':
+						location_code_final.push( data.substr( 0, 4 ) );
+					break;
+				}
+			} );
+		}
+
+		switch ( ref_role ) {
+			case 'REGION_CODE':
+				key = ref_role;
+				query[key] = location_code_final;
+			break;
+			case 'COMP_CODE':
+				key = ref_role;
+				query[key] = location_code_final;
+			break;
+			case 'AFD_CODE':
+				key = 'WERKS';
+				query[key] = location_code_final;
+			break;
+			case 'BA_CODE':
+				key = 'WERKS';
+				query[key] = location_code_final;
+			break;
+			case 'NATIONAL':
+				key = 'NATIONAL';
+				query[key] = 'NATIONAL';
+			break;
+		}
+
+		estModel.find( query )
+		.select( {
+			_id: 0,
+			NATIONAL: 1,
+			REGION_CODE: 1,
+			COMP_CODE: 1,
+			EST_CODE: 1,
+			WERKS: 1,
+			EST_NAME: 1,
+			CITY: 1
+		} )
+		.then( data => {
+			if( !data ) {
+				return res.send( {
+					status: false,
+					message: 'Data not found 2',
+					data: {}
+				} );
+			}
+			res.send( {
+				status: true,
+				message: 'Success',
+				data: data
+			} );
+		} ).catch( err => {
+			if( err.kind === 'ObjectId' ) {
+				return res.send( {
+					status: false,
+					message: 'Data not found 1',
+					data: {}
+				} );
+			}
+			return res.send( {
+				status: false,
+				message: 'Error retrieving data',
+				data: {}
+			} );
+		} );
+
 	};

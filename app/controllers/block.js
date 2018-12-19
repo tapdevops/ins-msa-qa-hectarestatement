@@ -11,6 +11,115 @@ const moment_pure = require( 'moment' );
 const moment = require( 'moment-timezone' );
 const date = require( '../libraries/date.js' );
 
+	// Retrieve and return all notes from the database.
+	exports.find = ( req, res ) => {
+
+		url_query = req.query;
+		var url_query_length = Object.keys( url_query ).length;
+
+		// Auth Data
+		var auth = req.auth;
+
+		//auth.REFFERENCE_ROLE = 'COMP_CODE';
+		//auth.LOCATION_CODE = '21';
+		console.log(auth);
+
+		var location_code_group = auth.LOCATION_CODE.split( ',' );
+		var ref_role = auth.REFFERENCE_ROLE;
+		var location_code_final = [];
+		var key = [];
+		var query = {};
+			query["END_VALID"] = 99991231;
+		
+		if ( ref_role != 'ALL' ) {
+			location_code_group.forEach( function( data ) {
+				switch ( ref_role ) {
+					case 'REGION_CODE':
+						location_code_final.push( data.substr( 0, 2 ) );
+					break;
+					case 'COMP_CODE':
+						location_code_final.push( data.substr( 0, 2 ) );
+					break;
+					case 'AFD_CODE':
+						location_code_final.push( data );
+					break;
+					case 'BA_CODE':
+						location_code_final.push( data.substr( 0, 4 ) );
+					break;
+				}
+			} );
+		}
+
+		switch ( ref_role ) {
+			case 'REGION_CODE':
+				key = ref_role;
+				query[key] = location_code_final;
+			break;
+			case 'COMP_CODE':
+				key = ref_role;
+				query[key] = location_code_final;
+			break;
+			case 'AFD_CODE':
+				key = 'WERKS_AFD_CODE';
+				query[key] = location_code_final;
+			break;
+			case 'BA_CODE':
+				key = 'WERKS';
+				query[key] = location_code_final;
+			break;
+			case 'NATIONAL':
+				key = 'NATIONAL';
+				query[key] = 'NATIONAL';
+			break;
+		}
+		console.log(query);
+		blockModel.find( query )
+		.select( {
+			_id: 0,
+			REGION_CODE: 1,
+			COMP_CODE: 1,
+			EST_CODE: 1,
+			WERKS: 1,
+			AFD_CODE: 1,
+			BLOCK_CODE: 1,
+			BLOCK_NAME: 1,
+			WERKS_AFD_CODE: 1,
+			WERKS_AFD_BLOCK_CODE: 1,
+			LATITUDE_BLOCK: 1,
+			LONGITUDE_BLOCK: 1,
+		} )
+		.then( data => {
+			if( !data ) {
+				return res.send( {
+					status: false,
+					message: 'Data not found 2',
+					data: {}
+				} );
+			}
+			res.send( {
+				status: true,
+				message: 'Success',
+				data: data
+			} );
+		} ).catch( err => {
+			if( err.kind === 'ObjectId' ) {
+				return res.send( {
+					status: false,
+					message: 'Data not found 1',
+					data: {}
+				} );
+			}
+			return res.send( {
+				status: false,
+				message: 'Error retrieving data',
+				data: {}
+			} );
+		} );
+
+	};
+
+
+
 // Create and Save new Data
 exports.create = ( req, res ) => {
 	
@@ -60,7 +169,7 @@ exports.create = ( req, res ) => {
 };
 
 // Retrieve and return all notes from the database.
-exports.find = ( req, res ) => {
+exports.find2 = ( req, res ) => {
 
 	// Output Query URL
 	//console.log(req.query);
@@ -298,6 +407,7 @@ exports.delete = ( req, res ) => {
 					AFD_CODE: req.body.AFD_CODE || "",
 					BLOCK_CODE: req.body.BLOCK_CODE || "",
 					BLOCK_NAME: req.body.BLOCK_NAME || "",
+					WERKS_AFD_CODE: req.body.WERKS_AFD_CODE || "",
 					WERKS_AFD_BLOCK_CODE: req.body.WERKS_AFD_BLOCK_CODE || "",
 					LATITUDE_BLOCK: req.body.LATITUDE_BLOCK || "",
 					LONGITUDE_BLOCK: req.body.LONGITUDE_BLOCK || "",
@@ -350,7 +460,6 @@ exports.delete = ( req, res ) => {
 							AFD_CODE: req.body.AFD_CODE || "",
 							BLOCK_CODE: req.body.BLOCK_CODE || "",
 							BLOCK_NAME: req.body.BLOCK_NAME || "",
-							WERKS_AFD_BLOCK_CODE: req.body.WERKS_AFD_BLOCK_CODE || "",
 							LATITUDE_BLOCK: req.body.LATITUDE_BLOCK || "",
 							LONGITUDE_BLOCK: req.body.LONGITUDE_BLOCK || "",
 							END_VALID: date.convert( req.body.END_VALID, 'YYYYMMDD' ),
@@ -367,7 +476,6 @@ exports.delete = ( req, res ) => {
 							AFD_CODE: req.body.AFD_CODE || "",
 							BLOCK_CODE: req.body.BLOCK_CODE || "",
 							BLOCK_NAME: req.body.BLOCK_NAME || "",
-							WERKS_AFD_BLOCK_CODE: req.body.WERKS_AFD_BLOCK_CODE || "",
 							LATITUDE_BLOCK: req.body.LATITUDE_BLOCK || "",
 							LONGITUDE_BLOCK: req.body.LONGITUDE_BLOCK || "",
 							END_VALID: date.convert( req.body.END_VALID, 'YYYYMMDD' ),
@@ -434,3 +542,254 @@ exports.delete = ( req, res ) => {
 			} );
 		} );
 	};
+
+	// Find All
+	exports.findAll = ( req, res ) => {
+		var url_query = req.query;
+		var url_query_length = Object.keys( url_query ).length;
+		
+		url_query.END_VALID = 99991231;
+
+		blockModel.find( url_query )
+		.select( {
+			_id: 0,
+			REGION_CODE: 1,
+			COMP_CODE: 1,
+			EST_CODE: 1,
+			WERKS: 1,
+			AFD_CODE: 1,
+			BLOCK_CODE: 1,
+			BLOCK_NAME: 1,
+			WERKS_AFD_BLOCK_CODE: 1,
+			LATITUDE_BLOCK: 1,
+			LONGITUDE_BLOCK: 1
+		} )
+		.then( data => {
+			if( !data ) {
+				return res.send( {
+					status: false,
+					message: 'Data not found 2',
+					data: {}
+				} );
+			}
+			res.send( {
+				status: true,
+				message: 'Success',
+				data: data
+			} );
+		} ).catch( err => {
+			if( err.kind === 'ObjectId' ) {
+				return res.send( {
+					status: false,
+					message: 'Data not found 1',
+					data: {}
+				} );
+			}
+			return res.send( {
+				status: false,
+				message: 'Error retrieving data',
+				data: {}
+			} );
+		} );
+	}
+
+	// Sync Mobile
+	exports.syncMobile = ( req, res ) => {
+
+	// Auth Data
+	var auth = req.auth;
+	auth.REFFERENCE_ROLE = 'AFD_CODE';
+	auth.LOCATION_CODE = '2121D,2121H,2121E,2121C';
+
+	var start_date = date.convert( req.params.start_date, 'YYYYMMDDhhmmss' );
+	var end_date = date.convert( req.params.end_date, 'YYYYMMDDhhmmss' );
+	var location_code_group = auth.LOCATION_CODE.split( ',' );
+	var ref_role = auth.REFFERENCE_ROLE;
+	var location_code_final = [];
+	var key = [];
+	var query = {};
+		query["END_VALID"] = 99991231;
+	
+	if ( ref_role != 'ALL' ) {
+		location_code_group.forEach( function( data ) {
+			switch ( ref_role ) {
+				case 'REGION_CODE':
+					location_code_final.push( data.substr( 0, 2 ) );
+				break;
+				case 'COMP_CODE':
+					location_code_final.push( data.substr( 0, 2 ) );
+				break;
+				case 'AFD_CODE':
+					location_code_final.push( data );
+				break;
+				case 'BA_CODE':
+					location_code_final.push( data.substr( 0, 4 ) );
+				break;
+			}
+		} );
+	}
+
+	switch ( ref_role ) {
+		case 'REGION_CODE':
+			key = ref_role;
+			query[key] = location_code_final;
+		break;
+		case 'COMP_CODE':
+			key = ref_role;
+			query[key] = location_code_final;
+		break;
+		case 'AFD_CODE':
+			key = 'WERKS_AFD_CODE';
+			query[key] = location_code_final;
+		break;
+		case 'BA_CODE':
+			key = 'WERKS';
+			query[key] = location_code_final;
+		break;
+		case 'NATIONAL':
+			key = 'NATIONAL';
+			query[key] = 'NATIONAL';
+		break;
+	}
+
+	//console.log(auth);
+	console.log(query);
+	console.log(start_date);
+	console.log(end_date);
+
+	// Set Data
+	blockModel
+	.find( 
+		query,
+		/*{
+			$and: [
+				{
+					$or: [
+						{
+							INSERT_TIME: {
+								$gte: start_date,
+								$lte: end_date
+							}
+						},
+						{
+							UPDATE_TIME: {
+								$gte: start_date,
+								$lte: end_date
+							}
+						},
+						{
+							DELETE_TIME: {
+								$gte: start_date,
+								$lte: end_date
+							}
+						}
+					]
+				}
+			]
+		}*/
+	)
+	.select( {
+		_id: 0,
+		REGION_CODE: 1,
+		COMP_CODE: 1,
+		EST_CODE: 1,
+		WERKS: 1,
+		AFD_CODE: 1,
+		BLOCK_CODE: 1,
+		BLOCK_NAME: 1,
+		WERKS_AFD_CODE: 1,
+		WERKS_AFD_BLOCK_CODE: 1,
+		LATITUDE_BLOCK: 1,
+		LONGITUDE_BLOCK: 1,
+		INSERT_TIME: 1,
+		DELETE_TIME: 1,
+		UPDATE_TIME: 1
+	} )
+	.then( data_insert => {
+		//console.log(data_insert);
+		//console.log(start_date);
+		//console.log(end_date);
+		var temp_insert = [];
+		var temp_update = [];
+		var temp_delete = [];
+
+		data_insert.forEach( function( data ) {
+
+			if ( data.DELETE_TIME >= start_date && data.DELETE_TIME <= end_date ) {
+				temp_delete.push( {
+					REGION_CODE: data.REGION_CODE,
+					COMP_CODE: data.COMP_CODE,
+					EST_CODE: data.EST_CODE,
+					WERKS: data.WERKS,
+					AFD_CODE: data.AFD_CODE,
+					BLOCK_CODE: data.BLOCK_CODE,
+					BLOCK_NAME: data.BLOCK_NAME,
+					BLOCK_NAME: data.BLOCK_NAME,
+					WERKS_AFD_CODE: data.WERKS_AFD_CODE,
+					WERKS_AFD_BLOCK_CODE: data.WERKS_AFD_BLOCK_CODE,
+					LATITUDE_BLOCK: data.LATITUDE_BLOCK,
+					LONGITUDE_BLOCK: data.LONGITUDE_BLOCK
+				} );
+			}
+
+			if ( data.INSERT_TIME >= start_date && data.INSERT_TIME <= end_date ) {
+				temp_insert.push( {
+					REGION_CODE: data.REGION_CODE,
+					COMP_CODE: data.COMP_CODE,
+					EST_CODE: data.EST_CODE,
+					WERKS: data.WERKS,
+					AFD_CODE: data.AFD_CODE,
+					BLOCK_CODE: data.BLOCK_CODE,
+					BLOCK_NAME: data.BLOCK_NAME,
+					BLOCK_NAME: data.BLOCK_NAME,
+					WERKS_AFD_CODE: data.WERKS_AFD_CODE,
+					WERKS_AFD_BLOCK_CODE: data.WERKS_AFD_BLOCK_CODE,
+					LATITUDE_BLOCK: data.LATITUDE_BLOCK,
+					LONGITUDE_BLOCK: data.LONGITUDE_BLOCK
+				} );
+			}
+
+			if ( data.UPDATE_TIME >= start_date && data.UPDATE_TIME <= end_date ) {
+				temp_update.push( {
+					REGION_CODE: data.REGION_CODE,
+					COMP_CODE: data.COMP_CODE,
+					EST_CODE: data.EST_CODE,
+					WERKS: data.WERKS,
+					AFD_CODE: data.AFD_CODE,
+					BLOCK_CODE: data.BLOCK_CODE,
+					BLOCK_NAME: data.BLOCK_NAME,
+					BLOCK_NAME: data.BLOCK_NAME,
+					WERKS_AFD_CODE: data.WERKS_AFD_CODE,
+					WERKS_AFD_BLOCK_CODE: data.WERKS_AFD_BLOCK_CODE,
+					LATITUDE_BLOCK: data.LATITUDE_BLOCK,
+					LONGITUDE_BLOCK: data.LONGITUDE_BLOCK
+				} );
+			}
+
+		} );
+
+		res.json({
+			status: true,
+			message: 'Data Sync tanggal ' + date.convert( req.params.start_date, 'YYYY-MM-DD' ) + ' s/d ' + date.convert( req.params.end_date, 'YYYY-MM-DD' ),
+			data: {
+				"insert": temp_insert,
+				"update": temp_update,
+				"delete": temp_delete
+			}
+		});
+	} ).catch( err => {
+		if( err.kind === 'ObjectId' ) {
+			return res.send({
+				status: false,
+				message: "ObjectId Error",
+				data: {}
+			});
+		}
+
+		return res.send({
+			status: false,
+			message: "Error",
+			data: {}
+		} );
+	});
+}
