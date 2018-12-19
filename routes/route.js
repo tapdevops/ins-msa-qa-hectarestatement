@@ -95,12 +95,15 @@ module.exports = ( app ) => {
 	app.delete( '/block/:id', block.delete );
 
 	// Routing: Comp
-	app.post( '/sync/comp', comp.createOrUpdate );
+	app.get( '/comp/all', token_verify, comp.findAll );
+	app.get( '/comp/q', token_verify, comp.findAll );
+	app.post( '/sync-tap/comp', token_verify, comp.createOrUpdate );
+	app.delete( '/comp/:id', token_verify, comp.delete );
+
 	app.post( '/comp', comp.create );
 	app.get( '/comp', comp.find );
 	app.get( '/comp/:id', comp.findOne );
 	app.put( '/comp/:id', comp.update );
-	app.delete( '/comp/:id', comp.delete );
 
 	// Routing: Est
 	app.get( '/est/all', token_verify, est.findAll );
