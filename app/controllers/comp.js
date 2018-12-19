@@ -8,43 +8,6 @@ var url = require( 'url' );
 const Client = require('node-rest-client').Client; 	
 const config = require( '../../config/config.js' );
 
-// Delete data with the specified ID in the request
-exports.delete = ( req, res ) => {
-	compModel.findOneAndUpdate( { 
-		COMP_CODE: req.params.id
-	}, {
-		DELETE_TIME: date.convert( 'now', 'YYYYMMDDhhmmss' )
-	}, { new: true } )
-	.then( data => {
-		if( !data ) {
-			return res.send( {
-				status: false,
-				message: "Data failed to delete",
-				data: {}
-			} );
-		}
-		else {
-			return res.send({
-				status: true,
-				message: 'Data successfully deleted',
-				data: {}
-			});
-		}
-	}).catch( err => {
-		if( err.kind === 'ObjectId' ) {
-			return res.send( {
-				status: false,
-				message: "ObjectID Error",
-				data: {}
-			} );
-		}
-		return res.send( {
-			status: false,
-			message: "Error",
-			data: {}
-		} );
-	});
-};
 
 // Create and Save new Data
 exports.create = ( req, res ) => {
@@ -283,29 +246,16 @@ exports.update = ( req, res ) => {
 					data.COMP_NAME != req.body.COMP_NAME || 
 					data.ADDRESS != req.body.ADDRESS
 				) {
-					var data_update;
-					if ( date.convert( req.body.END_VALID, 'YYYYMMDD' ) == '99991231' ) {
-						data_update = {
-							NATIONAL: req.body.NATIONAL || "",
-							REGION_CODE: req.body.REGION_CODE || "",
-							COMP_NAME: req.body.COMP_NAME || "",
-							ADDRESS: req.body.ADDRESS || "",
-							UPDATE_TIME: date.convert( 'now', 'YYYYMMDDhhmmss' )
-						}
-					}
-					else {
-						data_update = {
-							NATIONAL: req.body.NATIONAL || "",
-							REGION_CODE: req.body.REGION_CODE || "",
-							COMP_NAME: req.body.COMP_NAME || "",
-							ADDRESS: req.body.ADDRESS || "",
-							DELETE_TIME: date.convert( 'now', 'YYYYMMDDhhmmss' )
-						}
-					}
 
 					compModel.findOneAndUpdate( { 
 						COMP_CODE: req.body.COMP_CODE
-					}, data_update, { new: true } )
+					}, {
+						NATIONAL: req.body.NATIONAL || "",
+						REGION_CODE: req.body.REGION_CODE || "",
+						COMP_NAME: req.body.COMP_NAME || "",
+						ADDRESS: req.body.ADDRESS || "",
+						UPDATE_TIME: date.convert( 'now', 'YYYYMMDDhhmmss' )
+					}, { new: true } )
 					.then( data => {
 						if( !data ) {
 							return res.send( {
@@ -403,4 +353,212 @@ exports.update = ( req, res ) => {
 				data: {}
 			} );
 		} );
+	}
+
+	// Delete data with the specified ID in the request
+	exports.delete = ( req, res ) => {
+		compModel.findOneAndUpdate( { 
+			COMP_CODE: req.params.id
+		}, {
+			DELETE_TIME: date.convert( 'now', 'YYYYMMDDhhmmss' )
+		}, { new: true } )
+		.then( data => {
+			if( !data ) {
+				return res.send( {
+					status: false,
+					message: "Data failed to delete",
+					data: {}
+				} );
+			}
+			else {
+				return res.send({
+					status: true,
+					message: 'Data successfully deleted',
+					data: {}
+				});
+			}
+		}).catch( err => {
+			if( err.kind === 'ObjectId' ) {
+				return res.send( {
+					status: false,
+					message: "ObjectID Error",
+					data: {}
+				} );
+			}
+			return res.send( {
+				status: false,
+				message: "Error",
+				data: {}
+			} );
+		});
+	};
+
+	// Sync Mobile
+	exports.syncMobile = ( req, res ) => {
+
+		// Auth Data
+		var auth = req.auth;
+		//auth.REFFERENCE_ROLE = 'AFD_CODE';
+		//auth.LOCATION_CODE = '2121D,2121H,2121E,2121C';
+		
+		var start_date = date.convert( req.params.start_date, 'YYYYMMDDhhmmss' );
+		var end_date = date.convert( req.params.end_date, 'YYYYMMDDhhmmss' );
+		var location_code_group = auth.LOCATION_CODE.split( ',' );
+		var ref_role = auth.REFFERENCE_ROLE;
+		var location_code_final = [];
+		var key = [];
+		var query = {};
+		
+		if ( ref_role != 'ALL' ) {
+			location_code_group.forEach( function( data ) {
+				switch ( ref_role ) {
+					case 'REGION_CODE':
+						location_code_final.push( data.substr( 0, 2 ) );
+					break;
+					case 'COMP_CODE':
+						location_code_final.push( data.substr( 0, 2 ) );
+					break;
+					case 'AFD_CODE':
+						location_code_final.push( data.substr( 0, 2 ) );
+					break;
+					case 'BA_CODE':
+						location_code_final.push( data.substr( 0, 2 ) );
+					break;
+				}
+			} );
+		}
+
+		switch ( ref_role ) {
+			case 'REGION_CODE':
+				key = ref_role;
+				query[key] = location_code_final;
+			break;
+			case 'COMP_CODE':
+				key = ref_role;
+				query[key] = location_code_final;
+			break;
+			case 'AFD_CODE':
+				key = 'COMP_CODE';
+				query[key] = location_code_final;
+			break;
+			case 'BA_CODE':
+				key = 'COMP_CODE';
+				query[key] = location_code_final;
+			break;
+			case 'NATIONAL':
+				key = 'NATIONAL';
+				query[key] = 'NATIONAL';
+			break;
+		}
+
+		console.log(auth);
+		console.log(query);
+
+		// Set Data
+		compModel
+		.find( 
+			query,
+			{
+				$and: [
+					{
+						$or: [
+							{
+								INSERT_TIME: {
+									$gte: start_date,
+									$lte: end_date
+								}
+							},
+							{
+								UPDATE_TIME: {
+									$gte: start_date,
+									$lte: end_date
+								}
+							},
+							{
+								DELETE_TIME: {
+									$gte: start_date,
+									$lte: end_date
+								}
+							}
+						]
+					}
+				]
+			}
+		)
+		.select( {
+			_id: 0,
+			NATIONAL: 1,
+			REGION_CODE: 1,
+			COMP_CODE: 1,
+			COMP_NAME: 1,
+			ADDRESS: 1,
+			DELETE_TIME: 1,
+			INSERT_TIME: 1,
+			UPDATE_TIME: 1
+		} )
+		.then( data_insert => {
+
+			var temp_insert = [];
+			var temp_update = [];
+			var temp_delete = [];
+
+			data_insert.forEach( function( data ) {
+
+				if ( data.DELETE_TIME >= start_date && data.DELETE_TIME <= end_date ) {
+					temp_delete.push( {
+						NATIONAL: data.NATIONAL,
+						REGION_CODE: data.REGION_CODE,
+						COMP_CODE: data.COMP_CODE,
+						COMP_NAME: data.COMP_NAME,
+						ADDRESS: data.ADDRESS
+					} );
+				}
+
+				if ( data.INSERT_TIME >= start_date && data.INSERT_TIME <= end_date ) {
+					temp_insert.push( {
+						NATIONAL: data.NATIONAL,
+						REGION_CODE: data.REGION_CODE,
+						COMP_CODE: data.COMP_CODE,
+						COMP_NAME: data.COMP_NAME,
+						ADDRESS: data.ADDRESS
+					} );
+				}
+
+				if ( data.UPDATE_TIME >= start_date && data.UPDATE_TIME <= end_date ) {
+					temp_update.push( {
+						NATIONAL: data.NATIONAL,
+						REGION_CODE: data.REGION_CODE,
+						COMP_CODE: data.COMP_CODE,
+						COMP_NAME: data.COMP_NAME,
+						ADDRESS: data.ADDRESS
+					} );
+				}
+
+			} );
+
+			res.json({
+				status: true,
+				message: 'Data Sync tanggal ' + date.convert( req.params.start_date, 'YYYY-MM-DD' ) + ' s/d ' + date.convert( req.params.end_date, 'YYYY-MM-DD' ),
+				data: {
+					"insert": temp_insert,
+					"update": temp_update,
+					"delete": temp_delete
+				}
+			});
+		} ).catch( err => {
+			if( err.kind === 'ObjectId' ) {
+				return res.send({
+					status: false,
+					message: "ObjectId Error",
+					data: {}
+				});
+			}
+
+			return res.send({
+				status: false,
+				message: "Error",
+				data: {}
+			} );
+		});
+		
 	}

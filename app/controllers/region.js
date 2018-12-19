@@ -66,7 +66,173 @@ exports.findAll = ( req, res ) => {
 
 };
 
+// Sync Mobile
 exports.syncMobile = ( req, res ) => {
+
+	// Auth Data
+	var auth = req.auth;
+	//auth.REFFERENCE_ROLE = 'AFD_CODE';
+	//auth.LOCATION_CODE = '2121D,2121H,2121E,2121C';
+	
+	var start_date = date.convert( req.params.start_date, 'YYYYMMDDhhmmss' );
+	var end_date = date.convert( req.params.end_date, 'YYYYMMDDhhmmss' );
+	var location_code_group = auth.LOCATION_CODE.split( ',' );
+	var ref_role = auth.REFFERENCE_ROLE;
+	var location_code_final = [];
+	var key = [];
+	var query = {};
+	
+	if ( ref_role != 'ALL' ) {
+		location_code_group.forEach( function( data ) {
+			switch ( ref_role ) {
+				case 'REGION_CODE':
+					location_code_final.push( data.substr( 0, 2 ) );
+				break;
+				case 'COMP_CODE':
+					location_code_final.push( '0' + data.substr( 0, 1 ) );
+				break;
+				case 'AFD_CODE':
+					location_code_final.push( '0' + data.substr( 0, 1 ) );
+				break;
+				case 'BA_CODE':
+					location_code_final.push( '0' + data.substr( 0, 1 ) );
+				break;
+			}
+		} );
+	}
+
+	switch ( ref_role ) {
+		case 'REGION_CODE':
+			key = ref_role;
+			query[key] = location_code_final;
+		break;
+		case 'COMP_CODE':
+			key = 'REGION_CODE';
+			query[key] = location_code_final;
+		break;
+		case 'AFD_CODE':
+			key = 'REGION_CODE';
+			query[key] = location_code_final;
+		break;
+		case 'BA_CODE':
+			key = 'REGION_CODE';
+			query[key] = location_code_final;
+		break;
+		case 'NATIONAL':
+			key = 'NATIONAL';
+			query[key] = 'NATIONAL';
+		break;
+	}
+
+	console.log(auth);
+	console.log(query);
+
+	// Set Data
+	regionModel
+	.find( 
+		query,
+		//{
+		//	$and: [
+		//		{
+		//			$or: [
+		//				{
+		//					INSERT_TIME: {
+		//						$gte: start_date,
+		//						$lte: end_date
+		//					}
+		//				},
+		//				{
+		//					UPDATE_TIME: {
+		//						$gte: start_date,
+		//						$lte: end_date
+		//					}
+		//				},
+		//				{
+		//					DELETE_TIME: {
+		//						$gte: start_date,
+		//						$lte: end_date
+		//					}
+		//				}
+		//			]
+		//		}
+		//	]
+		//}
+	)
+	.select( {
+		_id: 0,
+		NATIONAL: 1,
+		REGION_CODE: 1,
+		REGION_NAME: 1,
+		DELETE_TIME: 1,
+		INSERT_TIME: 1,
+		UPDATE_TIME: 1
+	} )
+	.then( data_insert => {
+
+		var temp_insert = [];
+		var temp_update = [];
+		var temp_delete = [];
+
+		data_insert.forEach( function( data ) {
+
+			if ( data.DELETE_TIME >= start_date && data.DELETE_TIME <= end_date ) {
+				temp_delete.push( {
+					NATIONAL: data.NATIONAL,
+					REGION_CODE: data.REGION_CODE,
+					REGION_NAME: data.REGION_NAME
+				} );
+			}
+
+			if ( data.INSERT_TIME >= start_date && data.INSERT_TIME <= end_date ) {
+				temp_insert.push( {
+					NATIONAL: data.NATIONAL,
+					REGION_CODE: data.REGION_CODE,
+					REGION_NAME: data.REGION_NAME
+				} );
+			}
+
+			if ( data.UPDATE_TIME >= start_date && data.UPDATE_TIME <= end_date ) {
+				temp_update.push( {
+					NATIONAL: data.NATIONAL,
+					REGION_CODE: data.REGION_CODE,
+					REGION_NAME: data.REGION_NAME
+				} );
+			}
+
+		} );
+		console.log(start_date + '/' + end_date)
+		console.log(data_insert)
+		console.log(temp_insert)
+		console.log(temp_update)
+		console.log(temp_delete)
+		res.json({
+			status: true,
+			message: 'Data Sync tanggal ' + date.convert( req.params.start_date, 'YYYY-MM-DD' ) + ' s/d ' + date.convert( req.params.end_date, 'YYYY-MM-DD' ),
+			data: {
+				"insert": temp_insert,
+				"update": temp_update,
+				"delete": temp_delete
+			}
+		});
+	} ).catch( err => {
+		if( err.kind === 'ObjectId' ) {
+			return res.send({
+				status: false,
+				message: "ObjectId Error",
+				data: {}
+			});
+		}
+
+		return res.send({
+			status: false,
+			message: "Error",
+			data: {}
+		} );
+	});
+	
+}
+
+exports.syncMobile2 = ( req, res ) => {
 
 	nJwt.verify( req.token, config.secret_key, config.token_algorithm, ( err, authData ) => {
 		if ( err ) {

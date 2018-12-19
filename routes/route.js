@@ -94,16 +94,33 @@ module.exports = ( app ) => {
 	app.put( '/block/:id', block.update );
 	app.delete( '/block/:id', block.delete );
 
+
+
+
+
+
 	// Routing: Comp
 	app.get( '/comp/all', token_verify, comp.findAll );
 	app.get( '/comp/q', token_verify, comp.findAll );
 	app.post( '/sync-tap/comp', token_verify, comp.createOrUpdate );
+	app.get( '/sync-mobile/comp/:start_date/:end_date', token_verify, comp.syncMobile );
 	app.delete( '/comp/:id', token_verify, comp.delete );
+
+
+
+
 
 	app.post( '/comp', comp.create );
 	app.get( '/comp', comp.find );
 	app.get( '/comp/:id', comp.findOne );
 	app.put( '/comp/:id', comp.update );
+
+
+
+
+
+
+
 
 	// Routing: Est
 	app.get( '/est/all', token_verify, est.findAll );
@@ -125,7 +142,7 @@ module.exports = ( app ) => {
 	app.post( '/sync-tap/region', verifyToken, region.createOrUpdate );
 
 
-	app.get( '/sync-mobile/region/:start_date/:end_date', verifyToken, region.syncMobile );
+	app.get( '/sync-mobile/region/:start_date/:end_date', token_verify, region.syncMobile );
 	app.post( '/region', verifyToken, region.create );
 	app.get( '/region', verifyToken, region.find );
 	app.get( '/region/:id', verifyToken, region.findOne );

@@ -577,6 +577,7 @@ exports.delete = ( req, res ) => {
 
 		// Auth Data
 		var auth = req.auth;
+		console.log(auth);
 
 		// Data Dummy
 		//auth.REFFERENCE_ROLE = 'AFD_CODE';
@@ -630,6 +631,7 @@ exports.delete = ( req, res ) => {
 				query[key] = 'NATIONAL';
 			break;
 		}
+		console.log(query)
 
 		afdelingModel
 		.find( query )
