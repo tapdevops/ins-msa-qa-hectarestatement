@@ -131,32 +131,32 @@ exports.syncMobile = ( req, res ) => {
 	regionModel
 	.find( 
 		query,
-		//{
-		//	$and: [
-		//		{
-		//			$or: [
-		//				{
-		//					INSERT_TIME: {
-		//						$gte: start_date,
-		//						$lte: end_date
-		//					}
-		//				},
-		//				{
-		//					UPDATE_TIME: {
-		//						$gte: start_date,
-		//						$lte: end_date
-		//					}
-		//				},
-		//				{
-		//					DELETE_TIME: {
-		//						$gte: start_date,
-		//						$lte: end_date
-		//					}
-		//				}
-		//			]
-		//		}
-		//	]
-		//}
+		{
+			$and: [
+				{
+					$or: [
+						{
+							INSERT_TIME: {
+								$gte: start_date,
+								$lte: end_date
+							}
+						},
+						{
+							UPDATE_TIME: {
+								$gte: start_date,
+								$lte: end_date
+							}
+						},
+						{
+							DELETE_TIME: {
+								$gte: start_date,
+								$lte: end_date
+							}
+						}
+					]
+				}
+			]
+		}
 	)
 	.select( {
 		_id: 0,
@@ -169,6 +169,7 @@ exports.syncMobile = ( req, res ) => {
 	} )
 	.then( data_insert => {
 
+		console.log(data_insert);
 		var temp_insert = [];
 		var temp_update = [];
 		var temp_delete = [];
@@ -209,9 +210,9 @@ exports.syncMobile = ( req, res ) => {
 			status: true,
 			message: 'Data Sync tanggal ' + date.convert( req.params.start_date, 'YYYY-MM-DD' ) + ' s/d ' + date.convert( req.params.end_date, 'YYYY-MM-DD' ),
 			data: {
-				"insert": temp_insert,
-				"update": temp_update,
-				"delete": temp_delete
+				"hapus": temp_delete,
+				"simpan": temp_insert,
+				"ubah": temp_update
 			}
 		});
 	} ).catch( err => {
@@ -370,7 +371,7 @@ exports.createOrUpdate = ( req, res ) => {
 		}
 		else {
 			if( !req.body.NATIONAL || !req.body.REGION_CODE ) {
-				return res.status( 400 ).send({
+				return res.send({
 					status: false,
 					message: 'Invalid input',
 					data: {}

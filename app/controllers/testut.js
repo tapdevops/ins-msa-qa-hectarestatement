@@ -34,7 +34,6 @@
  */
 	// Create or update data
 	// Untuk proses sync menggunakan cronjob dari database Oracle ke MongoDB (TAP_DW)
- 	// Create or update data
 	exports.createOrUpdate = ( req, res ) => {
 
 		//if( !req.body.NATIONAL || !req.body.REGION_CODE || !req.body.COMP_CODE ) {
@@ -46,7 +45,12 @@
 		//}
 
 		landUseModel.findOne( { 
-			REGION_CODE: req.body.REGION_CODE
+			REGION_CODE: req.body.REGION_CODE,
+			COMP_CODE: req.body.COMP_CODE,
+			WERKS: req.body.WERKS,
+			AFD_CODE: req.body.AFD_CODE,
+			BLOCK_CODE: req.body.BLOCK_CODE,
+			SPMON: date.convert( req.body.SPMON, 'YYYYMMDDhhmmss' )
 		} ).then( data => {
 
 			// Kondisi belum ada data, create baru dan insert ke Sync List
@@ -55,13 +59,7 @@
 				const set = new landUseModel( {
 					NATIONAL 				: req.body.NATIONAL || "",
 					REGION_CODE 			: req.body.REGION_CODE || "",
-					REGION_NAME 			: req.body.REGION_NAME || "",
 					COMP_CODE 				: req.body.COMP_CODE || "",
-					COMP_NAME 				: req.body.COMP_NAME || "",
-					ADDRESS 				: req.body.ADDRESS || "",
-					EST_CODE 				: req.body.EST_CODE || "",
-					EST_NAME 				: req.body.EST_NAME || "",
-					CITY 					: req.body.CITY || "",
 					WERKS 					: req.body.WERKS || "", 
 					SUB_BA_CODE 			: req.body.SUB_BA_CODE || "",
 					KEBUN_CODE 				: req.body.KEBUN_CODE || "",
@@ -72,9 +70,9 @@
 					BLOCK_NAME 				: req.body.BLOCK_NAME || "",
 					WERKS_AFD_BLOCK_CODE 	: req.body.WERKS + req.body.AFD_CODE + req.body.BLOCK_CODE,
 					LAND_USE_CODE 			: req.body.LAND_USE_CODE || "",
-					LAND_USE_NAME 			: req.body.LAND_USE_CNAME|| "",
+					LAND_USE_NAME 			: req.body.LAND_USE_NAME|| "",
 					LAND_USE_CODE_GIS 		: req.body.LAND_USE_CODE_GIS || "",
-					SPMON 					: req.body.SPMON || "",
+					SPMON 					: date.convert( req.body.SPMON, 'YYYYMMDDhhmmss' ),
 					LAND_CAT 				: req.body.LAND_CAT || "",
 					LAND_CAT_L1_CODE 		: req.body.LAND_CAT_L1_CODE || "",
 					LAND_CAT_L1 			: req.body.LAND_CAT_L1 || "",
@@ -126,11 +124,39 @@
 			}
 			// Kondisi data sudah ada, check value, jika sama tidak diupdate, jika beda diupdate dan dimasukkan ke Sync List
 			else {
-				res.json({
-					message: 'OK -> UPDATE'
-				})
-				/*
-				if ( data.COMP_NAME != req.body.COMP_NAME || data.ADDRESS != req.body.ADDRESS ) {
+				if ( 
+					data.REGION_CODE != req.body.REGION_CODE || 
+					data.NATIONAL 				!= req.body.NATIONAL || 
+					data.REGION_CODE 			!= req.body.REGION_CODE || 
+					data.COMP_CODE 				!= req.body.COMP_CODE || 
+					data.WERKS 					!= req.body.WERKS  || 
+					data.SUB_BA_CODE 			!= req.body.SUB_BA_CODE || 
+					data.KEBUN_CODE 			!= req.body.KEBUN_CODE || 
+					data.AFD_CODE 				!= req.body.AFD_CODE || 
+					data.AFD_NAME 				!= req.body.AFD_NAME || 
+					data.WERKS_AFD_CODE 		!= req.body.WERKS + req.body.AFD_CODE || 
+					data.BLOCK_CODE 			!= req.body.BLOCK_CODE || 
+					data.BLOCK_NAME 			!= req.body.BLOCK_NAME || 
+					data.WERKS_AFD_BLOCK_CODE 	!= req.body.WERKS + req.body.AFD_CODE + req.body.BLOCK_CODE || 
+					data.LAND_USE_CODE 			!= req.body.LAND_USE_CODE || 
+					data.LAND_USE_NAME 			!= req.body.LAND_USE_NAME || 
+					data.LAND_USE_CODE_GIS 		!= req.body.LAND_USE_CODE_GIS || 
+					data.SPMON 					!= date.convert( req.body.SPMON, 'YYYYMMDDhhmmss' ) || 
+					data.LAND_CAT 				!= req.body.LAND_CAT || 
+					data.LAND_CAT_L1_CODE 		!= req.body.LAND_CAT_L1_CODE || 
+					data.LAND_CAT_L1 			!= req.body.LAND_CAT_L1 || 
+
+					data.LAND_CAT_L2_CODE 		!= req.body.LAND_CAT_L2_CODE ||
+					data.MATURITY_STATUS 		!= req.body.MATURITY_STATUS ||
+					data.SCOUT_STATUS 			!= req.body.SCOUT_STATUS ||
+					data.AGES 					!= req.body.AGES ||
+					data.HA_SAP 				!= req.body.HA_SAP ||
+					data.PALM_SAP 				!= req.body.PALM_SAP ||
+					data.SPH_SAP 				!= req.body.SPH_SAP ||
+					data.HA_GIS 				!= req.body.HA_GIS ||
+					data.PALM_GIS 				!= req.body.PALM_GIS ||
+					data.SPH_GIS 				!= req.body.SPH_GIS
+				) {
 					landUseModel.findOneAndUpdate( { 
 						COMP_CODE: req.body.COMP_CODE
 					}, {
@@ -177,8 +203,6 @@
 						data: {}
 					} );
 				}
-				*/
-				
 			}
 			
 		} ).catch( err => {

@@ -37,6 +37,8 @@ mongoose.connect( dbConfig.url, {
 
 // Server Running Message
 app.listen( config.app_port, () => {
+	var host = config.ip_address;
+	var port = config.app_port;
 	console.log( config.app_name + ' running on ' + config.app_port )
 } );
 
@@ -47,3 +49,4 @@ app.get( '/', ( req, res ) => {
 
 // Require Bisnis Area Routes
 require( './routes/route.js' )( app );
+module.exports = app;

@@ -3,13 +3,9 @@ const mongoose = require( 'mongoose' );
 const LandUseSchema = mongoose.Schema( {
 	NATIONAL 				: String,
 	REGION_CODE 			: String,
-	REGION_NAME 			: String, // TM_REGION
 	COMP_CODE 				: String,
-	COMP_NAME 				: String, // TM_COMP
 	ADDRESS 				: String, // TM_COMP
 	EST_CODE 				: String,
-	EST_NAME 				: String, // TM_EST
-	CITY 					: String, // TM_EST
 	WERKS 					: String, 
 	SUB_BA_CODE 			: String,
 	KEBUN_CODE 				: String,

@@ -65,7 +65,7 @@ module.exports = ( app ) => {
 	const testut = require( '../app/controllers/testut.js' );
 
 	app.get( '/testut', token_verify, testut.find );
-	app.post( '/testut', token_verify, testut.createOrUpdate );
+	app.post( '/sync-tap/land-use', token_verify, testut.createOrUpdate );
 
 	// Routing: Afdeling
 	app.get( '/afdeling/all', token_verify, afdeling.findAll );

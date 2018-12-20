@@ -1,88 +1,86 @@
 /**
  * --------------------------------------------------
- * VARIABLE
+ * SETUP VARIABLE
  * --------------------------------------------------
  */
-var test_name = 'REGION';
-var data_model = require( '../app/models/region.js' );
-var data_dummy = [
-	{
-		// With Null UPDATE_TIME_DW
-		"NATIONAL": "NATIONAL",
-		"REGION_CODE": "02",
-		"REGION_NAME": "TESTING 1",
-		"INSERT_TIME_DW": "2018-01-01 00:00:00",
-		"UPDATE_TIME_DW": ""
-	},
-	{
-		// With Null INSERT_TIME_DW
-		"NATIONAL": "NATIONAL",
-		"REGION_CODE": "02",
-		"REGION_NAME": "TESTING 2",
-		"INSERT_TIME_DW": "",
-		"UPDATE_TIME_DW": "2018-01-01 00:00:00"
-	},
-	{
-		// With Null Date
-		"NATIONAL": "NATIONAL",
-		"REGION_CODE": "02",
-		"REGION_NAME": "TESTING 2",
-		"INSERT_TIME_DW": "",
-		"UPDATE_TIME_DW": ""
-	},
-	{
-		// With Null Date
-		"NATIONAL": "NATIONAL",
-		"REGION_CODE": "02",
-		"REGION_NAME": "TESTING 2*^*",
-		"INSERT_TIME_DW": "",
-		"UPDATE_TIME_DW": "7575957575"
-	}
-];
+	// Libraries
+	const request = require( 'supertest' );
+	const app = require( '../app.js' );
+	const expect = require( 'chai' ).expect;
 
-const date_and_time = require( 'date-and-time' );
+	// Setup Testing
+	const testing_name = "TEST REGION";
+	const url = {}
+	const model = require( '../app/models/region.js' );
+
+	// MENAMPILKAN DATA REGION BERDASARKAN PARAMETER
+	const data_dummy_test_02 = [ '04' ];
 
 /**
  * --------------------------------------------------
  * BEGIN TESTING
  * --------------------------------------------------
  */
-describe( test_name, function() {
+	describe( testing_name, function() {
 
-
-	// Inserting Data
-	// --------------------------------------------------\
-	it ( 'INSERTING DATA', function() {
-
-		var i = 1;
-
-		data_dummy.forEach( function( result ) {
-
-			const set = new data_model( {
-				NATIONAL: result.NATIONAL || "",
-				REGION_CODE: result.REGION_CODE || "",
-				REGION_NAME: result.REGION_NAME || "",
-				INSERT_TIME_DW: result.INSERT_TIME_DW || "",
-				UPDATE_TIME_DW: result.UPDATE_TIME_DW || "",
-				FLAG_UPDATE: date_and_time.format( new Date(), 'YYYYMMDD' )
-			} );
-
-			set.save()
+		// TEST - 01
+		// MENAMPILKAN SELURUH DATA REGION
+		// --------------------------------------------------\
+		it ( 'MENAMPILKAN SELURUH DATA REGION', function() {
+			model.find({}).select({
+				_id: 0,
+				NATIONAL: 1,
+				REGION_CODE: 1,
+				REGION_NAME: 1
+			})
 			.then( data => {
 				if ( !data ) {
-					console.log( data );
-					console.log( '    - INSERTING ' + i + ' -> FAILED' );
+					console.log( 'Error' );
 				}
 				else {
-					console.log( '    - INSERTING ' + i + ' -> SUCCESS' );
+					console.log( data );
 				}
 			} ).catch( err => {
-				console.log( '    - INSERTING ' + i + ' -> ERROR' );
+				if( err.kind === 'ObjectId' ) {
+					console.log( 'ObjectId error' );
+				}
+				else {
+					console.log( 'Error retrieving data' );
+				}
 			} );
 
-			i++;
+		} );
+
+		// TEST - 02
+		// MENAMPILKAN DATA REGION BERDASARKAN PARAMETER
+		// --------------------------------------------------\
+		it ( 'MENAMPILKAN DATA REGION BERDASARKAN PARAMETER', function() {
+			model.find({
+				REGION_CODE: { 
+					$in: data_dummy_test_02 
+				}
+			}).select({
+				_id: 0,
+				NATIONAL: 1,
+				REGION_CODE: 1,
+				REGION_NAME: 1
+			})
+			.then( data => {
+				if ( !data ) {
+					console.log( 'Error' );
+				}
+				else {
+					console.log( data );
+				}
+			} ).catch( err => {
+				if( err.kind === 'ObjectId' ) {
+					console.log( 'ObjectId error' );
+				}
+				else {
+					console.log( 'Error retrieving data' );
+				}
+			} );
+
 		} );
 
 	} );
-
-} );
