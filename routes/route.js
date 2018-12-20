@@ -62,10 +62,14 @@ module.exports = ( app ) => {
 	const comp = require( '../app/controllers/comp.js' );
 	const est = require( '../app/controllers/est.js' );
 	const region = require( '../app/controllers/region.js' );
-	const testut = require( '../app/controllers/testut.js' );
+	const landUse = require( '../app/controllers/landUse.js' );
 
-	app.get( '/testut', token_verify, testut.find );
-	app.post( '/sync-tap/land-use', token_verify, testut.createOrUpdate );
+	// Routing: Land Use
+	app.get( '/land-use/all', token_verify, landUse.findAll );
+	app.get( '/land-use/q', token_verify, landUse.findAll );
+	app.get( '/land-use', token_verify, landUse.find );
+	app.post( '/sync-tap/land-use', token_verify, landUse.createOrUpdate );
+	app.get( '/sync-mobile/land-use/:start_date/:end_date', token_verify, landUse.syncMobile );
 
 	// Routing: Afdeling
 	app.get( '/afdeling/all', token_verify, afdeling.findAll );

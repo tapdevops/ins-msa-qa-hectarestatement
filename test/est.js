@@ -9,12 +9,12 @@
 	const expect = require( 'chai' ).expect;
 
 	// Setup Testing
-	const testing_name = "TEST COMP";
+	const testing_name = "TEST EST";
 	const url = {}
-	const model = require( '../app/models/comp.js' );
+	const model = require( '../app/models/est.js' );
 
-	// MENAMPILKAN DATA COMP DENGAN PARAMETER
-	const data_dummy_test_01 = [ '33', '41', '42' ];
+	// MENAMPILKAN DATA EST DENGAN PARAMETER
+	const data_dummy_test_01 = [ '4121' ];
 
 /**
  * --------------------------------------------------
@@ -24,12 +24,11 @@
 	describe( testing_name, function() {
 
 		// TEST - 01
-		// MENAMPILKAN DATA COMP DENGAN PARAMETER
+		// MENAMPILKAN DATA EST DENGAN PARAMETER
 		// --------------------------------------------------\
-		it ( 'MENAMPILKAN DATA COMP DENGAN PARAMETER', function() {
-			var key = 'COMP_CODE';
+		it ( 'MENAMPILKAN DATA EST DENGAN PARAMETER', function() {
 			model.find( {
-				COMP_CODE: {
+				WERKS: {
 					$in: data_dummy_test_01
 				}
 			} )
@@ -38,8 +37,10 @@
 				NATIONAL: 1,
 				REGION_CODE: 1,
 				COMP_CODE: 1,
-				COMP_NAME: 1,
-				ADDRESS: 1
+				EST_CODE: 1,
+				WERKS: 1,
+				EST_NAME: 1,
+				CITY: 1
 			})
 			.then( data => {
 				if ( !data ) {
@@ -47,7 +48,7 @@
 				}
 				else {
 					data.forEach( function( result ) {
-						console.log( 'COMP_CODE : ' + result.COMP_CODE + ' - ' + result.COMP_NAME + ' -> SUCCESS' );
+						console.log( 'EST_CODE : ' + result.WERKS + ' - ' + result.EST_NAME + ' -> SUCCESS' );
 					} );
 				}
 			} ).catch( err => {

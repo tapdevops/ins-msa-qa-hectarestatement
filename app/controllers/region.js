@@ -201,11 +201,7 @@ exports.syncMobile = ( req, res ) => {
 			}
 
 		} );
-		console.log(start_date + '/' + end_date)
-		console.log(data_insert)
-		console.log(temp_insert)
-		console.log(temp_update)
-		console.log(temp_delete)
+
 		res.json({
 			status: true,
 			message: 'Data Sync tanggal ' + date.convert( req.params.start_date, 'YYYY-MM-DD' ) + ' s/d ' + date.convert( req.params.end_date, 'YYYY-MM-DD' ),
@@ -230,135 +226,6 @@ exports.syncMobile = ( req, res ) => {
 			data: {}
 		} );
 	});
-	
-}
-
-exports.syncMobile2 = ( req, res ) => {
-
-	nJwt.verify( req.token, config.secret_key, config.token_algorithm, ( err, authData ) => {
-		if ( err ) {
-			res.send({
-				status: false,
-				message: "Invalid Token",
-				data: {}
-			} );
-		}
-		else {
-			
-			var auth = jwtDecode( req.token );
-			var location_code = auth.LOCATION_CODE;
-			var location_code = location_code.split( ',' );
-			var location_code_final = [];
-
-			location_code.forEach( function( data ) {
-				location_code_final.push( '0' + data.substr( 0, 1 ) );
-			} );
-
-			var start_date = date.convert( req.params.start_date, 'YYYYMMDD' ) + '000000';
-			var end_date = date.convert( req.params.end_date, 'YYYYMMDD' ) + '235959';
-
-			var data_sync = [];
-
-			console.log( parseInt( start_date ) + '/' + parseInt( end_date ) );
-			
-
-			// Select All (Insert Update Delete)
-			regionModel.find( { 
-				REGION_CODE: { $in: location_code_final },
-				
-				$and: [
-					{
-						$or: [
-							{
-								INSERT_TIME: {
-									$gte: parseInt( start_date ),
-									$lt: parseInt( end_date )
-								}
-							},
-							{
-								UPDATE_TIME: {
-									$gte: parseInt( start_date ),
-									$lt: parseInt( end_date )
-								}
-							},
-							{
-								DELETE_TIME: {
-									$gte: parseInt( start_date ),
-									$lt: parseInt( end_date )
-								}
-							}
-						]
-					}
-				]
-			} ).then( data_insert => {
-				console.log( data_insert );
-
-				var temp_insert = [];
-				var temp_update = [];
-				var temp_delete = [];
-
-				data_insert.forEach( function( data ) {
-					var convert_date = {
-						INSERT_TIME: parseInt( date.convert( String( data.INSERT_TIME ), 'YYYYMMDD' ) ),
-						UPDATE_TIME: parseInt( date.convert( String( data.UPDATE_TIME ), 'YYYYMMDD' ) ),
-						DELETE_TIME: parseInt( date.convert( String( data.DELETE_TIME ), 'YYYYMMDD' ) ),
-					};
-					
-					if ( convert_date.INSERT_TIME <= end_date && convert_date.INSERT_TIME >= start_date ) {
-						temp_insert.push( {
-							NATIONAL: data.NATIONAL,
-							REGION_CODE: data.REGION_CODE,
-							REGION_NAME: data.REGION_NAME
-						} );
-					}
-					
-					if ( convert_date.UPDATE_TIME <= end_date && convert_date.UPDATE_TIME >= start_date ) {
-						temp_update.push( {
-							NATIONAL: data.NATIONAL,
-							REGION_CODE: data.REGION_CODE,
-							REGION_NAME: data.REGION_NAME
-						} );
-					}
-
-					if ( convert_date.DELETE_TIME <= end_date && convert_date.DELETE_TIME >= start_date ) {
-						temp_delete.push( {
-							NATIONAL: data.NATIONAL,
-							REGION_CODE: data.REGION_CODE,
-							REGION_NAME: data.REGION_NAME
-						} );
-					}
-
-				} );
-
-				start_date = date.convert( String( start_date ), 'YYYY-MM-DD' );
-				end_date = date.convert( String( end_date ), 'YYYY-MM-DD' );
-
-				res.json( {
-					status: true,
-					message: "Data sync dari tanggal " + start_date + " s/d " + end_date,
-					data: {
-						"delete": temp_delete,
-						"insert": temp_insert,
-						"update": temp_update
-					}
-				} );
-			} ).catch( err => {
-				if( err.kind === 'ObjectId' ) {
-					return res.send({
-						status: false,
-						message: "Data not found 1",
-						data: {}
-					});
-				}
-
-				return res.send({
-					status: false,
-					message: "Error retrieving Data",
-					data: {}
-				} );
-			} );
-		}
-	} );
 	
 }
 

@@ -38,7 +38,9 @@
 					console.log( 'Error' );
 				}
 				else {
-					console.log( data );
+					data.forEach( function( result ) {
+						console.log( 'REGION_CODE : ' + result.REGION_CODE + ' - ' + result.REGION_NAME + ' -> SUCCESS' );
+					} );
 				}
 			} ).catch( err => {
 				if( err.kind === 'ObjectId' ) {
@@ -70,7 +72,9 @@
 					console.log( 'Error' );
 				}
 				else {
-					console.log( data );
+					data.forEach( function( result ) {
+						console.log( 'REGION_CODE : ' + result.REGION_CODE + ' - ' + result.REGION_NAME + ' -> SUCCESS' );
+					} );
 				}
 			} ).catch( err => {
 				if( err.kind === 'ObjectId' ) {

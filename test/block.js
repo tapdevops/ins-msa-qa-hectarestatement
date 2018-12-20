@@ -9,12 +9,12 @@
 	const expect = require( 'chai' ).expect;
 
 	// Setup Testing
-	const testing_name = "TEST COMP";
+	const testing_name = "TEST BLOCK";
 	const url = {}
-	const model = require( '../app/models/comp.js' );
+	const model = require( '../app/models/block.js' );
 
-	// MENAMPILKAN DATA COMP DENGAN PARAMETER
-	const data_dummy_test_01 = [ '33', '41', '42' ];
+	// MENAMPILKAN DATA BLOCK DENGAN PARAMETER
+	const data_dummy_test_01 = [ '4121A', '4121B', '4121C' ];
 
 /**
  * --------------------------------------------------
@@ -24,22 +24,28 @@
 	describe( testing_name, function() {
 
 		// TEST - 01
-		// MENAMPILKAN DATA COMP DENGAN PARAMETER
+		// MENAMPILKAN DATA BLOCK DENGAN PARAMETER
 		// --------------------------------------------------\
-		it ( 'MENAMPILKAN DATA COMP DENGAN PARAMETER', function() {
-			var key = 'COMP_CODE';
+		it ( 'MENAMPILKAN DATA BLOCK DENGAN PARAMETER', function() {
+			var key = 'AFD_CODE';
 			model.find( {
-				COMP_CODE: {
+				WERKS_AFD_CODE: {
 					$in: data_dummy_test_01
 				}
 			} )
 			.select({
 				_id: 0,
-				NATIONAL: 1,
 				REGION_CODE: 1,
 				COMP_CODE: 1,
-				COMP_NAME: 1,
-				ADDRESS: 1
+				EST_CODE: 1,
+				WERKS: 1,
+				AFD_CODE: 1,
+				BLOCK_CODE: 1,
+				BLOCK_NAME: 1,
+				WERKS_AFD_CODE: 1,
+				WERKS_AFD_BLOCK_CODE: 1,
+				LATITUDE_BLOCK: 1,
+				LONGITUDE_BLOCK: 1
 			})
 			.then( data => {
 				if ( !data ) {
@@ -47,7 +53,7 @@
 				}
 				else {
 					data.forEach( function( result ) {
-						console.log( 'COMP_CODE : ' + result.COMP_CODE + ' - ' + result.COMP_NAME + ' -> SUCCESS' );
+						console.log( 'BLOCK_CODE : ' + result.WERKS_AFD_BLOCK_CODE + ' - ' + result.BLOCK_NAME + ' -> SUCCESS' );
 					} );
 				}
 			} ).catch( err => {

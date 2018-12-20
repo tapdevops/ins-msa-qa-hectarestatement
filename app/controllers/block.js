@@ -86,7 +86,7 @@ const date = require( '../libraries/date.js' );
 			WERKS_AFD_CODE: 1,
 			WERKS_AFD_BLOCK_CODE: 1,
 			LATITUDE_BLOCK: 1,
-			LONGITUDE_BLOCK: 1,
+			LONGITUDE_BLOCK: 1
 		} )
 		.then( data => {
 			if( !data ) {
