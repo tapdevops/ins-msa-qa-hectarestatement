@@ -687,6 +687,7 @@ exports.delete = ( req, res ) => {
 				}
 			]
 		}
+		
 	)
 	.select( {
 		_id: 0,
