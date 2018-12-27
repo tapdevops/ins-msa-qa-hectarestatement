@@ -598,8 +598,8 @@ exports.delete = ( req, res ) => {
 
 	// Auth Data
 	var auth = req.auth;
-	auth.REFFERENCE_ROLE = 'AFD_CODE';
-	auth.LOCATION_CODE = '2121D,2121H,2121E,2121C';
+	//auth.REFFERENCE_ROLE = 'AFD_CODE';
+	//auth.LOCATION_CODE = '2121D,2121H,2121E,2121C';
 
 	var start_date = date.convert( req.params.start_date, 'YYYYMMDDhhmmss' );
 	var end_date = date.convert( req.params.end_date, 'YYYYMMDDhhmmss' );
