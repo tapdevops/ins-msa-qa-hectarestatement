@@ -652,11 +652,6 @@ exports.delete = ( req, res ) => {
 		break;
 	}
 
-	//console.log(auth);
-	console.log(query);
-	console.log(start_date);
-	console.log(end_date);
-
 	// Set Data
 	blockModel
 	.find( 
