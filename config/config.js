@@ -5,7 +5,7 @@ module.exports = {
 	| App Config
 	|--------------------------------------------------------------------------
 	*/
-	app_port: process.env.PORT || 3003,
+	app_port: process.env.PORT || 3009,
 	app_name: 'Microservice Hectare Statement',
 
 	/*
