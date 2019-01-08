@@ -400,8 +400,8 @@ exports.update = ( req, res ) => {
 
 		// Auth Data
 		var auth = req.auth;
-		//auth.REFFERENCE_ROLE = 'AFD_CODE';
-		//auth.LOCATION_CODE = '2121D,2121H,2121E,2121C';
+		auth.REFFERENCE_ROLE = 'AFD_CODE';
+		auth.LOCATION_CODE = '4121A,2121A';
 		
 		var start_date = date.convert( req.params.start_date, 'YYYYMMDDhhmmss' );
 		var end_date = date.convert( req.params.end_date, 'YYYYMMDDhhmmss' );
@@ -410,6 +410,7 @@ exports.update = ( req, res ) => {
 		var location_code_final = [];
 		var key = [];
 		var query = {};
+		var query_search = [];
 		
 		if ( ref_role != 'ALL' ) {
 			location_code_group.forEach( function( data ) {
@@ -430,22 +431,46 @@ exports.update = ( req, res ) => {
 			} );
 		}
 
+
+		switch ( ref_role ) {
+			case 'REGION_CODE':
+				location_code_final.forEach( function( q ) {
+					query_search.push( q );
+				} );
+			break;
+			case 'COMP_CODE':
+				location_code_final.forEach( function( q ) {
+					query_search.push( new RegExp( '^' + q.substr( 0, 2 ) ) );
+				} );
+			break;
+			case 'AFD_CODE':
+				location_code_final.forEach( function( q ) {
+					query_search.push( new RegExp( '^' + q.substr( 0, 2 ) ) )
+				} );
+			break;
+			case 'BA_CODE':
+				location_code_final.forEach( function( q ) {
+					query_search.push( q );
+				} );
+			break;
+		}
+
 		switch ( ref_role ) {
 			case 'REGION_CODE':
 				key = ref_role;
-				query[key] = location_code_final;
+				query[key] = query_search;
 			break;
 			case 'COMP_CODE':
 				key = ref_role;
-				query[key] = location_code_final;
+				query[key] = query_search;
 			break;
 			case 'AFD_CODE':
 				key = 'COMP_CODE';
-				query[key] = location_code_final;
+				query[key] = query_search;
 			break;
 			case 'BA_CODE':
 				key = 'COMP_CODE';
-				query[key] = location_code_final;
+				query[key] = query_search;
 			break;
 			case 'NATIONAL':
 				key = 'NATIONAL';
@@ -453,7 +478,9 @@ exports.update = ( req, res ) => {
 			break;
 		}
 
-		console.log(auth);
+		//console.log(query_search);
+
+		//console.log(auth);
 		console.log(query);
 
 		// Set Data

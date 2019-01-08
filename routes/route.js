@@ -124,8 +124,6 @@ module.exports = ( app ) => {
 
 
 
-
-
 	// Routing: Est
 	app.get( '/est/all', token_verify, est.findAll );
 	app.get( '/est/q', token_verify, est.findAll );

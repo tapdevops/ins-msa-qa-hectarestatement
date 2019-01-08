@@ -72,7 +72,7 @@ const date = require( '../libraries/date.js' );
 				query[key] = 'NATIONAL';
 			break;
 		}
-		console.log(query);
+		
 		blockModel.find( query )
 		.select( {
 			_id: 0,
