@@ -450,7 +450,7 @@ exports.update = ( req, res ) => {
 			break;
 			case 'BA_CODE':
 				location_code_final.forEach( function( q ) {
-					query_search.push( q );
+					query_search.push( new RegExp( '^' + q.substr( 0, 2 ) ) )
 				} );
 			break;
 		}
