@@ -607,6 +607,7 @@ exports.update = ( req, res ) => {
 		var location_code_final = [];
 		var key = [];
 		var query = {};
+		var query_search = [];
 		
 		if ( ref_role != 'ALL' ) {
 			location_code_group.forEach( function( data ) {
@@ -627,22 +628,46 @@ exports.update = ( req, res ) => {
 			} );
 		}
 
+
+		switch ( ref_role ) {
+			case 'REGION_CODE':
+				location_code_final.forEach( function( q ) {
+					query_search.push( new RegExp( '^' + q.substr( 0, 2 ) ) );
+				} );
+			break;
+			case 'COMP_CODE':
+				location_code_final.forEach( function( q ) {
+					query_search.push( new RegExp( '^' + q.substr( 0, 2 ) ) );
+				} );
+			break;
+			case 'AFD_CODE':
+				location_code_final.forEach( function( q ) {
+					query_search.push( new RegExp( '^' + q.substr( 0, 2 ) ) )
+				} );
+			break;
+			case 'BA_CODE':
+				location_code_final.forEach( function( q ) {
+					query_search.push( new RegExp( '^' + q.substr( 0, 2 ) ) )
+				} );
+			break;
+		}
+
 		switch ( ref_role ) {
 			case 'REGION_CODE':
 				key = ref_role;
-				query[key] = location_code_final;
+				query[key] = query_search;
 			break;
 			case 'COMP_CODE':
 				key = ref_role;
-				query[key] = location_code_final;
+				query[key] = query_search;
 			break;
 			case 'AFD_CODE':
 				key = 'COMP_CODE';
-				query[key] = location_code_final;
+				query[key] = query_search;
 			break;
 			case 'BA_CODE':
 				key = 'COMP_CODE';
-				query[key] = location_code_final;
+				query[key] = query_search;
 			break;
 			case 'NATIONAL':
 				key = 'NATIONAL';
@@ -652,7 +677,7 @@ exports.update = ( req, res ) => {
 		console.log(query)
 
 		compModel
-		.find( {COMP_CODE:'41'} )
+		.find( query )
 		.select( {
 			_id: 0,
 			NATIONAL: 1,
