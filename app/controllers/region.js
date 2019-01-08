@@ -421,11 +421,19 @@ exports.find = ( req, res ) => {
 			var location_code = auth.LOCATION_CODE;
 			var location_code = location_code.split( ',' );
 			var location_code_final = [];
+			var ref_role = auth.REFFERENCE_ROLE;
 			var url_query = req.query;
 			var url_query_length = Object.keys( url_query ).length;
 
+
 			location_code.forEach( function( data ) {
-				location_code_final.push( '0' + data.substr( 0, 1 ) );
+				if ( ref_role == 'REGION_CODE' ) {
+					location_code_final.push( data );
+				}
+				else if ( ref_role == 'COMP_CODE' || ref_role == 'AFD_CODE' || ref_role == 'BA_CODE' ) {
+					location_code_final.push( '0' + data.substr( 0, 1 ) );
+				}
+				
 			} );
 
 			if ( url_query_length > 0 ) {
@@ -435,6 +443,9 @@ exports.find = ( req, res ) => {
 				});
 			}
 			else {
+
+				console.log( location_code_final );
+
 				regionModel.find( {
 					REGION_CODE: { $in: location_code_final },
 					DELETE_TIME: ""
