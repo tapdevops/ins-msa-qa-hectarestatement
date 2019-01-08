@@ -435,7 +435,7 @@ exports.update = ( req, res ) => {
 		switch ( ref_role ) {
 			case 'REGION_CODE':
 				location_code_final.forEach( function( q ) {
-					query_search.push( q );
+					query_search.push( new RegExp( '^' + q.substr( 0, 2 ) ) );
 				} );
 			break;
 			case 'COMP_CODE':
@@ -457,7 +457,7 @@ exports.update = ( req, res ) => {
 
 		switch ( ref_role ) {
 			case 'REGION_CODE':
-				key = ref_role;
+				key = 'COMP_CODE';
 				query[key] = query_search;
 			break;
 			case 'COMP_CODE':
@@ -477,10 +477,7 @@ exports.update = ( req, res ) => {
 				query[key] = 'NATIONAL';
 			break;
 		}
-
-		//console.log(query_search);
-
-		//console.log(auth);
+		
 		console.log(query);
 
 		// Set Data

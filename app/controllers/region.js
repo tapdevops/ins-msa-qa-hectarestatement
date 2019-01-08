@@ -132,6 +132,7 @@ exports.syncMobile = ( req, res ) => {
 	.find( 
 		query,
 		{
+			
 			$and: [
 				{
 					$or: [
@@ -169,6 +170,7 @@ exports.syncMobile = ( req, res ) => {
 	} )
 	.then( data_insert => {
 
+		console.log( start_date + ' - ' + end_date );
 		console.log(data_insert);
 		var temp_insert = [];
 		var temp_update = [];
