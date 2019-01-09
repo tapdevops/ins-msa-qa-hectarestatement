@@ -24,8 +24,7 @@ exports.findAll = ( req, res ) => {
 		else {
 			var url_query = req.query;
 			var url_query_length = Object.keys( url_query ).length;
-			
-			url_query.DELETE_TIME = "";
+				url_query.DELETE_TIME = "";
 
 			regionModel.find( url_query )
 			.select( {
