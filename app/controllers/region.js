@@ -130,10 +130,6 @@ exports.syncMobile = ( req, res ) => {
 	regionModel
 	.find( 
 		query
-
-		//query,
-
-		/*
 		{
 			
 			$and: [
@@ -161,7 +157,6 @@ exports.syncMobile = ( req, res ) => {
 				}
 			]
 		}
-		*/
 	)
 	.select( {
 		_id: 0,
