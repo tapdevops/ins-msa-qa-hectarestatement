@@ -129,7 +129,7 @@ exports.syncMobile = ( req, res ) => {
 	// Set Data
 	regionModel
 	.find( 
-		query
+		query,
 		{
 			
 			$and: [
