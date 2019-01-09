@@ -569,9 +569,9 @@ exports.delete = ( req, res ) => {
 				status: true,
 				message: 'Data Sync tanggal ' + date.convert( req.params.start_date, 'YYYY-MM-DD' ) + ' s/d ' + date.convert( req.params.end_date, 'YYYY-MM-DD' ),
 				data: {
-					"insert": temp_insert,
-					"update": temp_update,
-					"delete": temp_delete
+					"hapus": temp_delete,
+					"simpan": temp_insert,
+					"ubah": temp_update
 				}
 			});
 		} ).catch( err => {
