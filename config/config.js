@@ -24,6 +24,7 @@ module.exports = {
 	*/
 	url: {
 		sync_list: 'http://149.129.242.205:3001/sync/list'
+		  
 	}
 
 }
