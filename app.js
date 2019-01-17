@@ -44,7 +44,7 @@ app.listen( config.app_port, () => {
 
 // Routes
 app.get( '/', ( req, res ) => {
-	res.json( { 'message': config.app_name } )
+	res.json( { 'message': config.app_name + '17-33' } )
 } );
 
 // Require Bisnis Area Routes
