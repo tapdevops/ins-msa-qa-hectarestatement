@@ -603,6 +603,7 @@ exports.delete = ( req, res ) => {
 
 	var start_date = date.convert( req.params.start_date, 'YYYYMMDDhhmmss' );
 	var end_date = date.convert( req.params.end_date, 'YYYYMMDDhhmmss' );
+	console.log( start_date + ' / ' + end_date );
 	var location_code_group = auth.LOCATION_CODE.split( ',' );
 	var ref_role = auth.REFFERENCE_ROLE;
 	var location_code_final = [];
