@@ -66,8 +66,8 @@ module.exports = ( app ) => {
 
 	// Routing: Land Use
 	app.get( '/land-use/all', token_verify, landUse.findAll );
-	app.get( '/report/land-use/all', token_verify, landUse.findAllReport );
-	app.get( '/report/land-use/q', token_verify, landUse.findAllReport );
+	app.get( '/land-use/q', token_verify, landUse.findAll );
+	app.get( '/report/land-use/:id', token_verify, landUse.findOneForReport );
 
 	app.get( '/land-use/q', token_verify, landUse.findAll );
 	app.get( '/land-use', token_verify, landUse.find );

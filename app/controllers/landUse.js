@@ -6,6 +6,7 @@
 
 	// Models
 	const landUseModel 		= require( '../models/landUse.js' );
+	const viewLandUseModel 	= require( '../models/viewLandUse.js' );
 
 	// Config
 	const config 			= require( '../../config/config.js' );
@@ -299,21 +300,23 @@
  |--------------------------------------------------------------------------
  */
  	// Find All
-	exports.findAllReport = ( req, res ) => {
+	exports.findOneForReport = ( req, res ) => {
 		var url_query = req.query;
 		var url_query_length = Object.keys( url_query ).length;
-		url_query.DELETE_TIME = [null, 0];
+		//url_query.DELETE_TIME = [null, 0];
 		
-		landUseModel.find( url_query )
-		.select( {
-			_id : 0,
-			BLOCK_CODE: 1,
-			BLOCK_NAME: 1,
-			AFD_CODE: 1,
-			AFD_NAME: 1,
-			SPMON: 1,
-			MATURITY_STATUS: 1,
+		viewLandUseModel.findOne( {
+			WERKS_AFD_BLOCK_CODE: req.params.id
 		} )
+		//.select( {
+		//	_id : 0,
+		//	BLOCK_CODE: 1,
+		//	BLOCK_NAME: 1,
+		//	AFD_CODE: 1,
+		//	AFD_NAME: 1,
+		//	SPMON: 1,
+		//	MATURITY_STATUS: 1,
+		//} )
 		.then( data => {
 			if( !data ) {
 				return res.send( {
