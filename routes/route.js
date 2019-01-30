@@ -149,7 +149,7 @@ module.exports = ( app ) => {
 
 	app.get( '/sync-mobile/region/:start_date/:end_date', token_verify, region.syncMobile );
 	app.post( '/region', verifyToken, region.create );
-	app.get( '/region', verifyToken, region.find );
+	app.get( '/region', token_verify, region.find );
 	app.get( '/region/:id', verifyToken, region.findOne );
 	app.put( '/region/:id', verifyToken, region.update );
 	app.delete( '/region/:id', verifyToken, region.delete );
