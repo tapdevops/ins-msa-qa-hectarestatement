@@ -13,19 +13,6 @@ const config = require( '../../config/config.js' );
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 // Create and Save new Data
 exports.create = ( req, res ) => {
 	
@@ -417,8 +404,8 @@ exports.update = ( req, res ) => {
 
 		// Auth Data
 		var auth = req.auth;
-		auth.REFFERENCE_ROLE = 'AFD_CODE';
-		auth.LOCATION_CODE = '4121A,2121A';
+		//auth.REFFERENCE_ROLE = 'AFD_CODE';
+		//auth.LOCATION_CODE = '4121A,2121A';
 		
 		var start_date = date.convert( req.params.start_date, 'YYYYMMDDhhmmss' );
 		var end_date = date.convert( req.params.end_date, 'YYYYMMDDhhmmss' );
