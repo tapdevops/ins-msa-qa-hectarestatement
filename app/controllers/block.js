@@ -15,7 +15,7 @@ const fs = require( 'file-system' );
 	// Find Geo JSON
 	exports.findSKMDesignGeoJSON = ( req, res ) => {
 
-		var geometry_file_location = 'assets/geo-json/SKM_DESIGN_BLOCK/' + req.params.id + '-test.enc';
+		var geometry_file_location = 'assets/geo-json/SKM_DESIGN_BLOCK/' + req.params.id + '.enc';
 		var results = [];
 
 		if ( fs.existsSync( geometry_file_location ) ) {
