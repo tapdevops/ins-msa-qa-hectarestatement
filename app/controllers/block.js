@@ -15,7 +15,7 @@ const fs = require( 'file-system' );
 	// Find Geo JSON
 	exports.findSKMDesignGeoJSON = ( req, res ) => {
 
-		var geometry_file_location = 'assets/geo-json/SKM_DESIGN_BLOCK/' + req.params.id + '.enc';
+		var geometry_file_location = 'assets/geo-json/SKM_DESIGN_BLOCK/' + req.params.id + '-test.enc';
 		var results = [];
 
 		if ( fs.existsSync( geometry_file_location ) ) {
@@ -27,22 +27,25 @@ const fs = require( 'file-system' );
 					var temporary_geometry = [];
 					// Attributes
 					var temporary_geometry = {
-						attributes: {
-							WERKS_AFD_CODE: String( data.attributes.WERKS ) + String( data.attributes.AFD_CODE ).substr( 4, 10 ),
-							WERKS_AFD_BLOCK_CODE: String( data.attributes.WERKS ) + String( data.attributes.AFD_CODE ).substr( 4, 10 ) + String( data.attributes.BLOCK_CODE ),
-							WERKS: String( data.attributes.WERKS ),
-							AFD_CODE: String( data.attributes.AFD_CODE ).substr( 4, 10 ),
-							BLOCK_CODE: String( data.attributes.BLOCK_CODE ),
-							BLOCK_NAME: String( data.attributes.REBLOCK ),
-						},
-						geometry: []
+						//attributes: {
+						//	WERKS_AFD_CODE: String( data.attributes.WERKS ) + String( data.attributes.AFD_CODE ).substr( 4, 10 ),
+						//	WERKS_AFD_BLOCK_CODE: String( data.attributes.WERKS ) + String( data.attributes.AFD_CODE ).substr( 4, 10 ) + String( data.attributes.BLOCK_CODE ),
+						//	WERKS: String( data.attributes.WERKS ),
+						//	AFD_CODE: String( data.attributes.AFD_CODE ).substr( 4, 10 ),
+						//	BLOCK_CODE: String( data.attributes.BLOCK_CODE ),
+						//	BLOCK_NAME: String( data.attributes.REBLOCK ),
+						//},
+
+						coords: [],
+						blokname: String( data.attributes.REBLOCK ),
+						blokcode: String( data.attributes.BLOCK_CODE )
 					};
 					// Geometry
-					temporary_geometry.geometry = [];
+					temporary_geometry.coords = [];
 					var j = 0;
 					data.geometry.rings.forEach( function( geom ) {
 						geom.forEach( function( location ) {
-							temporary_geometry.geometry.push( {
+							temporary_geometry.coords.push( {
 								longitude: location[0],
 								latitude: location[1]
 							} );
@@ -54,7 +57,9 @@ const fs = require( 'file-system' );
 				res.json( {
 					status: true,
 					message: "Success!",
-					data: results
+					data: {
+						polygons: results
+					}
 				} );
 			}
 			else {
