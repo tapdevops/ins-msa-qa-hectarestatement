@@ -51,7 +51,6 @@ const fs = require( 'file-system' );
 					} );
 					results.push( temporary_geometry );
 				} );
-			//	console.log( results );
 				res.json( {
 					status: true,
 					message: "Success!",
