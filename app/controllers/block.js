@@ -10,6 +10,74 @@ const Client = require('node-rest-client').Client;
 const moment_pure = require( 'moment' );
 const moment = require( 'moment-timezone' );
 const date = require( '../libraries/date.js' );
+const fs = require( 'file-system' );
+	
+	// Find Geo JSON
+	exports.findSKMDesignGeoJSON = ( req, res ) => {
+
+		var geometry_file_location = 'assets/geo-json/SKM_DESIGN_BLOCK/' + req.params.id + '-test.enc';
+		var results = [];
+
+		if ( fs.existsSync( geometry_file_location ) ) {
+			var data_geometry = JSON.parse( fs.readFileSync( geometry_file_location ) );
+
+			if ( data_geometry.features ) {
+				var i = 0;
+				data_geometry.features.forEach( function( data ) {
+					var temporary_geometry = [];
+					// Attributes
+					var temporary_geometry = {
+						attributes: {
+							WERKS_AFD_CODE: String( data.attributes.WERKS ) + String( data.attributes.AFD_CODE ).substr( 4, 10 ),
+							WERKS_AFD_BLOCK_CODE: String( data.attributes.WERKS ) + String( data.attributes.AFD_CODE ).substr( 4, 10 ) + String( data.attributes.BLOCK_CODE ),
+							WERKS: String( data.attributes.WERKS ),
+							AFD_CODE: String( data.attributes.AFD_CODE ).substr( 4, 10 ),
+							BLOCK_CODE: String( data.attributes.BLOCK_CODE ),
+							BLOCK_NAME: String( data.attributes.REBLOCK ),
+						},
+						geometry: []
+					};
+					// Geometry
+					temporary_geometry.geometry = [];
+					var j = 0;
+					data.geometry.rings.forEach( function( geom ) {
+						geom.forEach( function( location ) {
+							temporary_geometry.geometry.push( {
+								longitude: location[0],
+								latitude: location[1]
+							} );
+						} );
+						j++;
+					} );
+					results.push( temporary_geometry );
+				} );
+			//	console.log( results );
+				res.json( {
+					status: true,
+					message: "Success!",
+					data: results
+				} );
+			}
+			else {
+				res.json( {
+					status: false,
+					message: "Error! Invalid geometry data. ",
+					data: []
+				} );
+				console.log( 'Error! Invalid geometry data. ' );
+			}
+			
+		}
+		else {
+			res.json( {
+				status: false,
+				message: "Error! Geometry data file not found. ",
+				data: []
+			} );
+			console.log( 'Error! Geometry data file not found. ' );
+		}
+		
+	}
 
 	// Retrieve and return all notes from the database.
 	exports.find = ( req, res ) => {

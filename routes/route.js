@@ -100,9 +100,11 @@ module.exports = ( app ) => {
 	app.get( '/block/:id', block.findOne );
 	app.put( '/block/:id', block.update );
 	app.delete( '/block/:id', block.delete );
+	
+	
 
 
-
+	
 
 
 
@@ -153,5 +155,8 @@ module.exports = ( app ) => {
 	app.get( '/region/:id', verifyToken, region.findOne );
 	app.put( '/region/:id', verifyToken, region.update );
 	app.delete( '/region/:id', verifyToken, region.delete );
+
+	// Geometry
+	app.get( '/geom/skm-design/block/:id', block.findSKMDesignGeoJSON );
 
 }

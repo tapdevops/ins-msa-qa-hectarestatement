@@ -16,6 +16,8 @@ const config = require( './config/config.js' );
 // Define App
 const app = express();
 
+app.use( '/skm-design-block/', express.static( 'assets/geo-json/SKM_DESIGN_BLOCK' ) );
+
 // Parse request of content-type - application/x-www-form-urlencoded
 app.use( bodyParser.urlencoded( { extended: true } ) )
 
