@@ -1,0 +1,126 @@
+{
+	"displayFieldName" : "",
+	"fieldAliases" : {
+		"FID" : "FID",
+		"WERKS" : "WERKS",
+		"AFD_CODE" : "AFD_CODE",
+		"REBLOCK" : "REBLOCK",
+		"BLOCK_CODE" : "BLOCK_CODE"
+	},
+	"geometryType" : "esriGeometryPolygon",
+	"spatialReference" : {
+		"wkid" : 4326,
+		"latestWkid" : 4326
+	},
+	"fields" : [
+		{
+			"name" : "FID",
+			"type" : "esriFieldTypeOID",
+			"alias" : "FID"
+		},
+		{
+			"name" : "WERKS",
+			"type" : "esriFieldTypeString",
+			"alias" : "WERKS",
+			"length" : 15
+		},
+		{
+			"name" : "AFD_CODE",
+			"type" : "esriFieldTypeString",
+			"alias" : "AFD_CODE",
+			"length" : 50
+		},
+		{
+			"name" : "REBLOCK",
+			"type" : "esriFieldTypeString",
+			"alias" : "REBLOCK",
+			"length" : 15
+		},
+		{
+			"name" : "BLOCK_CODE",
+			"type" : "esriFieldTypeString",
+			"alias" : "BLOCK_CODE",
+			"length" : 30
+		}
+	],
+	"features" : [
+		{
+			"attributes" : {
+				"FID" : 424,
+				"WERKS" : "4433",
+				"AFD_CODE" : "4433E",
+				"REBLOCK" : "D31",
+				"BLOCK_CODE" : "001"
+			},
+			"geometry" : {
+				"rings" : [
+					[
+						[
+							111.3080417181319,
+							-2.2251387259523767
+						],
+						[
+							111.30796071269185,
+							-2.2251397922483989
+						],
+						[
+							111.30725538503793,
+							-2.2251490717287083
+						],
+						[
+							111.30729447926944,
+							-2.2231567494901583
+						],
+						[
+							111.30807477187028,
+							-2.2231836961062754
+						],
+						[
+							111.3080417181319,
+							-2.2251387259523767
+						]
+					]
+				]
+			}
+		},
+		{
+			"attributes" : {
+				"FID" : 425,
+				"WERKS" : "4433",
+				"AFD_CODE" : "4433E",
+				"REBLOCK" : "D34\r\n",
+				"BLOCK_CODE" : "004"
+			},
+			"geometry" : {
+				"rings" : [
+					[
+						[
+							111.29898396351888,
+							-2.2234207424471606
+						],
+						[
+							111.29912160665805,
+							-2.2234166399486526
+						],
+						[
+							111.30176165848712,
+							-2.2231920849424114
+						],
+						[
+							111.30172952852956,
+							-2.2252135354365805
+						],
+						[
+							111.29895521680561,
+							-2.2252468465705419
+						],
+						[
+							111.29898396351888,
+							-2.2234207424471606
+						]
+					]
+				]
+			}
+		}
+	]
+}

@@ -27,6 +27,67 @@ const fs = require( 'file-system' );
 					var temporary_geometry = [];
 					// Attributes
 					var temporary_geometry = {
+						coords: [],
+						blokname: String( data.properties.REBLOCK ),
+						blokcode: String( data.properties.BLOCK_CODE )
+					};
+
+					// Geometry
+					temporary_geometry.coords = [];
+					data.geometry.coordinates.forEach( function( geom ) {
+						geom.forEach( function( location ) {
+							temporary_geometry.coords.push( {
+								longitude: location[0],
+								latitude: location[1]
+							} );
+						} );
+					} );
+					results.push( temporary_geometry );
+				} );
+				res.json( {
+					status: true,
+					message: "Success!",
+					data: {
+						polygons: results
+					}
+				} );
+			}
+			else {
+				res.json( {
+					status: false,
+					message: "Error! Invalid geometry data. ",
+					data: []
+				} );
+				console.log( 'Error! Invalid geometry data. ' );
+			}
+			
+		}
+		else {
+			res.json( {
+				status: false,
+				message: "Error! Geometry data file not found. ",
+				data: []
+			} );
+			console.log( 'Error! Geometry data file not found. ' );
+		}
+		
+	}
+
+	// Find Geo JSON - 1
+	exports.findSKMDesignGeoJSON__1 = ( req, res ) => {
+
+		var geometry_file_location = 'assets/geo-json/design-block/' + req.params.id + '.enc';
+		var results = [];
+
+		if ( fs.existsSync( geometry_file_location ) ) {
+			var data_geometry = JSON.parse( fs.readFileSync( geometry_file_location ) );
+
+			if ( data_geometry.features ) {
+				var i = 0;
+				data_geometry.features.forEach( function( data ) {
+					var temporary_geometry = [];
+					// Attributes
+					var temporary_geometry = {
 						//attributes: {
 						//	WERKS_AFD_CODE: String( data.attributes.WERKS ) + String( data.attributes.AFD_CODE ).substr( 4, 10 ),
 						//	WERKS_AFD_BLOCK_CODE: String( data.attributes.WERKS ) + String( data.attributes.AFD_CODE ).substr( 4, 10 ) + String( data.attributes.BLOCK_CODE ),
