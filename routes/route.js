@@ -95,16 +95,16 @@ module.exports = ( app ) => {
 	app.get( '/sync-mobile/block/:start_date/:end_date', token_verify, block.syncMobile );
 	app.get( '/block', token_verify, block.find );
 
-	
+
 	app.post( '/block', block.create );
 	app.get( '/block/:id', block.findOne );
 	app.put( '/block/:id', block.update );
 	app.delete( '/block/:id', block.delete );
-	
-	
 
 
-	
+
+
+
 
 
 
@@ -148,7 +148,6 @@ module.exports = ( app ) => {
 	app.get( '/region/q', verifyToken, region.findAll );
 	app.post( '/sync-tap/region', verifyToken, region.createOrUpdate );
 
-
 	app.get( '/sync-mobile/region/:start_date/:end_date', token_verify, region.syncMobile );
 	app.post( '/region', verifyToken, region.create );
 	app.get( '/region', token_verify, region.find );
@@ -158,5 +157,7 @@ module.exports = ( app ) => {
 
 	// Geometry
 	app.get( '/geom/design/block/:id', block.findSKMDesignGeoJSON );
+
+	app.get( '/tst', block.test );
 
 }
