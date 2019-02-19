@@ -11,11 +11,74 @@ const moment_pure = require( 'moment' );
 const moment = require( 'moment-timezone' );
 const date = require( '../libraries/date.js' );
 const fs = require( 'file-system' );
+const gp = require( 'geojson-precision' );
 	
 	// Find Geo JSON
 	exports.findSKMDesignGeoJSON = ( req, res ) => {
 
 		var geometry_file_location = 'assets/geo-json/design-block/' + req.params.id + '.enc';
+		var results = [];
+
+		if ( fs.existsSync( geometry_file_location ) ) {
+			var data_geometry = gp.parse( JSON.parse( fs.readFileSync( geometry_file_location ) ), 3 );
+
+			if ( data_geometry.features ) {
+				var i = 0;
+				data_geometry.features.forEach( function( data ) {
+					var temporary_geometry = [];
+					// Attributes
+					var temporary_geometry = {
+						coords: [],
+						blokname: String( data.properties.REBLOCK ),
+						blokcode: String( data.properties.BLOCK_CODE )
+					};
+
+					// Geometry
+					temporary_geometry.coords = [];
+					data.geometry.coordinates.forEach( function( geom ) {
+						geom.forEach( function( location ) {
+							temporary_geometry.coords.push( {
+								longitude: location[0],
+								latitude: location[1]
+							} );
+						} );
+					} );
+					results.push( temporary_geometry );
+				} );
+				res.json( {
+					status: true,
+					message: "Success!",
+					data: {
+						polygons: results
+					}
+				} );
+				
+			}
+			else {
+				res.json( {
+					status: false,
+					message: "Error! Invalid geometry data. ",
+					data: []
+				} );
+				console.log( 'Error! Invalid geometry data. ' );
+			}
+			
+		}
+		else {
+			res.json( {
+				status: false,
+				message: "Error! Geometry data file not found. ",
+				data: []
+			} );
+			console.log( 'Error! Geometry data file not found. ' );
+		}
+		
+	}
+
+	// Find Geo JSON 2
+	exports.findSKMDesignGeoJSON__2 = ( req, res ) => {
+
+		var geometry_file_location = 'assets/geo-json/design-block/' + req.params.id + '-test.enc';
 		var results = [];
 
 		if ( fs.existsSync( geometry_file_location ) ) {
