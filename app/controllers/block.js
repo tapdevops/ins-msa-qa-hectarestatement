@@ -11,17 +11,20 @@ const moment_pure = require( 'moment' );
 const moment = require( 'moment-timezone' );
 const date = require( '../libraries/date.js' );
 const fs = require( 'file-system' );
-const gp = require( 'geojson-precision' );
+const gp = require( 'geojson-precision' ); // GeoJSON Precision
+const gr = require('geojson-reducer'); // GeoJSON Reducer
 	
 	// Find Geo JSON
 	exports.findSKMDesignGeoJSON = ( req, res ) => {
 
-		var geometry_file_location = 'assets/geo-json/design-block/' + req.params.id + '.enc';
+		var geometry_file_location = 'assets/geo-json/design-block/' + req.params.id + '-sm.enc';
 		var results = [];
+		var count_block = 0;
 
 		if ( fs.existsSync( geometry_file_location ) ) {
-			var data_geometry = gp.parse( JSON.parse( fs.readFileSync( geometry_file_location ) ), 3 );
-
+			var data_geometry = gp.parse( JSON.parse( fs.readFileSync( geometry_file_location ) ), 4 );
+			//var x = gr.reduceCoordinates( geometry_file_location );
+			
 			if ( data_geometry.features ) {
 				var i = 0;
 				data_geometry.features.forEach( function( data ) {
@@ -62,7 +65,6 @@ const gp = require( 'geojson-precision' );
 				} );
 				console.log( 'Error! Invalid geometry data. ' );
 			}
-			
 		}
 		else {
 			res.json( {
