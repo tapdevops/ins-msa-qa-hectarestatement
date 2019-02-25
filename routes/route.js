@@ -156,8 +156,6 @@ module.exports = ( app ) => {
 	app.delete( '/region/:id', verifyToken, region.delete );
 
 	// Geometry
-	app.get( '/geom/design/block/:id', block.findSKMDesignGeoJSON );
-
-	app.get( '/tst', block.test );
+	app.get( '/geom/design/block/:id', token_verify, block.findSKMDesignGeoJSON );
 
 }
