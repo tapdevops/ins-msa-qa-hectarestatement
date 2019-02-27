@@ -19,7 +19,6 @@ const execSync = require( 'child_process' ).execSync;
 	exports.findDesignGeoJSON = ( req, res ) => {
 		
 		var geometry_file_location = 'assets/geo-json/design-block/' + req.params.id + '.enc';
-		var geometry_file_location_small_size = 'assets/geo-json/design-block/' + req.params.id + '-sm.enc';
 		var results = [];
 
 		if ( fs.existsSync( geometry_file_location ) ) {
@@ -31,7 +30,7 @@ const execSync = require( 'child_process' ).execSync;
 
 			console.log( execSync( cmd, options ) );
 			
-			var data_geometry = gp.parse( JSON.parse( fs.readFileSync( geometry_file_location_small_size ) ), 4 );
+			var data_geometry = gp.parse( JSON.parse( fs.readFileSync( geometry_file_location ) ), 4 );
 			
 			if ( data_geometry.features ) {
 				//var i = 0;
