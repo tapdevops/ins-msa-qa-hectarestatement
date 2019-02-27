@@ -12,6 +12,9 @@ RUN npm install
 # If you are building your code for production
 # RUN npm install --only=production
 
+# GeoJSON Reducer
+RUN npm install -g geojson-reducer
+
 # Bundle app source
 COPY . /usr/src/app
 

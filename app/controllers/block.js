@@ -13,7 +13,7 @@ const date = require( '../libraries/date.js' );
 const fs = require( 'file-system' );
 const gp = require( 'geojson-precision' ); // GeoJSON Precision
 const gr = require('geojson-reducer'); // GeoJSON Reducer
-const execSync = require('child_process').execSync;
+const execSync = require( 'child_process' ).execSync;
 
 	// Find Geo JSON
 	exports.findSKMDesignGeoJSON = ( req, res ) => {
@@ -29,6 +29,7 @@ const execSync = require('child_process').execSync;
 			};
 
 			console.log( execSync( cmd, options ) );
+			
 			var data_geometry = gp.parse( JSON.parse( fs.readFileSync( geometry_file_location ) ), 4 );
 			
 			if ( data_geometry.features ) {
@@ -40,7 +41,7 @@ const execSync = require('child_process').execSync;
 					var temporary_geometry = {
 						coords: [],
 						blokname: String( data.properties.REBLOCK ),
-						blokcode: String( data.properties.BLOCK_CODE )
+						werks_afd_block_code: String( data.properties.WERKS ) + String( data.properties.AFD_CODE ) + String( data.properties.BLOCK_CODE )
 					};
 
 					for (var i = 0; i < coordinate.length; i++) {
