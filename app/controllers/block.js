@@ -16,9 +16,10 @@ const gr = require('geojson-reducer'); // GeoJSON Reducer
 const execSync = require( 'child_process' ).execSync;
 
 	// Find Geo JSON
-	exports.findSKMDesignGeoJSON = ( req, res ) => {
+	exports.findDesignGeoJSON = ( req, res ) => {
 		
 		var geometry_file_location = 'assets/geo-json/design-block/' + req.params.id + '.enc';
+		var geometry_file_location_small_size = 'assets/geo-json/design-block/' + req.params.id + '-sm.enc';
 		var results = [];
 
 		if ( fs.existsSync( geometry_file_location ) ) {
@@ -30,7 +31,7 @@ const execSync = require( 'child_process' ).execSync;
 
 			console.log( execSync( cmd, options ) );
 			
-			var data_geometry = gp.parse( JSON.parse( fs.readFileSync( geometry_file_location ) ), 4 );
+			var data_geometry = gp.parse( JSON.parse( fs.readFileSync( geometry_file_location_small_size ) ), 4 );
 			
 			if ( data_geometry.features ) {
 				//var i = 0;
@@ -41,7 +42,8 @@ const execSync = require( 'child_process' ).execSync;
 					var temporary_geometry = {
 						coords: [],
 						blokname: String( data.properties.REBLOCK ),
-						werks_afd_block_code: String( data.properties.AFD_CODE ) + String( data.properties.BLOCK_CODE )
+						werks_afd_block_code: String( data.properties.AFD_CODE ) + String( data.properties.BLOCK_CODE ),
+						afd_code: String( data.properties.AFD_CODE ).substr( 4, 5 )
 					};
 
 					for (var i = 0; i < coordinate.length; i++) {
@@ -90,136 +92,6 @@ const execSync = require( 'child_process' ).execSync;
 			} );
 			console.log( 'Error! Geometry data file not found. ' );
 		}
-	}
-
-	// Find Geo JSON 2
-	exports.findSKMDesignGeoJSON__2 = ( req, res ) => {
-
-		var geometry_file_location = 'assets/geo-json/design-block/' + req.params.id + '.enc';
-		var results = [];
-
-		if ( fs.existsSync( geometry_file_location ) ) {
-			var data_geometry = JSON.parse( fs.readFileSync( geometry_file_location ) );
-
-			if ( data_geometry.features ) {
-				var i = 0;
-				data_geometry.features.forEach( function( data ) {
-					var temporary_geometry = [];
-					// Attributes
-					var temporary_geometry = {
-						coords: [],
-						blokname: String( data.properties.REBLOCK ),
-						blokcode: String( data.properties.BLOCK_CODE )
-					};
-
-					// Geometry
-					temporary_geometry.coords = [];
-					data.geometry.coordinates.forEach( function( geom ) {
-						geom.forEach( function( location ) {
-							temporary_geometry.coords.push( {
-								longitude: location[0],
-								latitude: location[1]
-							} );
-						} );
-					} );
-					results.push( temporary_geometry );
-				} );
-				res.json( {
-					status: true,
-					message: "Success!",
-					data: {
-						polygons: results
-					}
-				} );
-			}
-			else {
-				res.json( {
-					status: false,
-					message: "Error! Invalid geometry data. ",
-					data: []
-				} );
-				console.log( 'Error! Invalid geometry data. ' );
-			}
-			
-		}
-		else {
-			res.json( {
-				status: false,
-				message: "Error! Geometry data file not found. ",
-				data: []
-			} );
-			console.log( 'Error! Geometry data file not found. ' );
-		}
-		
-	}
-
-	// Find Geo JSON - 1
-	exports.findSKMDesignGeoJSON__1 = ( req, res ) => {
-
-		var geometry_file_location = 'assets/geo-json/design-block/' + req.params.id + '.enc';
-		var results = [];
-
-		if ( fs.existsSync( geometry_file_location ) ) {
-			var data_geometry = JSON.parse( fs.readFileSync( geometry_file_location ) );
-
-			if ( data_geometry.features ) {
-				var i = 0;
-				data_geometry.features.forEach( function( data ) {
-					var temporary_geometry = [];
-					// Attributes
-					var temporary_geometry = {
-						//attributes: {
-						//	WERKS_AFD_CODE: String( data.attributes.WERKS ) + String( data.attributes.AFD_CODE ).substr( 4, 10 ),
-						//	WERKS_AFD_BLOCK_CODE: String( data.attributes.WERKS ) + String( data.attributes.AFD_CODE ).substr( 4, 10 ) + String( data.attributes.BLOCK_CODE ),
-						//	WERKS: String( data.attributes.WERKS ),
-						//	AFD_CODE: String( data.attributes.AFD_CODE ).substr( 4, 10 ),
-						//	BLOCK_CODE: String( data.attributes.BLOCK_CODE ),
-						//	BLOCK_NAME: String( data.attributes.REBLOCK ),
-						//},
-
-						coords: [],
-						blokname: String( data.attributes.REBLOCK ),
-						blokcode: String( data.attributes.BLOCK_CODE )
-					};
-					// Geometry
-					temporary_geometry.coords = [];
-					data.geometry.rings.forEach( function( geom ) {
-						geom.forEach( function( location ) {
-							temporary_geometry.coords.push( {
-								longitude: location[0],
-								latitude: location[1]
-							} );
-						} );
-					} );
-					results.push( temporary_geometry );
-				} );
-				res.json( {
-					status: true,
-					message: "Success!",
-					data: {
-						polygons: results
-					}
-				} );
-			}
-			else {
-				res.json( {
-					status: false,
-					message: "Error! Invalid geometry data. ",
-					data: []
-				} );
-				console.log( 'Error! Invalid geometry data. ' );
-			}
-			
-		}
-		else {
-			res.json( {
-				status: false,
-				message: "Error! Geometry data file not found. ",
-				data: []
-			} );
-			console.log( 'Error! Geometry data file not found. ' );
-		}
-		
 	}
 
 	// Retrieve and return all notes from the database.
