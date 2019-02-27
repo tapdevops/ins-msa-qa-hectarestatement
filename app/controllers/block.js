@@ -41,7 +41,7 @@ const execSync = require( 'child_process' ).execSync;
 					var temporary_geometry = {
 						coords: [],
 						blokname: String( data.properties.REBLOCK ),
-						werks_afd_block_code: String( data.properties.WERKS ) + String( data.properties.AFD_CODE ) + String( data.properties.BLOCK_CODE )
+						werks_afd_block_code: String( data.properties.AFD_CODE ) + String( data.properties.BLOCK_CODE )
 					};
 
 					for (var i = 0; i < coordinate.length; i++) {
