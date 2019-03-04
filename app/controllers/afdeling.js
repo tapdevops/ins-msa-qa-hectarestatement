@@ -417,7 +417,7 @@ exports.delete = ( req, res ) => {
 						location_code_final.push( data.substr( 0, 2 ) );
 					break;
 					case 'AFD_CODE':
-						location_code_final.push( data );
+						location_code_final.push( data.substr( 0, 4 ) );
 					break;
 					case 'BA_CODE':
 						location_code_final.push( data.substr( 0, 4 ) );
@@ -436,7 +436,7 @@ exports.delete = ( req, res ) => {
 				query[key] = location_code_final;
 			break;
 			case 'AFD_CODE':
-				key = 'WERKS_AFD_CODE';
+				key = 'WERKS';
 				query[key] = location_code_final;
 			break;
 			case 'BA_CODE':
@@ -601,7 +601,7 @@ exports.delete = ( req, res ) => {
 						location_code_final.push( data.substr( 0, 2 ) );
 					break;
 					case 'AFD_CODE':
-						location_code_final.push( data );
+						location_code_final.push( data.substr( 0, 4 ) );
 					break;
 					case 'BA_CODE':
 						location_code_final.push( data.substr( 0, 4 ) );
@@ -620,7 +620,7 @@ exports.delete = ( req, res ) => {
 				query[key] = location_code_final;
 			break;
 			case 'AFD_CODE':
-				key = 'WERKS_AFD_CODE';
+				key = 'WERKS';
 				query[key] = location_code_final;
 			break;
 			case 'BA_CODE':
@@ -632,7 +632,6 @@ exports.delete = ( req, res ) => {
 				query[key] = 'NATIONAL';
 			break;
 		}
-		console.log(query)
 
 		afdelingModel
 		.find( query )

@@ -101,11 +101,6 @@ const execSync = require( 'child_process' ).execSync;
 
 		// Auth Data
 		var auth = req.auth;
-
-		//auth.REFFERENCE_ROLE = 'COMP_CODE';
-		//auth.LOCATION_CODE = '21';
-		console.log(auth);
-
 		var location_code_group = auth.LOCATION_CODE.split( ',' );
 		var ref_role = auth.REFFERENCE_ROLE;
 		var location_code_final = [];
@@ -123,7 +118,7 @@ const execSync = require( 'child_process' ).execSync;
 						location_code_final.push( data.substr( 0, 2 ) );
 					break;
 					case 'AFD_CODE':
-						location_code_final.push( data );
+						location_code_final.push( data.substr( 0, 4 ) );
 					break;
 					case 'BA_CODE':
 						location_code_final.push( data.substr( 0, 4 ) );
@@ -142,7 +137,7 @@ const execSync = require( 'child_process' ).execSync;
 				query[key] = location_code_final;
 			break;
 			case 'AFD_CODE':
-				key = 'WERKS_AFD_CODE';
+				key = 'WERKS';
 				query[key] = location_code_final;
 			break;
 			case 'BA_CODE':
@@ -248,68 +243,6 @@ exports.create = ( req, res ) => {
 		} );
 	} );
 	
-};
-
-// Retrieve and return all notes from the database.
-exports.find2 = ( req, res ) => {
-
-	// Output Query URL
-	//console.log(req.query);
-	// Count JSON length
-	//console.log( Object.keys( req.query ).length );
-
-	url_query = req.query;
-	var url_query_length = Object.keys( url_query ).length;
-	
-	if ( url_query_length > 0 ) {
-		console.log( req.query );
-
-		blockModel.find( url_query )
-		.then( data => {
-			if( !data ) {
-				return res.status( 404 ).send( {
-					status: false,
-					message: 'Data not found 2',
-					data: {}
-				} );
-			}
-			res.send( {
-				status: true,
-				message: 'Success',
-				data: data
-			} );
-		} ).catch( err => {
-			if( err.kind === 'ObjectId' ) {
-				return res.status( 404 ).send( {
-					status: false,
-					message: 'Data not found 1',
-					data: {}
-				} );
-			}
-			return res.status( 500 ).send( {
-				status: false,
-				message: 'Error retrieving data',
-				data: {}
-			} );
-		} );
-	}
-	else {
-		blockModel.find()
-		.then( data => {
-			res.send( {
-				status: true,
-				message: 'Success',
-				data: data
-			} );
-		} ).catch( err => {
-			res.status( 500 ).send( {
-				status: false,
-				message: err.message || "Some error occurred while retrieving data.",
-				data: {}
-			} );
-		} );
-	}
-
 };
 
 // Find a single data with a ID
@@ -703,7 +636,7 @@ exports.delete = ( req, res ) => {
 					location_code_final.push( data.substr( 0, 2 ) );
 				break;
 				case 'AFD_CODE':
-					location_code_final.push( data );
+					location_code_final.push( data.substr( 0, 4 ) );
 				break;
 				case 'BA_CODE':
 					location_code_final.push( data.substr( 0, 4 ) );
@@ -722,7 +655,7 @@ exports.delete = ( req, res ) => {
 			query[key] = location_code_final;
 		break;
 		case 'AFD_CODE':
-			key = 'WERKS_AFD_CODE';
+			key = 'WERKS';
 			query[key] = location_code_final;
 		break;
 		case 'BA_CODE':
@@ -735,6 +668,7 @@ exports.delete = ( req, res ) => {
 		break;
 	}
 
+	console.log(query);
 	// Set Data
 	blockModel
 	.find( 
