@@ -153,10 +153,13 @@
 			INSERT_TIME: 1,
 			UPDATE_TIME: 1
 		} )
+		.limit(3)
 		.then( data_insert => {
 			var temp_insert = [];
 			var temp_update = [];
 			var temp_delete = [];
+
+			console.log(data_insert);
 
 			data_insert.forEach( function( data ) {
 
@@ -191,7 +194,8 @@
 						SPH_SAP : data.SPH_SAP,
 						HA_GIS : data.HA_GIS,
 						PALM_GIS : data.PALM_GIS,
-						SPH_GIS: data.SPH_GIS
+						SPH_GIS: data.SPH_GIS,
+						SPMON: data.SPMON
 					} );
 				}
 
@@ -226,7 +230,8 @@
 						SPH_SAP : data.SPH_SAP,
 						HA_GIS : data.HA_GIS,
 						PALM_GIS : data.PALM_GIS,
-						SPH_GIS: data.SPH_GIS
+						SPH_GIS: data.SPH_GIS,
+						SPMON: data.SPMON
 					} );
 				}
 
@@ -261,7 +266,8 @@
 						SPH_SAP : data.SPH_SAP,
 						HA_GIS : data.HA_GIS,
 						PALM_GIS : data.PALM_GIS,
-						SPH_GIS: data.SPH_GIS
+						SPH_GIS: data.SPH_GIS,
+						SPMON: data.SPMON
 					} );
 				}
 
