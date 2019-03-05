@@ -391,11 +391,11 @@ exports.delete = ( req, res ) => {
 	exports.createOrUpdate = ( req, res ) => {
 
 		if ( 
-			!req.body.NATIONAL || 
 			!req.body.REGION_CODE || 
 			!req.body.COMP_CODE || 
 			!req.body.EST_CODE || 
 			!req.body.WERKS || 
+			!req.body.JUMLAH_TPH || 
 			!req.body.AFD_CODE || 
 			!req.body.WERKS_AFD_BLOCK_CODE ||
 			!req.body.START_VALID ||
@@ -456,7 +456,6 @@ exports.delete = ( req, res ) => {
 			else {
 				
 				if ( 
-					data.NATIONAL != req.body.NATIONAL || 
 					data.REGION_CODE != req.body.REGION_CODE || 
 					data.COMP_CODE != req.body.COMP_CODE || 
 					data.EST_CODE != req.body.EST_CODE || 
