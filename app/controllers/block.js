@@ -460,6 +460,7 @@ exports.delete = ( req, res ) => {
 					data.COMP_CODE != req.body.COMP_CODE || 
 					data.EST_CODE != req.body.EST_CODE || 
 					data.WERKS != req.body.WERKS || 
+					data.JUMLAH_TPH != req.body.JUMLAH_TPH || 
 					data.AFD_CODE != req.body.AFD_CODE || 
 					data.BLOCK_NAME != req.body.BLOCK_NAME || 
 					data.LATITUDE_BLOCK != req.body.LATITUDE_BLOCK || 
