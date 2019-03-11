@@ -47,16 +47,16 @@
 			location_code_group.forEach( function( data ) {
 				switch ( ref_role ) {
 					case 'REGION_CODE':
-						location_code_final.push( data );
+						location_code_final.push( data.substr( 0, 2 ) );
 					break;
 					case 'COMP_CODE':
-						location_code_final.push( data );
+						location_code_final.push( data.substr( 0, 2 ) );
 					break;
 					case 'AFD_CODE':
-						location_code_final.push( data );
+						location_code_final.push( data.substr( 0, 4 ) );
 					break;
 					case 'BA_CODE':
-						location_code_final.push( data );
+						location_code_final.push( data.substr( 0, 4 ) );
 					break;
 				}
 			} );
@@ -72,7 +72,7 @@
 				query[key] = location_code_final;
 			break;
 			case 'AFD_CODE':
-				key = 'WERKS_AFD_CODE';
+				key = 'WERKS';
 				query[key] = location_code_final;
 			break;
 			case 'BA_CODE':
@@ -84,6 +84,8 @@
 				query[key] = 'NATIONAL';
 			break;
 		}
+
+		console.log(query)
 
 		// Set Data
 		landUseModel
@@ -153,7 +155,7 @@
 			INSERT_TIME: 1,
 			UPDATE_TIME: 1
 		} )
-		.limit(3)
+		//.limit(3)
 		.then( data_insert => {
 			var temp_insert = [];
 			var temp_update = [];
