@@ -1,161 +1,174 @@
-const jwt = require( 'jsonwebtoken' );
-const config = require( '../config/config.js' );
-const uuid = require( 'uuid' );
-const nJwt = require( 'njwt' );
-const jwtDecode = require( 'jwt-decode' );
+/*
+|--------------------------------------------------------------------------
+| Variable
+|--------------------------------------------------------------------------
+*/
+	// Config
+	const config = require( _directory_base + '/config/config.js' );
 
-function verifyToken( req, res, next ) {
-	// Get auth header value
-	const bearerHeader = req.headers['authorization'];
-
-	if ( typeof bearerHeader !== 'undefined' ) {
-		const bearer = bearerHeader.split( ' ' );
-		const bearerToken = bearer[1];
-
-		req.token = bearerToken;
-		next();
-	}
-	else {
-		// Forbidden
-		res.sendStatus( 403 );
-	}
-}
-
-function token_verify( req, res, next ) {
-	// Get auth header value
-	const bearerHeader = req.headers['authorization'];
-
-	if ( typeof bearerHeader !== 'undefined' ) {
-		const bearer = bearerHeader.split( ' ' );
-		const bearer_token = bearer[1];
-
-		req.token = bearer_token;
-
-		nJwt.verify( bearer_token, config.secret_key, config.token_algorithm, ( err, authData ) => {
-			if ( err ) {
-				res.send({
-					status: false,
-					message: "Invalid Token",
-					data: []
-				} );
-			}
-			else {
-				req.auth = jwtDecode( req.token );
-				req.auth.LOCATION_CODE_GROUP = req.auth.LOCATION_CODE.split( ',' );
-				req.config = config;
-				next();
-			}
-		} );
-		
-	}
-	else {
-		// Forbidden
-		res.sendStatus( 403 );
-	}
-}
-
-module.exports = ( app ) => {
+	// Node Modules
+	const jwt = require( 'jsonwebtoken' );
+	const uuid = require( 'uuid' );
+	const nJwt = require( 'njwt' );
+	const jwtDecode = require( 'jwt-decode' );
 
 	// Declare Controllers
-	const afdeling = require( '../app/controllers/afdeling.js' );
-	const block = require( '../app/controllers/block.js' );
-	const comp = require( '../app/controllers/comp.js' );
-	const est = require( '../app/controllers/est.js' );
-	const region = require( '../app/controllers/region.js' );
-	const landUse = require( '../app/controllers/landUse.js' );
+	const AfdelingController = require( _directory_base + '/app/controllers/AfdelingController.js' );
+	const BlockController = require( _directory_base + '/app/controllers/BlockController.js' );
+	const CompController = require( _directory_base + '/app/controllers/CompController.js' );
+	const EstController = require( _directory_base + '/app/controllers/EstController.js' );
+	const RegionController = require( _directory_base + '/app/controllers/RegionController.js' );
+	const LandUseController = require( _directory_base + '/app/controllers/LandUseController.js' );
 
-	// Routing: Land Use
-	app.get( '/land-use/all', token_verify, landUse.findAll );
-	app.get( '/land-use/q', token_verify, landUse.findAll );
-	app.get( '/report/land-use/:id', token_verify, landUse.findOneForReport );
+/*
+|--------------------------------------------------------------------------
+| Routing
+|--------------------------------------------------------------------------
+*/
+	module.exports = ( app ) => {
 
-	app.get( '/land-use/q', token_verify, landUse.findAll );
-	app.get( '/land-use', token_verify, landUse.find );
-	app.post( '/sync-tap/land-use', token_verify, landUse.createOrUpdate );
-	app.get( '/sync-mobile/land-use/:start_date/:end_date', token_verify, landUse.syncMobile );
+		/*
+		 |--------------------------------------------------------------------------
+		 | Land Use
+		 |--------------------------------------------------------------------------
+		 */
+			app.get( '/land-use/all', token_verify, LandUseController.findAll );
+			app.get( '/land-use/q', token_verify, LandUseController.findAll );
+			app.get( '/report/land-use/:id', token_verify, LandUseController.findOneForReport );
+			app.get( '/land-use/q', token_verify, LandUseController.findAll );
+			app.get( '/land-use', token_verify, LandUseController.find );
+			app.post( '/sync-tap/land-use', token_verify, LandUseController.createOrUpdate );
+			app.get( '/sync-mobile/land-use/:start_date/:end_date', token_verify, LandUseController.syncMobile );
+			
+		/*
+		 |--------------------------------------------------------------------------
+		 | Afdeling
+		 |--------------------------------------------------------------------------
+		 */
+			app.get( '/afdeling/all', token_verify, AfdelingController.findAll );
+			app.get( '/afdeling/q', token_verify, AfdelingController.findAll );
+			app.post( '/sync-tap/afdeling', AfdelingController.createOrUpdate );
+			app.get( '/sync-mobile/afdeling/:start_date/:end_date', token_verify, AfdelingController.syncMobile );
+			app.get( '/afdeling', token_verify, AfdelingController.find );
+			app.post( '/afdeling', AfdelingController.create );
+			app.get( '/afdeling/:id', AfdelingController.findOne );
+			app.put( '/afdeling/:id', AfdelingController.update );
+			app.delete( '/afdeling/:id', AfdelingController.delete );
 
-	// Routing: Afdeling
-	app.get( '/afdeling/all', token_verify, afdeling.findAll );
-	app.get( '/afdeling/q', token_verify, afdeling.findAll );
-	app.post( '/sync-tap/afdeling', afdeling.createOrUpdate );
-	app.get( '/sync-mobile/afdeling/:start_date/:end_date', token_verify, afdeling.syncMobile );
-	app.get( '/afdeling', token_verify, afdeling.find );
+		/*
+		 |--------------------------------------------------------------------------
+		 | Block
+		 |--------------------------------------------------------------------------
+		 */
+			app.get( '/block/all', token_verify, BlockController.findAll );
+			app.get( '/block/q', token_verify, BlockController.findAll );
+			app.post( '/sync-tap/block', BlockController.createOrUpdate );
+			app.get( '/sync-mobile/block/:start_date/:end_date', token_verify, BlockController.syncMobile );
+			app.get( '/block', token_verify, BlockController.find );
+			app.post( '/block', BlockController.create );
+			app.get( '/block/:id', BlockController.findOne );
+			app.put( '/block/:id', BlockController.update );
+			app.delete( '/block/:id', BlockController.delete );
+			app.get( '/geom/design/block/:id', token_verify, BlockController.findDesignGeoJSON );
 
+		/*
+		 |--------------------------------------------------------------------------
+		 | Comp
+		 |--------------------------------------------------------------------------
+		 */
+			app.get( '/comp/all', token_verify, CompController.findAll );
+			app.get( '/comp/q', token_verify, CompController.findAll );
+			app.post( '/sync-tap/comp', token_verify, CompController.createOrUpdate );
+			app.get( '/sync-mobile/comp/:start_date/:end_date', token_verify, CompController.syncMobile );
+			app.delete( '/comp/:id', token_verify, CompController.delete );
+			app.get( '/comp', token_verify, CompController.find );
+			app.post( '/comp', CompController.create );
+			app.get( '/comp/:id', CompController.findOne );
+			app.put( '/comp/:id', CompController.update );
 
-	app.post( '/afdeling', afdeling.create );
-	
-	app.get( '/afdeling/:id', afdeling.findOne );
-	app.put( '/afdeling/:id', afdeling.update );
-	app.delete( '/afdeling/:id', afdeling.delete );
+		/*
+		 |--------------------------------------------------------------------------
+		 | Est
+		 |--------------------------------------------------------------------------
+		 */
+			app.get( '/est/all', token_verify, EstController.findAll );
+			app.get( '/est/q', token_verify, EstController.findAll );
+			app.post( '/sync-tap/est', verifyToken, EstController.createOrUpdate );
+			app.get( '/sync-mobile/est/:start_date/:end_date', token_verify, EstController.syncMobile );
+			app.get( '/est', token_verify, EstController.find );
+			app.post( '/est', EstController.create );
+			app.get( '/est/:id', EstController.findOne );
+			app.put( '/est/:id', EstController.update );
+			app.delete( '/est/:id', EstController.delete );
 
-	// Routing: Block
-	app.get( '/block/all', token_verify, block.findAll );
-	app.get( '/block/q', token_verify, block.findAll );
-	app.post( '/sync-tap/block', block.createOrUpdate );
-	app.get( '/sync-mobile/block/:start_date/:end_date', token_verify, block.syncMobile );
-	app.get( '/block', token_verify, block.find );
+		/*
+		 |--------------------------------------------------------------------------
+		 | Region
+		 |--------------------------------------------------------------------------
+		 */
+			app.get( '/region/all', verifyToken, RegionController.findAll );
+			app.get( '/region/q', verifyToken, RegionController.findAll );
+			app.post( '/sync-tap/region', verifyToken, RegionController.createOrUpdate );
+			app.get( '/sync-mobile/region/:start_date/:end_date', token_verify, RegionController.syncMobile );
+			app.post( '/region', verifyToken, RegionController.create );
+			app.get( '/region', token_verify, RegionController.find );
+			app.get( '/region/:id', verifyToken, RegionController.findOne );
+			app.put( '/region/:id', verifyToken, RegionController.update );
+			app.delete( '/region/:id', verifyToken, RegionController.delete );
 
+	}
 
-	app.post( '/block', block.create );
-	app.get( '/block/:id', block.findOne );
-	app.put( '/block/:id', block.update );
-	app.delete( '/block/:id', block.delete );
+/*
+|--------------------------------------------------------------------------
+| Token Verify
+|--------------------------------------------------------------------------
+*/
+	function token_verify( req, res, next ) {
+		// Get auth header value
+		const bearerHeader = req.headers['authorization'];
 
+		if ( typeof bearerHeader !== 'undefined' ) {
+			const bearer = bearerHeader.split( ' ' );
+			const bearer_token = bearer[1];
 
+			req.token = bearer_token;
 
+			nJwt.verify( bearer_token, config.secret_key, config.token_algorithm, ( err, authData ) => {
+				if ( err ) {
+					res.send({
+						status: false,
+						message: "Invalid Token",
+						data: []
+					} );
+				}
+				else {
+					req.auth = jwtDecode( req.token );
+					req.auth.LOCATION_CODE_GROUP = req.auth.LOCATION_CODE.split( ',' );
+					req.config = config;
+					next();
+				}
+			} );
+			
+		}
+		else {
+			// Forbidden
+			res.sendStatus( 403 );
+		}
+	}
 
+	function verifyToken( req, res, next ) {
+		// Get auth header value
+		const bearerHeader = req.headers['authorization'];
 
+		if ( typeof bearerHeader !== 'undefined' ) {
+			const bearer = bearerHeader.split( ' ' );
+			const bearerToken = bearer[1];
 
-
-
-	// Routing: Comp
-	app.get( '/comp/all', token_verify, comp.findAll );
-	app.get( '/comp/q', token_verify, comp.findAll );
-	app.post( '/sync-tap/comp', token_verify, comp.createOrUpdate );
-	app.get( '/sync-mobile/comp/:start_date/:end_date', token_verify, comp.syncMobile );
-	app.delete( '/comp/:id', token_verify, comp.delete );
-	app.get( '/comp', token_verify, comp.find );
-
-
-
-
-	app.post( '/comp', comp.create );
-	
-	app.get( '/comp/:id', comp.findOne );
-	app.put( '/comp/:id', comp.update );
-
-
-
-
-
-
-	// Routing: Est
-	app.get( '/est/all', token_verify, est.findAll );
-	app.get( '/est/q', token_verify, est.findAll );
-	app.post( '/sync-tap/est', verifyToken, est.createOrUpdate );
-
-	app.get( '/sync-mobile/est/:start_date/:end_date', token_verify, est.syncMobile );
-	app.get( '/est', token_verify, est.find );
-
-	app.post( '/est', est.create );
-	
-	app.get( '/est/:id', est.findOne );
-	app.put( '/est/:id', est.update );
-	app.delete( '/est/:id', est.delete );
-
-	// Routing: Region
-	app.get( '/region/all', verifyToken, region.findAll );
-	app.get( '/region/q', verifyToken, region.findAll );
-	app.post( '/sync-tap/region', verifyToken, region.createOrUpdate );
-
-	app.get( '/sync-mobile/region/:start_date/:end_date', token_verify, region.syncMobile );
-	app.post( '/region', verifyToken, region.create );
-	app.get( '/region', token_verify, region.find );
-	app.get( '/region/:id', verifyToken, region.findOne );
-	app.put( '/region/:id', verifyToken, region.update );
-	app.delete( '/region/:id', verifyToken, region.delete );
-
-	// Geometry
-	app.get( '/geom/design/block/:id', token_verify, block.findDesignGeoJSON );
-
-}
+			req.token = bearerToken;
+			next();
+		}
+		else {
+			// Forbidden
+			res.sendStatus( 403 );
+		}
+	}

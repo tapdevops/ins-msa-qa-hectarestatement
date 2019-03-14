@@ -1,54 +1,62 @@
-// Import Express
-const express = require( 'express' );
+/*
+|--------------------------------------------------------------------------
+| APP Setup
+|--------------------------------------------------------------------------
+*/
+	// Node Modules
+	const bodyParser = require( 'body-parser' );
+	const express = require( 'express' );
+	const mongoose = require( 'mongoose' );
 
-// Import Mongoose
-const mongoose = require( 'mongoose' );
+	// Primary Variable
+	const app = express();
 
-// Import Body Parser
-const bodyParser = require( 'body-parser' );
+	// Config
+	const config = {};
+		  config.app = require( './config/config.js' );
+		  config.database = require( './config/database.js' )[config.app.env];
 
-// Configuring the Database
-const dbConfig = require( './config/database.js' );
+/*
+|--------------------------------------------------------------------------
+| Global APP Init
+|--------------------------------------------------------------------------
+*/
+	global._directory_base = __dirname;
 
-// Configuring configuration
-const config = require( './config/config.js' );
+/*
+|--------------------------------------------------------------------------
+| APP Init
+|--------------------------------------------------------------------------
+*/
+	// Routing Folder SKM Design
+	app.use( '/skm-design-block/', express.static( 'assets/geo-json/SKM_DESIGN_BLOCK' ) );
 
-// Define App
-const app = express();
+	// Parse request of content-type - application/x-www-form-urlencoded
+	app.use( bodyParser.urlencoded( { extended: false } ) );
 
-app.use( '/skm-design-block/', express.static( 'assets/geo-json/SKM_DESIGN_BLOCK' ) );
+	// Parse request of content-type - application/json
+	app.use( bodyParser.json() );
 
-// Parse request of content-type - application/x-www-form-urlencoded
-app.use( bodyParser.urlencoded( { extended: true } ) )
+	// Setup Database
+	mongoose.Promise = global.Promise;
+	mongoose.connect( config.database.url, {
+		useNewUrlParser: true,
+		ssl: config.database.ssl
+	} ).then( () => {
+		console.log( 'Successfully connected to the Database' );
+	} ).catch( err => {
+		console.log( 'Could not connect to the Database. Exiting application.' )
+	} );
+	
+	// Server Running Message
+	app.listen( config.app.port, () => {
+		console.log( 'Server ' + config.app.name + ' Berjalan di port ' + config.app.port );
+	} );
 
-// Parse request of content-type - application/json
-app.use( bodyParser.json() )
+	// Routing
+	app.get( '/', ( req, res ) => {
+		res.json( { 'message': config.app.name } )
+	} );
 
-// Setup Database
-mongoose.Promise = global.Promise;
-
-// Connecting to the database
-mongoose.connect( dbConfig.url, {
-	useNewUrlParser: true,
-	ssl: dbConfig.ssl
-} ).then( () => {
-	console.log( 'Successfully connected to the Database' );
-} ).catch( err => {
-	console.log( 'Could not connect to the Database. Exiting application.' )
-} );
-
-// Server Running Message
-app.listen( config.app_port, () => {
-	var host = config.ip_address;
-	var port = config.app_port;
-	console.log( config.app_name + ' running on ' + config.app_port )
-} );
-
-// Routes
-app.get( '/', ( req, res ) => {
-	res.json( { 'message': config.app_name + '17-33' } )
-} );
-
-// Require Bisnis Area Routes
-require( './routes/route.js' )( app );
-module.exports = app;
+	require( './routes/route.js' )( app );
+	module.exports = app;
