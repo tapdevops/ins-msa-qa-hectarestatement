@@ -9,7 +9,7 @@
 			ssl: false
 		},
 		development: {
-			url: 'mongodb://dbapp:dbapp123@149.129.249.18:27017/s_hectare_statement?authSource=admin',
+			url: 'mongodb://dbapp:dbapp123@149.129.252.112:27017/s_hectare_statement?authSource=admin',
 			ssl: false
 		}
 	}
