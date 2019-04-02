@@ -166,6 +166,7 @@ const execSync = require( 'child_process' ).execSync;
 			LATITUDE_BLOCK: 1,
 			LONGITUDE_BLOCK: 1
 		} )
+		.limit( 10 )
 		.then( data => {
 			if( !data ) {
 				return res.send( {
@@ -174,9 +175,28 @@ const execSync = require( 'child_process' ).execSync;
 					data: {}
 				} );
 			}
+			var results = [];
+			if ( data.length > 0 ) {
+				data.forEach( function ( dt ) {
+					results.push( {
+						"JUMLAH_TPH": dt.JUMLAH_TPH.toString(),
+						"REGION_CODE": dt.REGION_CODE,
+						"COMP_CODE": dt.COMP_CODE,
+						"EST_CODE": dt.EST_CODE,
+						"WERKS": dt.WERKS,
+						"AFD_CODE": dt.AFD_CODE,
+						"BLOCK_CODE": dt.BLOCK_CODE,
+						"BLOCK_NAME": dt.BLOCK_NAME,
+						"WERKS_AFD_BLOCK_CODE": dt.WERKS_AFD_BLOCK_CODE,
+						"LATITUDE_BLOCK": dt.LATITUDE_BLOCK,
+						"LONGITUDE_BLOCK": dt.LONGITUDE_BLOCK
+					} );
+				} );
+			}
+			console.log(data);
 			res.send( {
 				status: true,
-				message: 'Success',
+				message: 'Success!',
 				data: data
 			} );
 		} ).catch( err => {
@@ -599,10 +619,28 @@ exports.delete = ( req, res ) => {
 					data: {}
 				} );
 			}
+			var results = [];
+			if ( data.length > 0 ) {
+				data.forEach( function ( dt ) {
+					results.push( {
+						"JUMLAH_TPH": dt.JUMLAH_TPH.toString(),
+						"REGION_CODE": dt.REGION_CODE,
+						"COMP_CODE": dt.COMP_CODE,
+						"EST_CODE": dt.EST_CODE,
+						"WERKS": dt.WERKS,
+						"AFD_CODE": dt.AFD_CODE,
+						"BLOCK_CODE": dt.BLOCK_CODE,
+						"BLOCK_NAME": dt.BLOCK_NAME,
+						"WERKS_AFD_BLOCK_CODE": dt.WERKS_AFD_BLOCK_CODE,
+						"LATITUDE_BLOCK": dt.LATITUDE_BLOCK,
+						"LONGITUDE_BLOCK": dt.LONGITUDE_BLOCK
+					} );
+				} );
+			}
 			res.send( {
 				status: true,
 				message: 'Success',
-				data: data
+				data: results
 			} );
 		} ).catch( err => {
 			if( err.kind === 'ObjectId' ) {
