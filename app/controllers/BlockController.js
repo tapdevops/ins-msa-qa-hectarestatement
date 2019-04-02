@@ -586,6 +586,11 @@ exports.delete = ( req, res ) => {
 			LATITUDE_BLOCK: 1,
 			LONGITUDE_BLOCK: 1
 		} )
+		.sort( {
+			WERKS: 1,
+			AFD_CODE: 1,
+			BLOCK_NAME: 1
+		} )
 		.then( data => {
 			if( !data ) {
 				return res.send( {

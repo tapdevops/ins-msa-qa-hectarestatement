@@ -55,7 +55,7 @@
 
 	// Routing
 	app.get( '/', ( req, res ) => {
-		res.json( { 'message': config.app.name, 'date': '28 March 2019'  } )
+		res.json( { 'message': config.app.name } )
 	} );
 
 	require( './routes/route.js' )( app );
