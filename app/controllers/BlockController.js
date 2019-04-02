@@ -627,6 +627,8 @@ exports.delete = ( req, res ) => {
 						"REGION_CODE": dt.REGION_CODE,
 						"COMP_CODE": dt.COMP_CODE,
 						"EST_CODE": dt.EST_CODE,
+
+						
 						"WERKS": dt.WERKS,
 						"AFD_CODE": dt.AFD_CODE,
 						"BLOCK_CODE": dt.BLOCK_CODE,
