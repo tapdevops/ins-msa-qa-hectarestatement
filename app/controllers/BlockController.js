@@ -93,128 +93,7 @@ const execSync = require( 'child_process' ).execSync;
 		}
 	}
 
-	// Retrieve and return all notes from the database.
-	exports.find = ( req, res ) => {
-
-		url_query = req.query;
-		var url_query_length = Object.keys( url_query ).length;
-
-		// Auth Data
-		var auth = req.auth;
-		var location_code_group = auth.LOCATION_CODE.split( ',' );
-		var ref_role = auth.REFFERENCE_ROLE;
-		var location_code_final = [];
-		var key = [];
-		var query = {};
-			query["END_VALID"] = 99991231;
-		
-		if ( ref_role != 'ALL' ) {
-			location_code_group.forEach( function( data ) {
-				switch ( ref_role ) {
-					case 'REGION_CODE':
-						location_code_final.push( data.substr( 0, 2 ) );
-					break;
-					case 'COMP_CODE':
-						location_code_final.push( data.substr( 0, 2 ) );
-					break;
-					case 'AFD_CODE':
-						location_code_final.push( data.substr( 0, 4 ) );
-					break;
-					case 'BA_CODE':
-						location_code_final.push( data.substr( 0, 4 ) );
-					break;
-				}
-			} );
-		}
-
-		switch ( ref_role ) {
-			case 'REGION_CODE':
-				key = ref_role;
-				query[key] = location_code_final;
-			break;
-			case 'COMP_CODE':
-				key = ref_role;
-				query[key] = location_code_final;
-			break;
-			case 'AFD_CODE':
-				key = 'WERKS';
-				query[key] = location_code_final;
-			break;
-			case 'BA_CODE':
-				key = 'WERKS';
-				query[key] = location_code_final;
-			break;
-			case 'NATIONAL':
-				key = 'NATIONAL';
-				query[key] = 'NATIONAL';
-			break;
-		}
-		
-		blockModel.find( query )
-		.select( {
-			_id: 0,
-			REGION_CODE: 1,
-			COMP_CODE: 1,
-			EST_CODE: 1,
-			WERKS: 1,
-			AFD_CODE: 1,
-			JUMLAH_TPH: 1,
-			BLOCK_CODE: 1,
-			BLOCK_NAME: 1,
-			WERKS_AFD_CODE: 1,
-			WERKS_AFD_BLOCK_CODE: 1,
-			LATITUDE_BLOCK: 1,
-			LONGITUDE_BLOCK: 1
-		} )
-		.limit( 10 )
-		.then( data => {
-			if( !data ) {
-				return res.send( {
-					status: false,
-					message: 'Data not found 2',
-					data: {}
-				} );
-			}
-			var results = [];
-			if ( data.length > 0 ) {
-				data.forEach( function ( dt ) {
-					results.push( {
-						"JUMLAH_TPH": dt.JUMLAH_TPH.toString(),
-						"REGION_CODE": dt.REGION_CODE,
-						"COMP_CODE": dt.COMP_CODE,
-						"EST_CODE": dt.EST_CODE,
-						"WERKS": dt.WERKS,
-						"AFD_CODE": dt.AFD_CODE,
-						"BLOCK_CODE": dt.BLOCK_CODE,
-						"BLOCK_NAME": dt.BLOCK_NAME,
-						"WERKS_AFD_BLOCK_CODE": dt.WERKS_AFD_BLOCK_CODE,
-						"LATITUDE_BLOCK": dt.LATITUDE_BLOCK,
-						"LONGITUDE_BLOCK": dt.LONGITUDE_BLOCK
-					} );
-				} );
-			}
-			console.log(data);
-			res.send( {
-				status: true,
-				message: 'Success!',
-				data: data
-			} );
-		} ).catch( err => {
-			if( err.kind === 'ObjectId' ) {
-				return res.send( {
-					status: false,
-					message: 'Data not found 1',
-					data: {}
-				} );
-			}
-			return res.send( {
-				status: false,
-				message: 'Error retrieving data',
-				data: {}
-			} );
-		} );
-
-	};
+	
 
 
 
@@ -584,6 +463,129 @@ exports.delete = ( req, res ) => {
 		} );
 	};
 
+	// Retrieve and return all notes from the database.
+	exports.find = ( req, res ) => {
+
+		url_query = req.query;
+		var url_query_length = Object.keys( url_query ).length;
+
+		// Auth Data
+		var auth = req.auth;
+		var location_code_group = auth.LOCATION_CODE.split( ',' );
+		var ref_role = auth.REFFERENCE_ROLE;
+		var location_code_final = [];
+		var key = [];
+		var query = {};
+			query["END_VALID"] = 99991231;
+		
+		if ( ref_role != 'ALL' ) {
+			location_code_group.forEach( function( data ) {
+				switch ( ref_role ) {
+					case 'REGION_CODE':
+						location_code_final.push( data.substr( 0, 2 ) );
+					break;
+					case 'COMP_CODE':
+						location_code_final.push( data.substr( 0, 2 ) );
+					break;
+					case 'AFD_CODE':
+						location_code_final.push( data.substr( 0, 4 ) );
+					break;
+					case 'BA_CODE':
+						location_code_final.push( data.substr( 0, 4 ) );
+					break;
+				}
+			} );
+		}
+
+		switch ( ref_role ) {
+			case 'REGION_CODE':
+				key = ref_role;
+				query[key] = location_code_final;
+			break;
+			case 'COMP_CODE':
+				key = ref_role;
+				query[key] = location_code_final;
+			break;
+			case 'AFD_CODE':
+				key = 'WERKS';
+				query[key] = location_code_final;
+			break;
+			case 'BA_CODE':
+				key = 'WERKS';
+				query[key] = location_code_final;
+			break;
+			case 'NATIONAL':
+				key = 'NATIONAL';
+				query[key] = 'NATIONAL';
+			break;
+		}
+		
+		blockModel.find( query )
+		.select( {
+			_id: 0,
+			REGION_CODE: 1,
+			COMP_CODE: 1,
+			EST_CODE: 1,
+			WERKS: 1,
+			AFD_CODE: 1,
+			JUMLAH_TPH: 1,
+			BLOCK_CODE: 1,
+			BLOCK_NAME: 1,
+			WERKS_AFD_CODE: 1,
+			WERKS_AFD_BLOCK_CODE: 1,
+			LATITUDE_BLOCK: 1,
+			LONGITUDE_BLOCK: 1
+		} )
+		.limit( 10 )
+		.then( data => {
+			if( !data ) {
+				return res.send( {
+					status: false,
+					message: 'Data not found 2',
+					data: {}
+				} );
+			}
+			var results = [];
+			if ( data.length > 0 ) {
+				data.forEach( function ( dt ) {
+					results.push( {
+						"JUMLAH_TPH": ( dt.JUMLAH_TPH == null ? 0 : dt.JUMLAH_TPH ),
+						"REGION_CODE": dt.REGION_CODE,
+						"COMP_CODE": dt.COMP_CODE,
+						"EST_CODE": dt.EST_CODE,
+						"WERKS": dt.WERKS,
+						"AFD_CODE": dt.AFD_CODE,
+						"BLOCK_CODE": dt.BLOCK_CODE,
+						"BLOCK_NAME": dt.BLOCK_NAME,
+						"WERKS_AFD_BLOCK_CODE": dt.WERKS_AFD_BLOCK_CODE,
+						"LATITUDE_BLOCK": dt.LATITUDE_BLOCK,
+						"LONGITUDE_BLOCK": dt.LONGITUDE_BLOCK
+					} );
+				} );
+			}
+			console.log(data);
+			res.send( {
+				status: true,
+				message: 'Success!',
+				data: results
+			} );
+		} ).catch( err => {
+			if( err.kind === 'ObjectId' ) {
+				return res.send( {
+					status: false,
+					message: 'Data not found 1',
+					data: {}
+				} );
+			}
+			return res.send( {
+				status: false,
+				message: 'Error retrieving data',
+				data: {}
+			} );
+		} );
+
+	};
+
 	// Find All
 	exports.findAll = ( req, res ) => {
 		var url_query = req.query;
@@ -623,12 +625,10 @@ exports.delete = ( req, res ) => {
 			if ( data.length > 0 ) {
 				data.forEach( function ( dt ) {
 					results.push( {
-						"JUMLAH_TPH": dt.JUMLAH_TPH.toString(),
+						"JUMLAH_TPH": ( dt.JUMLAH_TPH == null ? 0 : dt.JUMLAH_TPH ),
 						"REGION_CODE": dt.REGION_CODE,
 						"COMP_CODE": dt.COMP_CODE,
 						"EST_CODE": dt.EST_CODE,
-
-						
 						"WERKS": dt.WERKS,
 						"AFD_CODE": dt.AFD_CODE,
 						"BLOCK_CODE": dt.BLOCK_CODE,
