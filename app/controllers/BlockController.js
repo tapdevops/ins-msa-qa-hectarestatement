@@ -519,7 +519,7 @@ exports.delete = ( req, res ) => {
 				query[key] = 'NATIONAL';
 			break;
 		}
-		
+
 		blockModel.find( query )
 		.select( {
 			_id: 0,
@@ -536,7 +536,6 @@ exports.delete = ( req, res ) => {
 			LATITUDE_BLOCK: 1,
 			LONGITUDE_BLOCK: 1
 		} )
-		.limit( 10 )
 		.then( data => {
 			if( !data ) {
 				return res.send( {
@@ -564,11 +563,10 @@ exports.delete = ( req, res ) => {
 					} );
 				} );
 			}
-			console.log(data);
 			res.send( {
 				status: true,
 				message: 'Success!',
-				data: results
+				data: data
 			} );
 		} ).catch( err => {
 			if( err.kind === 'ObjectId' ) {
