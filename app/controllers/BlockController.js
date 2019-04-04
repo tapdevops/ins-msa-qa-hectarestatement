@@ -566,7 +566,7 @@ exports.delete = ( req, res ) => {
 			res.send( {
 				status: true,
 				message: 'Success!',
-				data: data
+				data: results
 			} );
 		} ).catch( err => {
 			if( err.kind === 'ObjectId' ) {
