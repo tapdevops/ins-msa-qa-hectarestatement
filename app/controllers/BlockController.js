@@ -557,6 +557,7 @@ exports.delete = ( req, res ) => {
 						"AFD_CODE": dt.AFD_CODE,
 						"BLOCK_CODE": dt.BLOCK_CODE,
 						"BLOCK_NAME": dt.BLOCK_NAME,
+						"WERKS_AFD_CODE": dt.WERKS_AFD_CODE,
 						"WERKS_AFD_BLOCK_CODE": dt.WERKS_AFD_BLOCK_CODE,
 						"LATITUDE_BLOCK": dt.LATITUDE_BLOCK,
 						"LONGITUDE_BLOCK": dt.LONGITUDE_BLOCK
@@ -633,6 +634,7 @@ exports.delete = ( req, res ) => {
 						"AFD_CODE": dt.AFD_CODE,
 						"BLOCK_CODE": dt.BLOCK_CODE,
 						"BLOCK_NAME": dt.BLOCK_NAME,
+						"WERKS_AFD_CODE": dt.WERKS_AFD_CODE,
 						"WERKS_AFD_BLOCK_CODE": dt.WERKS_AFD_BLOCK_CODE,
 						"LATITUDE_BLOCK": dt.LATITUDE_BLOCK,
 						"LONGITUDE_BLOCK": dt.LONGITUDE_BLOCK
