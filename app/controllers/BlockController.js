@@ -520,7 +520,11 @@ exports.delete = ( req, res ) => {
 			break;
 		}
 
-		blockModel.find( query )
+		console.log( 'ABC' );
+		//blockModel.find( query )
+		blockModel.find( {
+			WERKS_AFD_BLOCK_CODE: '4421C054'
+		} )
 		.select( {
 			_id: 0,
 			REGION_CODE: 1,
