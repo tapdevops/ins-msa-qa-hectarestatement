@@ -9,7 +9,7 @@
 			ssl: false
 		},
 		development: {
-			url: 'mongodb://dbapp:dbapp123@149.129.252.112:27017/s_hectare_statement?authSource=admin',
+			url: 'mongodb://s_hectare_statement:s_hectare_statement@dbappdev.tap-agri.com:4848/s_hectare_statement?authSource=s_hectare_statement',
 			ssl: false
 		}
 	}
