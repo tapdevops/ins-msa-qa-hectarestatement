@@ -93,10 +93,6 @@ const execSync = require( 'child_process' ).execSync;
 		}
 	}
 
-	
-
-
-
 // Create and Save new Data
 exports.create = ( req, res ) => {
 	
@@ -270,16 +266,6 @@ exports.delete = ( req, res ) => {
 		} );
 	} );
 };
-
-
-
-
-
-
-
-
-
-
 
 /*
 |--------------------------------------------------------------------------
