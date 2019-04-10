@@ -40,7 +40,7 @@ const execSync = require( 'child_process' ).execSync;
 					// Attributes
 					var temporary_geometry = {
 						coords: [],
-						blokname: String( data.properties.REBLOCK ),
+						blokname: String( data.properties.BLOCK_NAME ),
 						werks_afd_block_code: String( data.properties.AFD_CODE ) + String( data.properties.BLOCK_CODE ),
 						afd_code: String( data.properties.AFD_CODE ).substr( 4, 5 )
 					};
