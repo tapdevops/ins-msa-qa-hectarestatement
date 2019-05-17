@@ -2,7 +2,7 @@
 	"name": "app-masterdata",
 	"version": "1.0.0",
 	"description": "",
-	"main": "app.js",
+	"main": "server.js",
 	"dependencies": {
 		"aliyun-api-gateway": "^1.1.5",
 		"body-parser": "^1.16.0",
@@ -11,7 +11,9 @@
 		"date-and-time": "^0.6.3",
 		"dateformat": "^3.0.3",
 		"express": "^4.14.1",
+		"express-routes-versioning": "^1.0.1",
 		"express-validation": "^1.0.2",
+		"ferds-validator": "^1.0.4",
 		"file-system": "^2.2.2",
 		"geojson-precision": "^1.0.0",
 		"geojson-reducer": "^1.0.3",

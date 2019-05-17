@@ -1,16 +1,14 @@
+# Set NodeJS version
 FROM node:8
 
 # Create app directory
 WORKDIR /usr/src/app
 
 # Install app dependencies
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
-# where available (npm@5+)
 COPY package.json /usr/src/app
 
+# Install required packages
 RUN npm install
-# If you are building your code for production
-# RUN npm install --only=production
 
 # GeoJSON Reducer
 RUN npm install -g geojson-reducer
@@ -18,8 +16,8 @@ RUN npm install -g geojson-reducer
 # Bundle app source
 COPY . /usr/src/app
 
+# Setup port
 EXPOSE 3009
-CMD [ "npm", "start" ]
 
-#RUN npm install
-#RUN node  app.js
+# Running command
+CMD [ "node", "server.js" ]
