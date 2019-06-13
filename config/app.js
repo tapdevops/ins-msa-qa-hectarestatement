@@ -11,11 +11,11 @@
 		|--------------------------------------------------------------------------
 		*/
 			name: 'Microservice Inspection',
-			env: 'development', // production, qa, development
+			env: 'dev', // prod, qa, dev
 			port: {
-				development: process.env.PORT || 4009,
+				dev: process.env.PORT || 4009,
 				qa: process.env.PORT || 5009,
-				production: process.env.PORT || 3009,
+				prod: process.env.PORT || 3009,
 			},
 
 		/*
