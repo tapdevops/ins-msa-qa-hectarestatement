@@ -79,7 +79,7 @@
 			//app.get( '/block/:id', BlockController.findOne );
 			//app.put( '/block/:id', BlockController.update );
 			//app.delete( '/block/:id', BlockController.delete );
-			app.get( '/geom/design/block/:id', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.Block.find_one_geom );
+			app.post( '/geom/design/block', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.Block.find_one_geom );
 
 			// Comp
 			//app.get( '/comp/all', token_verify, CompController.findAll );

@@ -155,7 +155,15 @@
 	 */
 		exports.find_one_geom = ( req, res ) => {
 			
-			var geometry_file_location = 'assets/geo-json/design-block/' + req.params.id + '.enc';
+			if ( !req.body.WERKS ) {
+				return res.status( 200 ).send( {
+					status: false,
+					message: 'Input tidak valid',
+					data: {}
+				} );
+			}
+
+			var geometry_file_location = 'assets/geo-json/design-block/' + req.body.WERKS + '.enc';
 			var results = [];
 
 			if ( FS.existsSync( geometry_file_location ) ) {

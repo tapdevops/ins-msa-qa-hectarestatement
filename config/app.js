@@ -10,7 +10,7 @@
 		| App Config
 		|--------------------------------------------------------------------------
 		*/
-			name: 'Microservice Inspection',
+			name: 'Microservice Hectare Statement',
 			env: 'dev', // prod, qa, dev
 			port: {
 				dev: process.env.PORT || 4009,
