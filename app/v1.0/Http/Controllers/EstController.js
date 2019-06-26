@@ -88,7 +88,9 @@
 				EST_CODE: 1,
 				WERKS: 1,
 				EST_NAME: 1,
-				CITY: 1
+				CITY: 1,
+				LATITUDE: 1,
+				LONGITUDE: 1
 			} )
 			.then( data => {
 				if( !data ) {
