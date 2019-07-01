@@ -21,6 +21,9 @@ const execSync = require( 'child_process' ).execSync;
 		var geometry_file_location = 'assets/geo-json/design-block/' + req.params.id + '.enc';
 		var results = [];
 
+		console.log(req.bodyssss);
+		console.log(geometry_file_location);ss
+
 		if ( fs.existsSync( geometry_file_location ) ) {
 			// Generate Recuder GeoJSON
 			var cmd = "geojson-reducer " + geometry_file_location;

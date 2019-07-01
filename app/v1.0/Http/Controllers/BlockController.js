@@ -240,6 +240,8 @@
 			var geometry_file_location = 'assets/geo-json/design-block/' + req.body.WERKS + '.enc';
 			var results = [];
 
+			console.log(geometry_file_location);
+
 			if ( FS.existsSync( geometry_file_location ) ) {
 				// Generate Recuder GeoJSON
 				var cmd = "geojson-reducer " + geometry_file_location;

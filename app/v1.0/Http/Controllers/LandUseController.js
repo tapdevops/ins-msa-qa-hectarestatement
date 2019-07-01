@@ -144,6 +144,77 @@
 
 		};
 
+		exports.find_all = ( req, res ) => {
+			var url_query = req.query;
+			var url_query_length = Object.keys( url_query ).length;
+			url_query.DELETE_TIME = 0;
+			console.log(url_query);
+			
+			ViewLandUseModel.find( url_query )
+			.select( {
+				_id : 0,
+				NATIONAL : 1,
+				REGION_CODE : 1,
+				COMP_CODE : 1,
+				ADDRESS : 1,
+				EST_CODE : 1,
+				WERKS : 1,
+				SUB_BA_CODE : 1,
+				KEBUN_CODE : 1,
+				AFD_CODE : 1,
+				AFD_NAME : 1,
+				WERKS_AFD_CODE : 1,
+				BLOCK_CODE : 1,
+				BLOCK_NAME : 1,
+				WERKS_AFD_BLOCK_CODE : 1,
+				LAND_USE_CODE : 1,
+				LAND_USE_NAME : 1,
+				LAND_USE_CODE_GIS : 1,
+				SPMON : 1,
+				LAND_CAT : 1,
+				LAND_CAT_L1_CODE : 1,
+				LAND_CAT_L1 : 1,
+				LAND_CAT_L2_CODE : 1,
+				MATURITY_STATUS : 1,
+				SCOUT_STATUS : 1,
+				AGES : 1,
+				HA_SAP : 1,
+				PALM_SAP : 1,
+				SPH_SAP : 1,
+				HA_GIS : 1,
+				PALM_GIS : 1,
+				SPH_GIS: 1
+			} )
+			.then( data => {
+				console.log(data);
+				if( !data ) {
+					return res.send( {
+						status: false,
+						message: 'Data not found 2',
+						data: {}
+					} );
+				}
+				res.send( {
+					status: true,
+					message: 'Success',
+					data: data
+				} );
+			} ).catch( err => {
+				if( err.kind === 'ObjectId' ) {
+					return res.send( {
+						status: false,
+						message: 'Data not found 1',
+						data: {}
+					} );
+				}
+				return res.send( {
+					status: false,
+					message: 'Error retrieving data',
+					data: {}
+				} );
+			} );
+		}
+
 		// Find All
 		exports.findOneForReport = ( req, res ) => {
 			var url_query = req.query;

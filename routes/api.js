@@ -104,17 +104,17 @@
 			//app.delete( '/est/:id', EstController.delete );
 
 			// Land Use
-			//app.get( '/land-use/all', token_verify, LandUseController.findAll );
-			//app.get( '/land-use/q', token_verify, LandUseController.findAll );
+			app.get( '/land-use/all', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.LandUse.find_all );
+			app.get( '/land-use/q', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.LandUse.find_all );
 			app.get( '/report/land-use/:id', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.LandUse.findOneForReport );
-			//app.get( '/land-use/q', token_verify, LandUseController.findAll );
+			app.get( '/land-use/q', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.LandUse.find_all );
 			app.get( '/land-use', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.LandUse.find );
 			//app.post( '/sync-tap/land-use', token_verify, LandUseController.createOrUpdate );
 			app.get( '/sync-mobile/land-use/:start_date/:end_date', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.LandUse.sync_mobile );
 
 		 	// Region
-			//app.get( '/region/all', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.Region.findAll );
-			//app.get( '/region/q', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.Region.findAll );
+			app.get( '/region/all', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.Region.find_all );
+			app.get( '/region/q', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.Region.find_all );
 			//app.post( '/sync-tap/region', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.Region.createOrUpdate );
 			app.get( '/sync-mobile/region/:start_date/:end_date', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.Region.sync_mobile );
 			//app.post( '/region', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.Region.create );

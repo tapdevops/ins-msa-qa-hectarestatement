@@ -65,6 +65,49 @@
 
 		};
 
+		exports.find_all = async ( req, res ) => {
+
+			var url_query = req.query;
+			var url_query_length = Object.keys( url_query ).length;
+				url_query.DELETE_TIME = "";
+
+			RegionModel.find( url_query )
+			.select( {
+				_id: 0,
+				NATIONAL: 1,
+				REGION_CODE: 1,
+				REGION_NAME: 1
+			} )
+			.then( data => {
+				if( !data ) {
+					return res.send( {
+						status: false,
+						message: 'Data not found 2',
+						data: {}
+					} );
+				}
+				return res.send( {
+					status: true,
+					message: 'Success',
+					data: data
+				} );
+			} ).catch( err => {
+				if( err.kind === 'ObjectId' ) {
+					return res.send( {
+						status: false,
+						message: 'Data not found 1',
+						data: {}
+					} );
+				}
+				return res.send( {
+					status: false,
+					message: 'Error retrieving data',
+					data: {}
+				} );
+			} );
+
+		};
+
 	/**
 	 * Sync Mobile
 	 * ...
