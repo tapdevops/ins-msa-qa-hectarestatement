@@ -8,6 +8,7 @@
  */
  	// Models
  	const LandUseModel = require( _directory_base + '/app/v1.0/Http/Models/LandUseModel.js' );
+ 	const ViewLandUseModel = require( _directory_base + '/app/v1.0/Http/Models/ViewLandUseModel.js' );
 
  	// Modules
 	const Validator = require( 'ferds-validator');
@@ -142,6 +143,53 @@
 			} );
 
 		};
+
+		// Find All
+		exports.findOneForReport = ( req, res ) => {
+			var url_query = req.query;
+			var url_query_length = Object.keys( url_query ).length;
+			//url_query.DELETE_TIME = [null, 0];
+			
+			ViewLandUseModel.findOne( {
+				WERKS_AFD_BLOCK_CODE: req.params.id
+			} )
+			//.select( {
+			//	_id : 0,
+			//	BLOCK_CODE: 1,
+			//	BLOCK_NAME: 1,
+			//	AFD_CODE: 1,
+			//	AFD_NAME: 1,
+			//	SPMON: 1,
+			//	MATURITY_STATUS: 1,
+			//} )
+			.then( data => {
+				if( !data ) {
+					return res.send( {
+						status: false,
+						message: 'Data not found 2',
+						data: {}
+					} );
+				}
+				res.send( {
+					status: true,
+					message: 'Success',
+					data: data
+				} );
+			} ).catch( err => {
+				if( err.kind === 'ObjectId' ) {
+					return res.send( {
+						status: false,
+						message: 'Data not found 1',
+						data: {}
+					} );
+				}
+				return res.send( {
+					status: false,
+					message: 'Error retrieving data',
+					data: {}
+				} );
+			} );
+		}
 
 	/**
 	 * Sync Mobile

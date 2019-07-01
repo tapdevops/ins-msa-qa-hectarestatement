@@ -41,7 +41,7 @@
 				res.json( { 
 					application: {
 						name : config.app.name,
-						port : config.app.port,
+						port : config.app.port[config.app.env],
 						environment : config.app.env
 					} 
 				} )
@@ -71,7 +71,7 @@
 
 			// Block
 			//app.get( '/block/all', token_verify, BlockController.findAll );
-			//app.get( '/block/q', token_verify, BlockController.findAll );
+			app.get( '/block/q', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.Block.find_all );
 			//app.post( '/sync-tap/block', BlockController.createOrUpdate );
 			app.get( '/sync-mobile/block/:start_date/:end_date', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.Block.sync_mobile );
 			app.get( '/block', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.Block.find );
@@ -106,7 +106,7 @@
 			// Land Use
 			//app.get( '/land-use/all', token_verify, LandUseController.findAll );
 			//app.get( '/land-use/q', token_verify, LandUseController.findAll );
-			//app.get( '/report/land-use/:id', token_verify, LandUseController.findOneForReport );
+			app.get( '/report/land-use/:id', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.LandUse.findOneForReport );
 			//app.get( '/land-use/q', token_verify, LandUseController.findAll );
 			app.get( '/land-use', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.LandUse.find );
 			//app.post( '/sync-tap/land-use', token_verify, LandUseController.createOrUpdate );

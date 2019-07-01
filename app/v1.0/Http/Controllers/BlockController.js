@@ -148,6 +148,80 @@
 
 		};
 
+		exports.find_all = ( req, res ) => {
+			var url_query = req.query;
+			var url_query_length = Object.keys( url_query ).length;
+			
+			url_query.END_VALID = 99991231;
+
+			BlockModel.find( url_query )
+			.select( {
+				_id: 0,
+				REGION_CODE: 1,
+				COMP_CODE: 1,
+				EST_CODE: 1,
+				WERKS: 1,
+				JUMLAH_TPH: 1,
+				AFD_CODE: 1,
+				BLOCK_CODE: 1,
+				BLOCK_NAME: 1,
+				WERKS_AFD_BLOCK_CODE: 1,
+				LATITUDE_BLOCK: 1,
+				LONGITUDE_BLOCK: 1
+			} )
+			.sort( {
+				WERKS: 1,
+				AFD_CODE: 1,
+				BLOCK_NAME: 1
+			} )
+			.then( data => {
+				if( !data ) {
+					return res.send( {
+						status: false,
+						message: 'Data not found 2',
+						data: {}
+					} );
+				}
+				var results = [];
+				if ( data.length > 0 ) {
+					data.forEach( function ( dt ) {
+						results.push( {
+							"JUMLAH_TPH": ( dt.JUMLAH_TPH == null ? 0 : dt.JUMLAH_TPH ),
+							"REGION_CODE": dt.REGION_CODE,
+							"COMP_CODE": dt.COMP_CODE,
+							"EST_CODE": dt.EST_CODE,
+							"WERKS": dt.WERKS,
+							"AFD_CODE": dt.AFD_CODE,
+							"BLOCK_CODE": dt.BLOCK_CODE,
+							"BLOCK_NAME": dt.BLOCK_NAME,
+							"WERKS_AFD_CODE": dt.WERKS_AFD_CODE,
+							"WERKS_AFD_BLOCK_CODE": dt.WERKS_AFD_BLOCK_CODE,
+							"LATITUDE_BLOCK": dt.LATITUDE_BLOCK,
+							"LONGITUDE_BLOCK": dt.LONGITUDE_BLOCK
+						} );
+					} );
+				}
+				return res.send( {
+					status: true,
+					message: 'Success',
+					data: results
+				} );
+			} ).catch( err => {
+				if( err.kind === 'ObjectId' ) {
+					return res.send( {
+						status: false,
+						message: 'Data not found 1',
+						data: {}
+					} );
+				}
+				return res.send( {
+					status: false,
+					message: 'Error retrieving data',
+					data: {}
+				} );
+			} );
+		}
+
 	/**
 	 * Find
 	 * ...
