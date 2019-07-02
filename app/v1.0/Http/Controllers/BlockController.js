@@ -148,6 +148,38 @@
 
 		};
 
+		exports.find_one = ( req, res ) => {
+			BlockModel.findOne( { 
+				WERKS_AFD_BLOCK_CODE: req.params.id 
+			} ).then( data => {
+				if( !data ) {
+					return res.status(404).send({
+						status: false,
+						message: "Data not found 2 with id " + req.params.id,
+						data: {}
+					});
+				}
+				return res.send( {
+					status: true,
+					message: 'Success',
+					data: data
+				} );
+			} ).catch( err => {
+				if( err.kind === 'ObjectId' ) {
+					return res.status( 404 ).send({
+						status: false,
+						message: "Data not found 1 with id " + req.params.id,
+						data: {}
+					});
+				}
+				return res.status( 500 ).send({
+					status: false,
+					message: "Error retrieving Data with id " + req.params.id,
+					data: {}
+				} );
+			} );
+		};
+
 		exports.find_all = ( req, res ) => {
 			var url_query = req.query;
 			var url_query_length = Object.keys( url_query ).length;

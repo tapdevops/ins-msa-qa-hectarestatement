@@ -59,47 +59,47 @@
 		 */
 
 		 	// Afdeling
-		 	//app.get( '/afdeling/all', token_verify, AfdelingController.findAll );
-			//app.get( '/afdeling/q', token_verify, AfdelingController.findAll );
+		 	app.get( '/afdeling/all', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.Afdeling.find_all );
+			app.get( '/afdeling/q', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.Afdeling.find_all );
 			//app.post( '/sync-tap/afdeling', AfdelingController.createOrUpdate );
 			app.get( '/sync-mobile/afdeling/:start_date/:end_date', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.Afdeling.sync_mobile );
 			app.get( '/afdeling', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.Afdeling.find );
 			//app.post( '/afdeling', AfdelingController.create );
-			//app.get( '/afdeling/:id', AfdelingController.findOne );
+			app.get( '/afdeling/:id', Controllers.v_1_0.Afdeling.find_one );
 			//app.put( '/afdeling/:id', AfdelingController.update );
 			//app.delete( '/afdeling/:id', AfdelingController.delete );
 
 			// Block
-			//app.get( '/block/all', token_verify, BlockController.findAll );
-			app.get( '/block/q', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.Block.find_all );
+			app.get( '/block/all', Controllers.v_1_0.Block.find_all );
+			app.get( '/block/q', Controllers.v_1_0.Block.find_all );
 			//app.post( '/sync-tap/block', BlockController.createOrUpdate );
 			app.get( '/sync-mobile/block/:start_date/:end_date', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.Block.sync_mobile );
 			app.get( '/block', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.Block.find );
 			//app.post( '/block', BlockController.create );
-			//app.get( '/block/:id', BlockController.findOne );
+			app.get( '/block/:id', Controllers.v_1_0.Block.find_one );
 			//app.put( '/block/:id', BlockController.update );
 			//app.delete( '/block/:id', BlockController.delete );
 			app.post( '/geom/design/block', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.Block.find_one_geom );
 
 			// Comp
-			//app.get( '/comp/all', token_verify, CompController.findAll );
-			//app.get( '/comp/q', token_verify, CompController.findAll );
+			app.get( '/comp/all', Controllers.v_1_0.Comp.find_all );
+			app.get( '/comp/q', Controllers.v_1_0.Comp.find_all );
 			//app.post( '/sync-tap/comp', token_verify, CompController.createOrUpdate );
 			app.get( '/sync-mobile/comp/:start_date/:end_date', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.Comp.sync_mobile );
 			//app.delete( '/comp/:id', token_verify, CompController.delete );
 			app.get( '/comp', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.Comp.find );
 			//app.post( '/comp', CompController.create );
-			//app.get( '/comp/:id', CompController.findOne );
+			app.get( '/comp/:id', Controllers.v_1_0.Comp.find_one );
 			//app.put( '/comp/:id', CompController.update );
 
 			// Est
-			//app.get( '/est/all', token_verify, EstController.findAll );
-			//app.get( '/est/q', token_verify, EstController.findAll );
+			app.get( '/est/all', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.Est.find_all );
+			app.get( '/est/q', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.Est.find_all );
 			//app.post( '/sync-tap/est', verifyToken, EstController.createOrUpdate );
 			app.get( '/sync-mobile/est/:start_date/:end_date', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.Est.sync_mobile );
 			app.get( '/est', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.Est.find );
 			//app.post( '/est', EstController.create );
-			//app.get( '/est/:id', EstController.findOne );
+			app.get( '/est/:id', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.Est.find_one );
 			//app.put( '/est/:id', EstController.update );
 			//app.delete( '/est/:id', EstController.delete );
 
@@ -113,8 +113,8 @@
 			app.get( '/sync-mobile/land-use/:start_date/:end_date', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.LandUse.sync_mobile );
 
 		 	// Region
-			app.get( '/region/all', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.Region.find_all );
-			app.get( '/region/q', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.Region.find_all );
+			app.get( '/region/all', Controllers.v_1_0.Region.find_all );
+			app.get( '/region/q', Controllers.v_1_0.Region.find_all );
 			//app.post( '/sync-tap/region', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.Region.createOrUpdate );
 			app.get( '/sync-mobile/region/:start_date/:end_date', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.Region.sync_mobile );
 			//app.post( '/region', Middleware.v_1_0.VerifyToken, Controllers.v_1_0.Region.create );

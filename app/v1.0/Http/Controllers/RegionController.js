@@ -171,7 +171,6 @@
 			RegionModel.find( 
 				query,
 				{
-					
 					$and: [
 						{
 							$or: [
@@ -211,6 +210,7 @@
 
 				console.log( start_date + ' - ' + end_date );
 				console.log(data_insert);
+
 				var temp_insert = [];
 				var temp_update = [];
 				var temp_delete = [];

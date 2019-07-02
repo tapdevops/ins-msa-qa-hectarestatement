@@ -167,6 +167,84 @@
 
 		};
 
+		exports.find_one = ( req, res ) => {
+			AfdelingModel.findOne( { 
+				WERKS_AFD_CODE: req.params.id 
+			} ).then( data => {
+				if( !data ) {
+					return res.send({
+						status: false,
+						message: "Data not found 2 with id " + req.params.id,
+						data: {}
+					});
+				}
+				res.send( {
+					status: true,
+					message: 'Success',
+					data: data
+				} );
+			} ).catch( err => {
+				if( err.kind === 'ObjectId' ) {
+					return res.send({
+						status: false,
+						message: "Data not found 1 with id " + req.params.id,
+						data: {}
+					});
+				}
+				return res.send({
+					status: false,
+					message: "Error retrieving Data with id " + req.params.id,
+					data: {}
+				} );
+			} );
+		};
+
+		exports.find_all = ( req, res ) => {
+			var url_query = req.query;
+			var url_query_length = Object.keys( url_query ).length;
+			
+			url_query.END_VALID = 99991231;
+
+			AfdelingModel.find( url_query )
+			.select( {
+				_id: 0,
+				REGION_CODE: 1,
+				COMP_CODE: 1,
+				EST_CODE: 1,
+				WERKS: 1,
+				AFD_CODE: 1,
+				AFD_NAME: 1,
+				WERKS_AFD_CODE: 1
+			} )
+			.then( data => {
+				if( !data ) {
+					return res.send( {
+						status: false,
+						message: 'Data not found 2',
+						data: {}
+					} );
+				}
+				res.send( {
+					status: true,
+					message: 'Success',
+					data: data
+				} );
+			} ).catch( err => {
+				if( err.kind === 'ObjectId' ) {
+					return res.send( {
+						status: false,
+						message: 'Data not found 1',
+						data: {}
+					} );
+				}
+				return res.send( {
+					status: false,
+					message: 'Error retrieving data',
+					data: {}
+				} );
+			} );
+		}
+
 	/**
 	 * Sync Mobile
 	 * ...

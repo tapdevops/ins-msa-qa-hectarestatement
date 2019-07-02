@@ -141,6 +141,80 @@
 
 		};
 
+		exports.find_one = ( req, res ) => {
+			CompModel.findOne( { 
+				COMP_CODE: req.params.id 
+			} ).then( data => {
+				if( !data ) {
+					return res.status(404).send({
+						status: false,
+						message: "Data not found 2 with id " + req.params.id,
+						data: {}
+					});
+				}
+				return res.send( {
+					status: true,
+					message: 'Success',
+					data: data
+				} );
+			} ).catch( err => {
+				if( err.kind === 'ObjectId' ) {
+					return res.status( 404 ).send({
+						status: false,
+						message: "Data not found 1 with id " + req.params.id,
+						data: {}
+					});
+				}
+				return res.status( 500 ).send({
+					status: false,
+					message: "Error retrieving Data with id " + req.params.id,
+					data: {}
+				} );
+			} );
+		};
+
+		exports.find_all = ( req, res ) => {
+			var url_query = req.query;
+			var url_query_length = Object.keys( url_query ).length;
+
+			CompModel.find( url_query )
+			.select( {
+				_id: 0,
+				NATIONAL: 1,
+				REGION_CODE: 1,
+				COMP_CODE: 1,
+				COMP_NAME: 1,
+				ADDRESS: 1
+			} )
+			.then( data => {
+				if( !data ) {
+					return res.send( {
+						status: false,
+						message: 'Data not found 2',
+						data: {}
+					} );
+				}
+				return res.send( {
+					status: true,
+					message: 'Success',
+					data: data
+				} );
+			} ).catch( err => {
+				if( err.kind === 'ObjectId' ) {
+					return res.send( {
+						status: false,
+						message: 'Data not found 1',
+						data: {}
+					} );
+				}
+				return res.send( {
+					status: false,
+					message: 'Error retrieving data',
+					data: {}
+				} );
+			} );
+		}
+
 	/**
 	 * Sync Mobile
 	 * ...
