@@ -26,7 +26,6 @@
 	 * --------------------------------------------------------------------------
 	 */
  		exports.find = ( req, res ) => {
- 			console.log('AAA');
 			url_query = req.query;
 			var url_query_length = Object.keys( url_query ).length;
 			var auth = req.auth;

@@ -8,6 +8,10 @@
  */
  	// Models
  	const RegionModel = require( _directory_base + '/app/v1.0/Http/Models/RegionModel.js' );
+ 	const BlockModel = require( _directory_base + '/app/v1.0/Http/Models/BlockModel.js' );
+ 	const AfdelingModel = require( _directory_base + '/app/v1.0/Http/Models/AfdelingModel.js' );
+ 	const CompModel = require( _directory_base + '/app/v1.0/Http/Models/CompModel.js' );
+ 	const EstModel = require( _directory_base + '/app/v1.0/Http/Models/EstModel.js' );
 
  	// Modules
 	const Validator = require( 'ferds-validator');
@@ -113,7 +117,7 @@
 	 * ...
 	 * --------------------------------------------------------------------------
 	 */
-		exports.sync_mobile = ( req, res ) => {
+		exports.sync_mobile = async ( req, res ) => {
 
 			// Auth Data
 			var auth = req.auth;
@@ -124,6 +128,140 @@
 			var location_code_final = [];
 			var key = [];
 			var query = {};
+
+			var auth2 = {
+				"REFFERENCE_ROLE": "AFD_CODE",
+				"USER_ROLE": "ADMIN",
+				"LOCATION_CODE": "2121G088,2121B,6421A" // AFD_CODE
+			}
+			var selection = [];
+
+			switch( auth2.REFFERENCE_ROLE ) {
+				case "REGION_CODE":
+					selection = auth2.LOCATION_CODE.split( ',' );
+				break;
+				case "COMP_CODE":
+					var query_comp = await CompModel.aggregate( [
+						{
+							"$match": {
+								"COMP_CODE": {
+									"$in": auth2.LOCATION_CODE.split( ',' )
+								}
+							}
+						},
+						{
+							"$group": {
+								"_id": {
+									"REGION_CODE": "$REGION_CODE"
+								}
+							}
+						},
+						{
+							"$project": {
+								"_id": 0,
+								"REGION_CODE": "$_id.REGION_CODE"
+							}
+						}
+					] );
+
+					
+					query_comp.forEach( function( comp ) {
+						selection.push( comp.REGION_CODE );
+					} );
+
+				break;
+				case "BA_CODE":
+					var query_comp = await EstModel.aggregate( [
+						{
+							"$match": {
+								"WERKS": {
+									"$in": auth2.LOCATION_CODE.split( ',' )
+								}
+							}
+						},
+						{
+							"$group": {
+								"_id": {
+									"REGION_CODE": "$REGION_CODE"
+								}
+							}
+						},
+						{
+							"$project": {
+								"_id": 0,
+								"REGION_CODE": "$_id.REGION_CODE"
+							}
+						}
+					] );
+
+					
+					query_comp.forEach( function( comp ) {
+						selection.push( comp.REGION_CODE );
+					} );
+
+				break;
+				case "AFD_CODE":
+					var query_comp = await AfdelingModel.aggregate( [
+						{
+							"$match": {
+								"WERKS_AFD_CODE": {
+									"$in": auth2.LOCATION_CODE.split( ',' )
+								}
+							}
+						},
+						{
+							"$group": {
+								"_id": {
+									"REGION_CODE": "$REGION_CODE"
+								}
+							}
+						},
+						{
+							"$project": {
+								"_id": 0,
+								"REGION_CODE": "$_id.REGION_CODE"
+							}
+						}
+					] );
+					query_comp.forEach( function( comp ) {
+						selection.push( comp.REGION_CODE );
+					} );
+
+				break;
+			}
+
+			console.log(selection);
+
+			var query_region = await RegionModel.aggregate( [
+				{
+					"$match": {
+						"REGION_CODE": {
+							"$in": selection
+						}
+					}
+				},
+				{
+					"$project": {
+						"_id": 0,
+						"NATIONAL": 1,
+						"REGION_CODE": 1,
+						"REGION_NAME": 1
+					}
+				}
+			] );
+
+			return res.json({
+				status: true,
+				message: 'Data Sync tanggal ' + HelperLib.date_format( req.params.start_date, 'YYYY-MM-DD' ) + ' s/d ' + HelperLib.date_format( req.params.end_date, 'YYYY-MM-DD' ),
+				data: {
+					"hapus": [],
+					"simpan": query_region,
+					"ubah": []
+				}
+			});
+			/*
+
+			console.log(auth);
 			
 			if ( ref_role != 'ALL' ) {
 				location_code_group.forEach( function( data ) {
@@ -143,7 +281,7 @@
 					}
 				} );
 			}
-
+			console.log(location_code_final);
 			switch ( ref_role ) {
 				case 'REGION_CODE':
 					key = ref_role;
@@ -267,5 +405,5 @@
 					data: {}
 				} );
 			});
-			
+			*/
 		}
