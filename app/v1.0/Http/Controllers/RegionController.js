@@ -35,7 +35,129 @@
 			var location_code_final = [];
 			var ref_role = auth.REFFERENCE_ROLE;
 			var location_code = location_code.split( ',' );
+			var selection = [];
+
+			switch( auth.REFFERENCE_ROLE ) {
+				case "REGION_CODE":
+					selection = auth.LOCATION_CODE.split( ',' );
+				break;
+				case "COMP_CODE":
+					var query_comp = await CompModel.aggregate( [
+						{
+							"$match": {
+								"COMP_CODE": {
+									"$in": auth.LOCATION_CODE.split( ',' )
+								}
+							}
+						},
+						{
+							"$group": {
+								"_id": {
+									"REGION_CODE": "$REGION_CODE"
+								}
+							}
+						},
+						{
+							"$project": {
+								"_id": 0,
+								"REGION_CODE": "$_id.REGION_CODE"
+							}
+						}
+					] );
+
+					
+					query_comp.forEach( function( comp ) {
+						selection.push( comp.REGION_CODE );
+					} );
+
+				break;
+				case "BA_CODE":
+					var query_comp = await EstModel.aggregate( [
+						{
+							"$match": {
+								"WERKS": {
+									"$in": auth.LOCATION_CODE.split( ',' )
+								}
+							}
+						},
+						{
+							"$group": {
+								"_id": {
+									"REGION_CODE": "$REGION_CODE"
+								}
+							}
+						},
+						{
+							"$project": {
+								"_id": 0,
+								"REGION_CODE": "$_id.REGION_CODE"
+							}
+						}
+					] );
+
+					
+					query_comp.forEach( function( comp ) {
+						selection.push( comp.REGION_CODE );
+					} );
+
+				break;
+				case "AFD_CODE":
+					var query_comp = await AfdelingModel.aggregate( [
+						{
+							"$match": {
+								"WERKS_AFD_CODE": {
+									"$in": auth.LOCATION_CODE.split( ',' )
+								}
+							}
+						},
+						{
+							"$group": {
+								"_id": {
+									"REGION_CODE": "$REGION_CODE"
+								}
+							}
+						},
+						{
+							"$project": {
+								"_id": 0,
+								"REGION_CODE": "$_id.REGION_CODE"
+							}
+						}
+					] );
+					query_comp.forEach( function( comp ) {
+						selection.push( comp.REGION_CODE );
+					} );
+
+				break;
+			}
+
+			console.log(selection);
+
+			var query_region = await RegionModel.aggregate( [
+				{
+					"$match": {
+						"REGION_CODE": {
+							"$in": selection
+						}
+					}
+				},
+				{
+					"$project": {
+						"_id": 0,
+						"NATIONAL": 1,
+						"REGION_CODE": 1,
+						"REGION_NAME": 1
+					}
+				}
+			] );
+
+			return res.json({
+				status: true,
+				message: "Success! ",
+				data: query_region
+			});
 			
+			/*
 			if ( ref_role == 'NATIONAL' ) {
 				var query = await RegionModel.find().select( { _id:0, NATIONAL: 1, REGION_CODE: 1, REGION_NAME: 1 } );
 				res.json({
@@ -65,7 +187,7 @@
 					message: "Success! ",
 					data: query
 				});
-			}
+			}*/
 
 		};
 
