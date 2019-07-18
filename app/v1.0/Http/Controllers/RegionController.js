@@ -8,6 +8,10 @@
  */
  	// Models
  	const RegionModel = require( _directory_base + '/app/v1.0/Http/Models/RegionModel.js' );
+ 	const BlockModel = require( _directory_base + '/app/v1.0/Http/Models/BlockModel.js' );
+ 	const AfdelingModel = require( _directory_base + '/app/v1.0/Http/Models/AfdelingModel.js' );
+ 	const CompModel = require( _directory_base + '/app/v1.0/Http/Models/CompModel.js' );
+ 	const EstModel = require( _directory_base + '/app/v1.0/Http/Models/EstModel.js' );
 
  	// Modules
 	const Validator = require( 'ferds-validator');
@@ -31,7 +35,129 @@
 			var location_code_final = [];
 			var ref_role = auth.REFFERENCE_ROLE;
 			var location_code = location_code.split( ',' );
+			var selection = [];
+
+			switch( auth.REFFERENCE_ROLE ) {
+				case "REGION_CODE":
+					selection = auth.LOCATION_CODE.split( ',' );
+				break;
+				case "COMP_CODE":
+					var query_comp = await CompModel.aggregate( [
+						{
+							"$match": {
+								"COMP_CODE": {
+									"$in": auth.LOCATION_CODE.split( ',' )
+								}
+							}
+						},
+						{
+							"$group": {
+								"_id": {
+									"REGION_CODE": "$REGION_CODE"
+								}
+							}
+						},
+						{
+							"$project": {
+								"_id": 0,
+								"REGION_CODE": "$_id.REGION_CODE"
+							}
+						}
+					] );
+
+					
+					query_comp.forEach( function( comp ) {
+						selection.push( comp.REGION_CODE );
+					} );
+
+				break;
+				case "BA_CODE":
+					var query_comp = await EstModel.aggregate( [
+						{
+							"$match": {
+								"WERKS": {
+									"$in": auth.LOCATION_CODE.split( ',' )
+								}
+							}
+						},
+						{
+							"$group": {
+								"_id": {
+									"REGION_CODE": "$REGION_CODE"
+								}
+							}
+						},
+						{
+							"$project": {
+								"_id": 0,
+								"REGION_CODE": "$_id.REGION_CODE"
+							}
+						}
+					] );
+
+					
+					query_comp.forEach( function( comp ) {
+						selection.push( comp.REGION_CODE );
+					} );
+
+				break;
+				case "AFD_CODE":
+					var query_comp = await AfdelingModel.aggregate( [
+						{
+							"$match": {
+								"WERKS_AFD_CODE": {
+									"$in": auth.LOCATION_CODE.split( ',' )
+								}
+							}
+						},
+						{
+							"$group": {
+								"_id": {
+									"REGION_CODE": "$REGION_CODE"
+								}
+							}
+						},
+						{
+							"$project": {
+								"_id": 0,
+								"REGION_CODE": "$_id.REGION_CODE"
+							}
+						}
+					] );
+					query_comp.forEach( function( comp ) {
+						selection.push( comp.REGION_CODE );
+					} );
+
+				break;
+			}
+
+			console.log(selection);
+
+			var query_region = await RegionModel.aggregate( [
+				{
+					"$match": {
+						"REGION_CODE": {
+							"$in": selection
+						}
+					}
+				},
+				{
+					"$project": {
+						"_id": 0,
+						"NATIONAL": 1,
+						"REGION_CODE": 1,
+						"REGION_NAME": 1
+					}
+				}
+			] );
+
+			return res.json({
+				status: true,
+				message: "Success! ",
+				data: query_region
+			});
 			
+			/*
 			if ( ref_role == 'NATIONAL' ) {
 				var query = await RegionModel.find().select( { _id:0, NATIONAL: 1, REGION_CODE: 1, REGION_NAME: 1 } );
 				res.json({
@@ -61,7 +187,7 @@
 					message: "Success! ",
 					data: query
 				});
-			}
+			}*/
 
 		};
 
@@ -113,7 +239,7 @@
 	 * ...
 	 * --------------------------------------------------------------------------
 	 */
-		exports.sync_mobile = ( req, res ) => {
+		exports.sync_mobile = async ( req, res ) => {
 
 			// Auth Data
 			var auth = req.auth;
@@ -124,6 +250,134 @@
 			var location_code_final = [];
 			var key = [];
 			var query = {};
+			var selection = [];
+
+			switch( auth.REFFERENCE_ROLE ) {
+				case "REGION_CODE":
+					selection = auth.LOCATION_CODE.split( ',' );
+				break;
+				case "COMP_CODE":
+					var query_comp = await CompModel.aggregate( [
+						{
+							"$match": {
+								"COMP_CODE": {
+									"$in": auth.LOCATION_CODE.split( ',' )
+								}
+							}
+						},
+						{
+							"$group": {
+								"_id": {
+									"REGION_CODE": "$REGION_CODE"
+								}
+							}
+						},
+						{
+							"$project": {
+								"_id": 0,
+								"REGION_CODE": "$_id.REGION_CODE"
+							}
+						}
+					] );
+
+					
+					query_comp.forEach( function( comp ) {
+						selection.push( comp.REGION_CODE );
+					} );
+
+				break;
+				case "BA_CODE":
+					var query_comp = await EstModel.aggregate( [
+						{
+							"$match": {
+								"WERKS": {
+									"$in": auth.LOCATION_CODE.split( ',' )
+								}
+							}
+						},
+						{
+							"$group": {
+								"_id": {
+									"REGION_CODE": "$REGION_CODE"
+								}
+							}
+						},
+						{
+							"$project": {
+								"_id": 0,
+								"REGION_CODE": "$_id.REGION_CODE"
+							}
+						}
+					] );
+
+					
+					query_comp.forEach( function( comp ) {
+						selection.push( comp.REGION_CODE );
+					} );
+
+				break;
+				case "AFD_CODE":
+					var query_comp = await AfdelingModel.aggregate( [
+						{
+							"$match": {
+								"WERKS_AFD_CODE": {
+									"$in": auth.LOCATION_CODE.split( ',' )
+								}
+							}
+						},
+						{
+							"$group": {
+								"_id": {
+									"REGION_CODE": "$REGION_CODE"
+								}
+							}
+						},
+						{
+							"$project": {
+								"_id": 0,
+								"REGION_CODE": "$_id.REGION_CODE"
+							}
+						}
+					] );
+					query_comp.forEach( function( comp ) {
+						selection.push( comp.REGION_CODE );
+					} );
+
+				break;
+			}
+
+			console.log(selection);
+
+			var query_region = await RegionModel.aggregate( [
+				{
+					"$match": {
+						"REGION_CODE": {
+							"$in": selection
+						}
+					}
+				},
+				{
+					"$project": {
+						"_id": 0,
+						"NATIONAL": 1,
+						"REGION_CODE": 1,
+						"REGION_NAME": 1
+					}
+				}
+			] );
+
+			return res.json({
+				status: true,
+				message: 'Data Sync tanggal ' + HelperLib.date_format( req.params.start_date, 'YYYY-MM-DD' ) + ' s/d ' + HelperLib.date_format( req.params.end_date, 'YYYY-MM-DD' ),
+				data: {
+					"hapus": [],
+					"simpan": query_region,
+					"ubah": []
+				}
+			});
+			/*
+
+			console.log(auth);
 			
 			if ( ref_role != 'ALL' ) {
 				location_code_group.forEach( function( data ) {
@@ -143,7 +397,7 @@
 					}
 				} );
 			}
-
+			console.log(location_code_final);
 			switch ( ref_role ) {
 				case 'REGION_CODE':
 					key = ref_role;
@@ -267,5 +521,5 @@
 					data: {}
 				} );
 			});
-			
+			*/
 		}

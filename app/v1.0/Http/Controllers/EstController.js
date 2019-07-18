@@ -37,8 +37,15 @@
 			var query = {};
 				query["END_VALID"] = 99991231;
 			
+			// Testing
+			console.log( auth );
+
+
+
+
 			if ( ref_role != 'ALL' ) {
 				location_code_group.forEach( function( data ) {
+					console.log( data );
 					switch ( ref_role ) {
 						case 'REGION_CODE':
 							location_code_final.push( data.substr( 0, 2 ) );
