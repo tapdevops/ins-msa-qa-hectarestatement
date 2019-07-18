@@ -128,24 +128,18 @@
 			var location_code_final = [];
 			var key = [];
 			var query = {};
-
-			var auth2 = {
-				"REFFERENCE_ROLE": "AFD_CODE",
-				"USER_ROLE": "ADMIN",
-				"LOCATION_CODE": "2121G088,2121B,6421A" // AFD_CODE
-			}
 			var selection = [];
 
-			switch( auth2.REFFERENCE_ROLE ) {
+			switch( auth.REFFERENCE_ROLE ) {
 				case "REGION_CODE":
-					selection = auth2.LOCATION_CODE.split( ',' );
+					selection = auth.LOCATION_CODE.split( ',' );
 				break;
 				case "COMP_CODE":
 					var query_comp = await CompModel.aggregate( [
 						{
 							"$match": {
 								"COMP_CODE": {
-									"$in": auth2.LOCATION_CODE.split( ',' )
+									"$in": auth.LOCATION_CODE.split( ',' )
 								}
 							}
 						},
@@ -175,7 +169,7 @@
 						{
 							"$match": {
 								"WERKS": {
-									"$in": auth2.LOCATION_CODE.split( ',' )
+									"$in": auth.LOCATION_CODE.split( ',' )
 								}
 							}
 						},
@@ -205,7 +199,7 @@
 						{
 							"$match": {
 								"WERKS_AFD_CODE": {
-									"$in": auth2.LOCATION_CODE.split( ',' )
+									"$in": auth.LOCATION_CODE.split( ',' )
 								}
 							}
 						},
