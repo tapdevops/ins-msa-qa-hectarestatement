@@ -38,6 +38,28 @@
 			var selection = [];
 
 			switch( auth.REFFERENCE_ROLE ) {
+				case "NATIONAL":
+					var query_comp = await CompModel.aggregate( [
+						{
+							"$group": {
+								"_id": {
+									"REGION_CODE": "$REGION_CODE"
+								}
+							}
+						},
+						{
+							"$project": {
+								"_id": 0,
+								"REGION_CODE": "$_id.REGION_CODE"
+							}
+						}
+					] );
+
+					
+					query_comp.forEach( function( comp ) {
+						selection.push( comp.REGION_CODE );
+					} );
+				break;
 				case "REGION_CODE":
 					selection = auth.LOCATION_CODE.split( ',' );
 				break;
@@ -253,6 +275,28 @@
 			var selection = [];
 
 			switch( auth.REFFERENCE_ROLE ) {
+				case "NATIONAL":
+					var query_comp = await CompModel.aggregate( [
+						{
+							"$group": {
+								"_id": {
+									"REGION_CODE": "$REGION_CODE"
+								}
+							}
+						},
+						{
+							"$project": {
+								"_id": 0,
+								"REGION_CODE": "$_id.REGION_CODE"
+							}
+						}
+					] );
+
+					
+					query_comp.forEach( function( comp ) {
+						selection.push( comp.REGION_CODE );
+					} );
+				break;
 				case "REGION_CODE":
 					selection = auth.LOCATION_CODE.split( ',' );
 				break;
