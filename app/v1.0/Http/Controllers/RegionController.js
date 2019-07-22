@@ -38,6 +38,24 @@
 			var selection = [];
 
 			switch( auth.REFFERENCE_ROLE ) {
+				case 'NATIONAL':
+					var query_region = await RegionModel.aggregate( [
+						{
+							"$project": {
+								"_id": 0,
+								"NATIONAL": 1,
+								"REGION_CODE": 1,
+								"REGION_NAME": 1
+							}
+						}
+					] );
+
+					return res.json({
+						status: true,
+						message: "Success! ",
+						data: query_region
+					});
+				break;
 				case "REGION_CODE":
 					selection = auth.LOCATION_CODE.split( ',' );
 				break;
@@ -253,6 +271,28 @@
 			var selection = [];
 
 			switch( auth.REFFERENCE_ROLE ) {
+				case "NATIONAL":
+					var query_region = await RegionModel.aggregate( [
+						{
+							"$project": {
+								"_id": 0,
+								"NATIONAL": 1,
+								"REGION_CODE": 1,
+								"REGION_NAME": 1
+							}
+						}
+					] );
+
+					return res.json({
+						status: true,
+						message: 'Data Sync tanggal ' + HelperLib.date_format( req.params.start_date, 'YYYY-MM-DD' ) + ' s/d ' + HelperLib.date_format( req.params.end_date, 'YYYY-MM-DD' ),
+						data: {
+							"hapus": [],
+							"simpan": query_region,
+							"ubah": []
+						}
+					});
+				break;
 				case "REGION_CODE":
 					selection = auth.LOCATION_CODE.split( ',' );
 				break;
