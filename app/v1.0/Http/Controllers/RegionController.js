@@ -51,10 +51,9 @@
 						}
 					] );
 
-
-					query_comp.forEach( function( comp ) {
-						selection.push( comp.REGION_CODE );
-					} );
+					// query_comp.forEach( function( comp ) {
+					// 	selection.push( comp.REGION_CODE );
+					// } );
 
 					return res.json({
 						status: true,
@@ -281,7 +280,16 @@
 
 			switch( auth.REFFERENCE_ROLE ) {
 				case "NATIONAL":
-					var query_region = await RegionModel.find();
+					var query_region = await RegionModel.aggregate( [
+						{
+							"$project": {
+								"_id": 0,
+								"NATIONAL": 1,
+								"REGION_CODE": 1,
+								"REGION_NAME": 1
+							}
+						}
+					] );
 					console.log(query_region);
 					return res.json( {
 						status: true,
@@ -294,7 +302,7 @@
 					} );s
 				break;
 				case "REGION_CODE":
-					selection = auth.LOCATION_CODE.split( ',' )
+					selection = auth.LOCATION_CODE.split( ',' );
 				break;
 				case "COMP_CODE":
 					var query_comp = await CompModel.aggregate( [
