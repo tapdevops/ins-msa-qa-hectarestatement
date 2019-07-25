@@ -281,7 +281,7 @@
 
 			switch ( ref_role ) {
 				case 'REGION_CODE':
-					key = 'COMP_CODE';
+					key = 'REGION_CODE';
 					query[key] = query_search;
 				break;
 				case 'COMP_CODE':
@@ -301,6 +301,8 @@
 					query[key] = 'NATIONAL';
 				break;
 			}
+
+			console.log(query);
 
 			// Set Data
 			CompModel.find( 

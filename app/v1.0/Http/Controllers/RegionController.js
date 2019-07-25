@@ -38,27 +38,30 @@
 			var selection = [];
 
 			switch( auth.REFFERENCE_ROLE ) {
-				case "NATIONAL":
-					var query_comp = await CompModel.aggregate( [
-						{
-							"$group": {
-								"_id": {
-									"REGION_CODE": "$REGION_CODE"
-								}
-							}
-						},
+
+				case 'NATIONAL':
+					var query_region = await RegionModel.aggregate( [
 						{
 							"$project": {
 								"_id": 0,
-								"REGION_CODE": "$_id.REGION_CODE"
+								"NATIONAL": 1,
+								"REGION_CODE": 1,
+								"REGION_NAME": 1
 							}
 						}
 					] );
 
-					
+
 					query_comp.forEach( function( comp ) {
 						selection.push( comp.REGION_CODE );
 					} );
+
+					return res.json({
+						status: true,
+						message: "Success! ",
+						data: query_region
+					});
+
 				break;
 				case "REGION_CODE":
 					selection = auth.LOCATION_CODE.split( ',' );
@@ -276,6 +279,7 @@
 
 			switch( auth.REFFERENCE_ROLE ) {
 				case "NATIONAL":
+<<<<<<< HEAD
 					var query_comp = await CompModel.aggregate( [
 						{
 							"$group": {
@@ -288,13 +292,35 @@
 							"$project": {
 								"_id": 0,
 								"REGION_CODE": "$_id.REGION_CODE"
+=======
+					var query_region = await RegionModel.aggregate( [
+						{
+							"$project": {
+								"_id": 0,
+								"NATIONAL": 1,
+								"REGION_CODE": 1,
+								"REGION_NAME": 1
+>>>>>>> 2a4f927a111f2bd4e58613b84fc553be808d4fd4
 							}
 						}
 					] );
 
+<<<<<<< HEAD
 					
 					query_comp.forEach( function( comp ) {
 						selection.push( comp.REGION_CODE );
+=======
+					console.log(query_region);
+
+					return res.json( {
+						status: true,
+						message: 'Data Sync tanggal ' + HelperLib.date_format( req.params.start_date, 'YYYY-MM-DD' ) + ' s/d ' + HelperLib.date_format( req.params.end_date, 'YYYY-MM-DD' ),
+						data: {
+							"hapus": [],
+							"simpan": query_region,
+							"ubah": []
+						}
+>>>>>>> 2a4f927a111f2bd4e58613b84fc553be808d4fd4
 					} );
 				break;
 				case "REGION_CODE":
@@ -323,7 +349,6 @@
 							}
 						}
 					] );
-
 					
 					query_comp.forEach( function( comp ) {
 						selection.push( comp.REGION_CODE );
@@ -354,7 +379,6 @@
 						}
 					] );
 
-					
 					query_comp.forEach( function( comp ) {
 						selection.push( comp.REGION_CODE );
 					} );
