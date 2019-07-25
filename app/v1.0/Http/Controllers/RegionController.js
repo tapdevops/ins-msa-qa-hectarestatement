@@ -51,7 +51,6 @@
 						}
 					] );
 
-
 					query_comp.forEach( function( comp ) {
 						selection.push( comp.REGION_CODE );
 					} );
@@ -281,7 +280,16 @@
 
 			switch( auth.REFFERENCE_ROLE ) {
 				case "NATIONAL":
-					var query_region = await RegionModel.find();
+					var query_region = await RegionModel.aggregate( [
+						{
+							"$project": {
+								"_id": 0,
+								"NATIONAL": 1,
+								"REGION_CODE": 1,
+								"REGION_NAME": 1
+							}
+						}
+					] );
 					console.log(query_region);
 					return res.json( {
 						status: true,
