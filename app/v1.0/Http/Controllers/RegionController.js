@@ -277,41 +277,12 @@
 			var query = {};
 			var selection = [];
 
+			console.log(req.auth);
+
 			switch( auth.REFFERENCE_ROLE ) {
 				case "NATIONAL":
-<<<<<<< HEAD
-					var query_comp = await CompModel.aggregate( [
-						{
-							"$group": {
-								"_id": {
-									"REGION_CODE": "$REGION_CODE"
-								}
-							}
-						},
-						{
-							"$project": {
-								"_id": 0,
-								"REGION_CODE": "$_id.REGION_CODE"
-=======
-					var query_region = await RegionModel.aggregate( [
-						{
-							"$project": {
-								"_id": 0,
-								"NATIONAL": 1,
-								"REGION_CODE": 1,
-								"REGION_NAME": 1
->>>>>>> 2a4f927a111f2bd4e58613b84fc553be808d4fd4
-							}
-						}
-					] );
-
-<<<<<<< HEAD
-					
-					query_comp.forEach( function( comp ) {
-						selection.push( comp.REGION_CODE );
-=======
+					var query_region = await RegionModel.find();
 					console.log(query_region);
-
 					return res.json( {
 						status: true,
 						message: 'Data Sync tanggal ' + HelperLib.date_format( req.params.start_date, 'YYYY-MM-DD' ) + ' s/d ' + HelperLib.date_format( req.params.end_date, 'YYYY-MM-DD' ),
@@ -320,11 +291,10 @@
 							"simpan": query_region,
 							"ubah": []
 						}
->>>>>>> 2a4f927a111f2bd4e58613b84fc553be808d4fd4
-					} );
+					} );s
 				break;
 				case "REGION_CODE":
-					selection = auth.LOCATION_CODE.split( ',' );
+					selection = auth.LOCATION_CODE.split( ',' )
 				break;
 				case "COMP_CODE":
 					var query_comp = await CompModel.aggregate( [
