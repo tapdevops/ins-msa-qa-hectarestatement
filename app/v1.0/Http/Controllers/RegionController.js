@@ -50,6 +50,8 @@
 						}
 					] );
 
+					console.log(query_region);
+
 					return res.json({
 						status: true,
 						message: "Success! ",
@@ -283,7 +285,9 @@
 						}
 					] );
 
-					return res.json({
+					console.log(query_region);
+
+					return res.json( {
 						status: true,
 						message: 'Data Sync tanggal ' + HelperLib.date_format( req.params.start_date, 'YYYY-MM-DD' ) + ' s/d ' + HelperLib.date_format( req.params.end_date, 'YYYY-MM-DD' ),
 						data: {
@@ -291,7 +295,7 @@
 							"simpan": query_region,
 							"ubah": []
 						}
-					});
+					} );
 				break;
 				case "REGION_CODE":
 					selection = auth.LOCATION_CODE.split( ',' );
@@ -319,7 +323,6 @@
 							}
 						}
 					] );
-
 					
 					query_comp.forEach( function( comp ) {
 						selection.push( comp.REGION_CODE );
@@ -350,7 +353,6 @@
 						}
 					] );
 
-					
 					query_comp.forEach( function( comp ) {
 						selection.push( comp.REGION_CODE );
 					} );
