@@ -51,9 +51,9 @@
 						}
 					] );
 
-					query_comp.forEach( function( comp ) {
-						selection.push( comp.REGION_CODE );
-					} );
+					// query_comp.forEach( function( comp ) {
+					// 	selection.push( comp.REGION_CODE );
+					// } );
 
 					return res.json({
 						status: true,
