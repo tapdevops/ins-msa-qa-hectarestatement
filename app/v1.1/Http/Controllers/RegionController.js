@@ -215,6 +215,123 @@
 
 		};
 
+		// Create or update data
+		exports.createOrUpdate = ( req, res ) => {
+			
+			nJwt.verify( req.token, config.secret_key, config.token_algorithm, ( err, authData ) => {
+				if ( err ) {
+					res.sendStatus( 403 );
+				}
+				else {
+					if( !req.body.NATIONAL || !req.body.REGION_CODE ) {
+						return res.send({
+							status: false,
+							message: 'Invalid input',
+							data: {}
+						});
+					}
+
+					RegionModel.findOne( { 
+						REGION_CODE: req.body.REGION_CODE
+					} ).then( data => {
+						// Kondisi belum ada data, create baru dan insert ke Sync List
+						if( !data ) {
+
+							const region = new RegionModel( {
+								NATIONAL: req.body.NATIONAL || "",
+								REGION_CODE: req.body.REGION_CODE || "",
+								REGION_NAME: req.body.REGION_NAME || "",
+								INSERT_TIME: date.convert( 'now', 'YYYYMMDDhhmmss' ),
+								DELETE_TIME: null,
+								UPDATE_TIME: null
+							} );
+
+							region.save()
+							.then( data => {
+								console.log(data);
+								res.send({
+									status: true,
+									message: 'Success 2',
+									data: {}
+								});
+							} ).catch( err => {
+								res.send( {
+									status: false,
+									message: 'Some error occurred while creating data',
+									data: {}
+								} );
+							} );
+						}
+						// Kondisi data sudah ada, check value, jika sama tidak diupdate, jika beda diupdate dan dimasukkan ke Sync List
+						else {
+							
+							if ( data.REGION_NAME != req.body.REGION_NAME ) {
+								RegionModel.findOneAndUpdate( { 
+									REGION_CODE: req.body.REGION_CODE
+								}, {
+									REGION_NAME: req.body.REGION_NAME || "",
+									UPDATE_TIME: date.convert( 'now', 'YYYYMMDDhhmmss' )
+								}, { 
+									new: true 
+								} )
+								.then( data => {
+									if( !data ) {
+										return res.status( 404 ).send( {
+											status: false,
+											message: "Data error updating 2",
+											data: {}
+										} );
+									}
+									else {
+										res.send({
+											status: true,
+											message: 'Success',
+											data: {}
+										});
+									}
+								}).catch( err => {
+									if( err.kind === 'ObjectId' ) {
+										return res.status( 404 ).send( {
+											status: false,
+											message: "Data not found 2",
+											data: {}
+										} );
+									}
+									return res.status( 500 ).send( {
+										status: false,
+										message: "Data error updating",
+										data: {}
+									} );
+								});
+							}
+							else {
+								res.send( {
+									status: true,
+									message: 'Skip Update',
+									data: {}
+								} );
+							}
+							
+						}
+					} ).catch( err => {
+						if( err.kind === 'ObjectId' ) {
+							return res.status( 404 ).send({
+								status: false,
+								message: "Data not found 1",
+								data: {}
+							});
+						}
+
+						return res.status( 500 ).send({
+							status: false,
+							message: "Error retrieving Data",
+							data: {}
+						} );
+					} );
+				}
+			} );
+		};
+
 		exports.find_all = async ( req, res ) => {
 
 			var url_query = req.query;

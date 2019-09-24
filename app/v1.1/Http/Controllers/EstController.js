@@ -129,6 +129,159 @@
 
 		};
 
+			// Create or update data
+		exports.createOrUpdate = ( req, res ) => {
+			
+			nJwt.verify( req.token, config.secret_key, config.token_algorithm, ( err, authData ) => {
+				if ( err ) {
+					res.sendStatus( 403 );
+				}
+				else {
+					if( !req.body.NATIONAL || !req.body.REGION_CODE || !req.body.COMP_CODE || !req.body.EST_CODE || !req.body.WERKS || !req.body.EST_NAME  ) {
+						return res.send({
+							status: false,
+							message: 'Invalid input',
+							data: {}
+						});
+					}
+
+					EstModel.findOne( { 
+						WERKS: req.body.WERKS,
+						START_VALID: date.convert( req.body.START_VALID, 'YYYYMMDD' )
+					} ).then( data => {
+						// Kondisi belum ada data, create baru dan insert ke Sync List
+						if( !data ) {
+							
+							const set = new EstModel( {
+								NATIONAL: req.body.NATIONAL || "",
+								REGION_CODE: req.body.REGION_CODE || "",
+								COMP_CODE: req.body.COMP_CODE || "",
+								EST_CODE: req.body.EST_CODE || "",
+								EST_NAME: req.body.EST_NAME || "",
+								WERKS: req.body.WERKS || "",
+								CITY: req.body.CITY || "",
+								START_VALID: date.convert( req.body.START_VALID, 'YYYYMMDD' ),
+								END_VALID: date.convert( req.body.END_VALID, 'YYYYMMDD' ),
+								INSERT_TIME: date.convert( 'now', 'YYYYMMDDhhmmss' ),
+								DELETE_TIME: null,
+								UPDATE_TIME: null
+							} );
+
+							set.save()
+							.then( data => {
+								res.send({
+									status: true,
+									message: 'Success 2',
+									data: {}
+								});
+							} ).catch( err => {
+								res.send( {
+									status: false,
+									message: 'Some error occurred while creating data',
+									data: {}
+								} );
+							} );
+							
+						}
+						// Kondisi data sudah ada, check value, jika sama tidak diupdate, jika beda diupdate dan dimasukkan ke Sync List
+						else {
+							
+							if ( 
+								data.NATIONAL != req.body.NATIONAL || 
+								data.REGION_CODE != req.body.REGION_CODE || 
+								data.COMP_CODE != req.body.COMP_CODE || 
+								data.EST_CODE != req.body.EST_CODE || 
+								data.EST_NAME != req.body.EST_NAME || 
+								data.END_VALID != date.convert( req.body.END_VALID, 'YYYYMMDD' )
+							) {
+								var data_update;
+								if ( date.convert( req.body.END_VALID, 'YYYYMMDD' ) == '99991231' ) {
+									data_update = {
+										NATIONAL: req.body.NATIONAL || "",
+										REGION_CODE: req.body.REGION_CODE || "",
+										COMP_CODE: req.body.COMP_CODE || "",
+										EST_CODE: req.body.EST_CODE || "",
+										EST_NAME: req.body.EST_NAME || "",
+										CITY: req.body.CITY || "",
+										END_VALID: date.convert( req.body.END_VALID, 'YYYYMMDD' ),
+										UPDATE_TIME: date.convert( 'now', 'YYYYMMDDhhmmss' )
+									}
+								}
+								else {
+									data_update = {
+										NATIONAL: req.body.NATIONAL || "",
+										REGION_CODE: req.body.REGION_CODE || "",
+										COMP_CODE: req.body.COMP_CODE || "",
+										EST_CODE: req.body.EST_CODE || "",
+										EST_NAME: req.body.EST_NAME || "",
+										CITY: req.body.CITY || "",
+										END_VALID: date.convert( req.body.END_VALID, 'YYYYMMDD' ),
+										DELETE_TIME: date.convert( 'now', 'YYYYMMDDhhmmss' )
+									}
+								}
+
+								EstModel.findOneAndUpdate( { 
+									REGION_CODE: req.body.REGION_CODE,
+									START_VALID: date.convert( req.body.START_VALID, 'YYYYMMDD' )
+								}, data_update, { new: true } )
+								.then( data => {
+									if( !data ) {
+										return res.send( {
+											status: false,
+											message: "Data error updating 2",
+											data: {}
+										} );
+									}
+									else {
+										res.send({
+											status: true,
+											message: 'Success',
+											data: {}
+										});
+									}
+								}).catch( err => {
+									if( err.kind === 'ObjectId' ) {
+										return res.send( {
+											status: false,
+											message: "Data not found 2",
+											data: {}
+										} );
+									}
+									return res.send( {
+										status: false,
+										message: "Data error updating",
+										data: {}
+									} );
+								});
+							}
+							else {
+								res.send( {
+									status: true,
+									message: 'Skip Update',
+									data: {}
+								} );
+							}
+							
+						}
+					} ).catch( err => {
+						if( err.kind === 'ObjectId' ) {
+							return res.send({
+								status: false,
+								message: "Data not found 1",
+								data: {}
+							});
+						}
+
+						return res.send({
+							status: false,
+							message: "Error retrieving Data",
+							data: {}
+						} );
+					} );
+				}
+			} );
+		};
+
 		exports.find_all = ( req, res ) => {
 			var url_query = req.query;
 			var url_query_length = Object.keys( url_query ).length;
