@@ -148,6 +148,183 @@
 
 		};
 
+		// Create or update data
+		exports.createOrUpdate = ( req, res ) => {
+
+			if ( 
+				!req.body.REGION_CODE || 
+				!req.body.COMP_CODE || 
+				!req.body.EST_CODE || 
+				!req.body.WERKS || 
+				!req.body.JUMLAH_TPH || 
+				!req.body.AFD_CODE || 
+				!req.body.WERKS_AFD_BLOCK_CODE ||
+				!req.body.START_VALID ||
+				!req.body.END_VALID
+			) {
+				return res.send({
+					status: false,
+					message: 'Invalid input',
+					data: {}
+				});
+			}
+
+			BlockModel.findOne( { 
+				WERKS_AFD_BLOCK_CODE: req.body.WERKS_AFD_BLOCK_CODE,
+				START_VALID: HelperLib.date_format( req.body.START_VALID, 'YYYYMMDD' )
+			} ).then( data => {
+
+				// Kondisi belum ada data, create baru dan insert ke Sync List
+				if( !data ) {
+					
+					const set = new BlockModel( {
+						NATIONAL: req.body.NATIONAL || "",
+						REGION_CODE: req.body.REGION_CODE || "",
+						COMP_CODE: req.body.COMP_CODE || "",
+						EST_CODE: req.body.EST_CODE || "",
+						WERKS: req.body.WERKS || "",
+						JUMLAH_TPH: req.body.JUMLAH_TPH || "",
+						AFD_CODE: req.body.AFD_CODE || "",
+						BLOCK_CODE: req.body.BLOCK_CODE || "",
+						BLOCK_NAME: req.body.BLOCK_NAME || "",
+						WERKS_AFD_CODE: req.body.WERKS_AFD_CODE || "",
+						WERKS_AFD_BLOCK_CODE: req.body.WERKS_AFD_BLOCK_CODE || "",
+						LATITUDE_BLOCK: req.body.LATITUDE_BLOCK || "",
+						LONGITUDE_BLOCK: req.body.LONGITUDE_BLOCK || "",
+						START_VALID: HelperLib.date_format( req.body.START_VALID, 'YYYYMMDD' ),
+						END_VALID: HelperLib.date_format( req.body.END_VALID, 'YYYYMMDD' ),
+						INSERT_TIME: HelperLib.date_format( 'now', 'YYYYMMDDhhmmss' ),
+						DELETE_TIME: null,
+						UPDATE_TIME: null
+					} );
+
+					set.save()
+					.then( data => {
+						res.send({
+							status: true,
+							message: 'Success 2',
+							data: {}
+						});
+					} ).catch( err => {
+						res.send( {
+							status: false,
+							message: 'Some error occurred while creating data',
+							data: {}
+						} );
+					} );
+				}
+				// Kondisi data sudah ada, check value, jika sama tidak diupdate, jika beda diupdate dan dimasukkan ke Sync List
+				else {
+					
+					if ( 
+						data.REGION_CODE != req.body.REGION_CODE || 
+						data.COMP_CODE != req.body.COMP_CODE || 
+						data.EST_CODE != req.body.EST_CODE || 
+						data.WERKS != req.body.WERKS || 
+						data.JUMLAH_TPH != req.body.JUMLAH_TPH || 
+						data.AFD_CODE != req.body.AFD_CODE || 
+						data.BLOCK_NAME != req.body.BLOCK_NAME || 
+						data.LATITUDE_BLOCK != req.body.LATITUDE_BLOCK || 
+						data.LONGITUDE_BLOCK != req.body.LONGITUDE_BLOCK || 
+						data.END_VALID != HelperLib.date_format( req.body.END_VALID, 'YYYYMMDD' )
+					) {
+
+						var data_update;
+						if ( HelperLib.date_format( req.body.END_VALID, 'YYYYMMDD' ) == '99991231' ) {
+							data_update = {
+								NATIONAL: req.body.NATIONAL || "",
+								REGION_CODE: req.body.REGION_CODE || "",
+								COMP_CODE: req.body.COMP_CODE || "",
+								EST_CODE: req.body.EST_CODE || "",
+								WERKS: req.body.WERKS || "",
+								JUMLAH_TPH: req.body.JUMLAH_TPH || "",
+								AFD_CODE: req.body.AFD_CODE || "",
+								BLOCK_CODE: req.body.BLOCK_CODE || "",
+								BLOCK_NAME: req.body.BLOCK_NAME || "",
+								LATITUDE_BLOCK: req.body.LATITUDE_BLOCK || "",
+								LONGITUDE_BLOCK: req.body.LONGITUDE_BLOCK || "",
+								END_VALID: HelperLib.date_format( req.body.END_VALID, 'YYYYMMDD' ),
+								UPDATE_TIME: HelperLib.date_format( 'now', 'YYYYMMDDhhmmss' )
+							}
+						}
+						else {
+							data_update = {
+								NATIONAL: req.body.NATIONAL || "",
+								REGION_CODE: req.body.REGION_CODE || "",
+								COMP_CODE: req.body.COMP_CODE || "",
+								EST_CODE: req.body.EST_CODE || "",
+								WERKS: req.body.WERKS || "",
+								JUMLAH_TPH: req.body.JUMLAH_TPH || "",
+								AFD_CODE: req.body.AFD_CODE || "",
+								BLOCK_CODE: req.body.BLOCK_CODE || "",
+								BLOCK_NAME: req.body.BLOCK_NAME || "",
+								LATITUDE_BLOCK: req.body.LATITUDE_BLOCK || "",
+								LONGITUDE_BLOCK: req.body.LONGITUDE_BLOCK || "",
+								END_VALID: HelperLib.date_format( req.body.END_VALID, 'YYYYMMDD' ),
+								DELETE_TIME: HelperLib.date_format( 'now', 'YYYYMMDDhhmmss' )
+							}
+						}
+
+						BlockModel.findOneAndUpdate( { 
+							WERKS_AFD_BLOCK_CODE: req.body.WERKS_AFD_BLOCK_CODE,
+							START_VALID: HelperLib.date_format( req.body.START_VALID, 'YYYYMMDD' )
+						}, data_update, { new: true } )
+						.then( data => {
+							if( !data ) {
+								return res.send( {
+									status: false,
+									message: "Data error updating 2 ",
+									data: {}
+								} );
+							}
+							else {
+								res.send({
+									status: true,
+									message: 'Success',
+									data: {}
+								});
+							}
+						}).catch( err => {
+							if( err.kind === 'ObjectId' ) {
+								return res.send( {
+									status: false,
+									message: "Data not found 2",
+									data: {}
+								} );
+							}
+							return res.send( {
+								status: false,
+								message: "Data error updating",
+								data: {}
+							} );
+						});
+					}
+					else {
+						res.send( {
+							status: true,
+							message: 'Skip Update',
+							data: {}
+						} );
+					}
+				}
+				
+			} ).catch( err => {
+				if( err.kind === 'ObjectId' ) {
+					return res.send({
+						status: false,
+						message: "Data not found 1",
+						data: {}
+					});
+				}
+
+				return res.send({
+					status: false,
+					message: "Error retrieving Data",
+					data: {}
+				} );
+			} );
+		};
+
 		exports.find_one = ( req, res ) => {
 			BlockModel.findOne( { 
 				WERKS_AFD_BLOCK_CODE: req.params.id 

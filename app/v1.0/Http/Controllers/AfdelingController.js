@@ -35,7 +35,7 @@
 				});
 			}
 
-			const afdeling = new afdelingModel( {
+			const afdeling = new AfdelingModel( {
 				REGION_CODE: req.body.REGION_CODE || "",
 				COMP_CODE: req.body.COMP_CODE || "",
 				EST_CODE: req.body.EST_CODE || "",
@@ -43,12 +43,12 @@
 				AFD_CODE: req.body.AFD_CODE || "",
 				AFD_NAME: req.body.AFD_NAME || "",
 				WERKS_AFD_CODE: req.body.WERKS_AFD_CODE || "",
-				START_VALID: ( req.body.START_VALID != '' ) ? date.parse( req.body.START_VALID, 'YYYY-MM-DD' ) : "",
-				END_VALID: ( req.body.END_VALID != '' ) ? date.parse( req.body.END_VALID, 'YYYY-MM-DD' ) : "",
+				START_VALID: ( req.body.START_VALID != '' ) ? HelperLib.date_format( req.body.START_VALID, 'YYYY-MM-DD' ) : "",
+				END_VALID: ( req.body.END_VALID != '' ) ? HelperLib.date_format( req.body.END_VALID, 'YYYY-MM-DD' ) : "",
 				INSERT_USER: req.body.INSERT_USER || "",
-				INSERT_TIME: ( req.body.INSERT_TIME != '' ) ? date.parse( req.body.INSERT_TIME, 'YYYY-MM-DD HH:mm:ss' ) : "",
+				INSERT_TIME: ( req.body.INSERT_TIME != '' ) ? HelperLib.date_format( req.body.INSERT_TIME, 'YYYY-MM-DD HH:mm:ss' ) : "",
 				UPDATE_USER: req.body.UPDATE_USER || "",
-				UPDATE_TIME: ( req.body.UPDATE_TIME != '' ) ? date.parse( req.body.UPDATE_TIME, 'YYYY-MM-DD HH:mm:ss' ) : ""
+				UPDATE_TIME: ( req.body.UPDATE_TIME != '' ) ? HelperLib.date_format( req.body.UPDATE_TIME, 'YYYY-MM-DD HH:mm:ss' ) : ""
 			} );
 
 			afdeling.save()
@@ -65,6 +65,149 @@
 					data: {}
 				} );
 			} );
+		};
+		// Create or update data
+		exports.createOrUpdate = ( req, res ) => {
+
+			if( !req.body.REGION_CODE || !req.body.COMP_CODE || !req.body.EST_CODE || !req.body.WERKS || !req.body.AFD_CODE || !req.body.AFD_NAME || !req.body.WERKS_AFD_CODE  ) {
+				return res.send({
+					status: false,
+					message: 'Invalid input',
+					data: {}
+				});
+			}
+
+			AfdelingModel.findOne( { 
+				WERKS_AFD_CODE: req.body.WERKS_AFD_CODE,
+				START_VALID: HelperLib.date_format( req.body.START_VALID, 'YYYYMMDD' )
+			} ).then( data => {
+				if( !data ) {
+
+					const set = new AfdelingModel( {
+						NATIONAL: req.body.NATIONAL || "",
+						REGION_CODE: req.body.REGION_CODE || "",
+						COMP_CODE: req.body.COMP_CODE || "",
+						EST_CODE: req.body.EST_CODE || "",
+						WERKS: req.body.WERKS || "",
+						AFD_CODE: req.body.AFD_CODE || "",
+						AFD_NAME: req.body.AFD_NAME || "",
+						WERKS_AFD_CODE: req.body.WERKS_AFD_CODE || "",
+						START_VALID: HelperLib.date_format( req.body.START_VALID, 'YYYYMMDD' ),
+						END_VALID: HelperLib.date_format( req.body.END_VALID, 'YYYYMMDD' ),
+						INSERT_TIME: HelperLib.date_format( 'now', 'YYYYMMDDhhmmss' ),
+						DELETE_TIME: null,
+						UPDATE_TIME: null
+					} );
+
+					set.save()
+					.then( data => {
+						res.send({
+							status: true,
+							message: 'Success 2',
+							data: {}
+						});
+					} ).catch( err => {
+						res.send( {
+							status: false,
+							message: 'Some error occurred while creating data',
+							data: {}
+						} );
+					} );
+				}
+				// Kondisi data sudah ada, check value, jika sama tidak diupdate, jika beda diupdate dan dimasukkan ke Sync List
+				else {
+					
+					if ( 
+						data.REGION_CODE != req.body.REGION_CODE || 
+						data.COMP_CODE != req.body.COMP_CODE || 
+						data.EST_CODE != req.body.EST_CODE || 
+						data.AFD_NAME != req.body.AFD_NAME || 
+						data.END_VALID != HelperLib.date_format( req.body.END_VALID, 'YYYYMMDD' )
+					) {
+
+						var data_update;
+						if ( HelperLib.date_format( req.body.END_VALID, 'YYYYMMDD' ) == '99991231' ) {
+							data_update = {
+								REGION_CODE: req.body.REGION_CODE || "",
+								COMP_CODE: req.body.COMP_CODE || "",
+								EST_CODE: req.body.EST_CODE || "",
+								WERKS: req.body.WERKS || "",
+								AFD_NAME: req.body.AFD_NAME || "",
+								END_VALID: HelperLib.date_format( req.body.END_VALID, 'YYYYMMDD' ),
+								UPDATE_TIME: HelperLib.date_format( 'now', 'YYYYMMDDhhmmss' )
+							}
+						}
+						else {
+							data_update = {
+								REGION_CODE: req.body.REGION_CODE || "",
+								COMP_CODE: req.body.COMP_CODE || "",
+								EST_CODE: req.body.EST_CODE || "",
+								WERKS: req.body.WERKS || "",
+								AFD_NAME: req.body.AFD_NAME || "",
+								END_VALID: HelperLib.date_format( req.body.END_VALID, 'YYYYMMDD' ),
+								DELETE_TIME: HelperLib.date_format( 'now', 'YYYYMMDDhhmmss' )
+							}
+						}
+
+						AfdelingModel.findOneAndUpdate( { 
+							WERKS_AFD_CODE: req.body.WERKS_AFD_CODE,
+							START_VALID: HelperLib.date_format( req.body.START_VALID, 'YYYYMMDD' )
+						}, data_update, { new: true } )
+						.then( data => {
+							if( !data ) {
+								return res.send( {
+									status: false,
+									message: "Data error updating 2 " + req.body.WERKS_AFD_CODE,
+									data: {}
+								} );
+							}
+							else {
+								res.send({
+									status: true,
+									message: 'Success',
+									data: {}
+								});
+							}
+						}).catch( err => {
+							if( err.kind === 'ObjectId' ) {
+								return res.send( {
+									status: false,
+									message: "Data not found 2",
+									data: {}
+								} );
+							}
+							return res.send( {
+								status: false,
+								message: "Data error updating",
+								data: {}
+							} );
+						});
+					}
+					else {
+						res.send( {
+							status: true,
+							message: 'Skip Update',
+							data: {}
+						} );
+					}
+				}
+				
+			} ).catch( err => {
+				if( err.kind === 'ObjectId' ) {
+					return res.send({
+						status: false,
+						message: "Data not found 1",
+						data: {}
+					});
+				}
+
+				return res.send({
+					status: false,
+					message: "Error retrieving Data",
+					data: {}
+				} );
+			} );
+
 		};
 
 	/**

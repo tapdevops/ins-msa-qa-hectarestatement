@@ -129,7 +129,7 @@
 
 		};
 
-			// Create or update data
+		// Create or update data
 		exports.createOrUpdate = ( req, res ) => {
 			
 			nJwt.verify( req.token, config.secret_key, config.token_algorithm, ( err, authData ) => {

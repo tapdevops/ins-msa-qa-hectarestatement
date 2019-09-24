@@ -20,6 +20,7 @@
 */
 	module.exports = function( req, res, next ) {
 		const bearer_header = req.headers['authorization'];
+
 		if ( typeof bearer_header !== 'undefined' ) {
 			const bearer = bearer_header.split( ' ' );
 			const bearer_token = bearer[1];
@@ -34,6 +35,7 @@
 				}
 				else {
 					req.auth = JWTDecode( req.token );
+					// console.log( "auth", req.auth );
 					req.auth.LOCATION_CODE_GROUP = req.auth.LOCATION_CODE.split( ',' );
 					req.config = config;
 					next();
