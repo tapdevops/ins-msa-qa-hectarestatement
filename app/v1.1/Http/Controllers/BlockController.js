@@ -7,7 +7,7 @@
  |
  */
  	// Models
- 	const BlockModel = require( _directory_base + '/app/v1.0/Http/Models/BlockModel.js' );
+ 	const BlockModel = require( _directory_base + '/app/v1.1/Http/Models/BlockModel.js' );
 
  	// Modules
  	const Terminal = require( 'child_process' ).execSync;
@@ -17,7 +17,7 @@
 	const Validator = require( 'ferds-validator');
  	
 	// Libraries
- 	const HelperLib = require( _directory_base + '/app/v1.0/Http/Libraries/HelperLib.js' );
+ 	const HelperLib = require( _directory_base + '/app/v1.1/Http/Libraries/HelperLib.js' );
 
  /*
  |--------------------------------------------------------------------------
