@@ -70,7 +70,6 @@
 				}
 				// Kondisi data sudah ada, check value, jika sama tidak diupdate, jika beda diupdate dan dimasukkan ke Sync List
 				else {
-					
 					if ( 
 						data.NATIONAL != req.body.NATIONAL || 
 						data.REGION_CODE != req.body.REGION_CODE || 
@@ -146,7 +145,6 @@
 							data: {}
 						} );
 					}
-					
 				}
 			} ).catch( err => {
 				if( err.kind === 'ObjectId' ) {
