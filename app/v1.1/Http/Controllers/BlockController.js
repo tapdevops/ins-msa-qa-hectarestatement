@@ -460,7 +460,7 @@
 
 				console.log( Terminal( cmd, options ) );
 				
-				var data_geometry = GeoJSONPrecision.parse( JSON.parse( FS.readFileSync( geometry_file_location ) ), 4 );
+				var data_geometry = GeoJSONPrecision.parse( JSON.parse( FS.readFileSync( geometry_file_location ) ), 5 );
 				
 				if ( data_geometry.features ) {
 					data_geometry.features.forEach( function( data, y ) {

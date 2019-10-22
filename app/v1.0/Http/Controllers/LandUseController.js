@@ -41,7 +41,6 @@
 				AFD_CODE: req.body.AFD_CODE,
 				BLOCK_CODE: req.body.BLOCK_CODE
 			} ).then( data => {
-
 				// Kondisi belum ada data, create baru dan insert ke Sync List
 				if( !data ) {
 
