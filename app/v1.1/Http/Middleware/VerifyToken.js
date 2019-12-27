@@ -34,7 +34,9 @@
 				}
 				else {
 					req.auth = JWTDecode( req.token );
-					req.auth.LOCATION_CODE_GROUP = req.auth.LOCATION_CODE.split( ',' );
+					if ( req.auth.LOCATION_CODE ) { 
+						req.auth.LOCATION_CODE_GROUP = req.auth.LOCATION_CODE.split( ',' );
+					}
 					req.config = config;
 					next();
 				}
