@@ -8,6 +8,14 @@ const RoutesVersioning = require('express-routes-versioning')();
 
 // Controllers
 const Controllers = {
+	v_2_0: {
+		Afdeling: require(_directory_base + '/app/v2.0/Http/Controllers/AfdelingController.js'),
+		Block: require(_directory_base + '/app/v2.0/Http/Controllers/BlockController.js'),
+		Comp: require(_directory_base + '/app/v2.0/Http/Controllers/CompController.js'),
+		Est: require(_directory_base + '/app/v2.0/Http/Controllers/EstController.js'),
+		LandUse: require(_directory_base + '/app/v2.0/Http/Controllers/LandUseController.js'),
+		Region: require(_directory_base + '/app/v2.0/Http/Controllers/RegionController.js'),
+	},
 	v_1_2: {
 		Afdeling: require(_directory_base + '/app/v1.2/Http/Controllers/AfdelingController.js'),
 		Block: require(_directory_base + '/app/v1.2/Http/Controllers/BlockController.js'),
@@ -36,6 +44,9 @@ const Controllers = {
 
 // Middleware
 const Middleware = {
+	v_2_0: {
+		VerifyToken: require(_directory_base + '/app/v2.0/Http/Middleware/VerifyToken.js')
+	},
 	v_1_2: {
 		VerifyToken: require(_directory_base + '/app/v1.2/Http/Middleware/VerifyToken.js')
 	},
@@ -70,6 +81,75 @@ module.exports = (app) => {
 		})
 	});
 
+	/*
+	 |--------------------------------------------------------------------------
+	 | API Versi 2.0
+	 |--------------------------------------------------------------------------
+	 */
+	app.get('/api/v2.0/afdeling/all', Middleware.v_2_0.VerifyToken, Controllers.v_2_0.Afdeling.find_all);
+	app.get('/api/v2.0/afdeling/q', Middleware.v_2_0.VerifyToken, Controllers.v_2_0.Afdeling.find_all);
+	//app.post( '/sync-tap/afdeling', AfdelingController.createOrUpdate );
+	app.get('/api/v2.0/sync-mobile/afdeling/:start_date/:end_date', Middleware.v_2_0.VerifyToken, Controllers.v_2_0.Afdeling.sync_mobile);
+	app.get('/api/v2.0/afdeling', Middleware.v_2_0.VerifyToken, Controllers.v_2_0.Afdeling.find);
+	//app.post( 'api/v2.0/afdeling', AfdelingController.create );
+	app.get('/api/v2.0/afdeling/:id', Controllers.v_2_0.Afdeling.find_one);
+	//app.put( '/afdeling/:id', AfdelingController.update );
+	//app.delete( '/afdeling/:id', AfdelingController.delete );
+
+	// Block
+	app.get('/api/v2.0/block/all', Controllers.v_2_0.Block.find_all);
+	app.get('/api/v2.0/block/all/raw', Controllers.v_2_0.Block.findAllRaw);
+	app.get('/api/v2.0/block/q', Controllers.v_2_0.Block.find_all);
+	//app.post( '/api/v2.0/sync-tap/block', BlockController.createOrUpdate );
+	app.get('/api/v2.0/sync-mobile/block/:start_date/:end_date', Middleware.v_2_0.VerifyToken, Controllers.v_2_0.Block.sync_mobile);
+	app.get('/api/v2.0/block', Middleware.v_2_0.VerifyToken, Controllers.v_2_0.Block.find);
+	//app.post( '/api/v2.0/block', BlockController.create );
+	app.get('/api/v2.0/block/:id', Controllers.v_2_0.Block.find_one);
+	//app.put( '/api/v2.0/block/:id', BlockController.update );
+	//app.delete( '/api/v2.0/block/:id', BlockController.delete );
+	app.post('/api/v2.0/geom/design/block', Middleware.v_2_0.VerifyToken, Controllers.v_2_0.Block.find_one_geom);
+
+	// Comp
+	app.get('/api/v2.0/comp/all', Controllers.v_2_0.Comp.find_all);
+	app.get('/api/v2.0/comp/q', Controllers.v_2_0.Comp.find_all);
+	//app.post( '/api/v2.0/sync-tap/comp', token_verify, CompController.createOrUpdate );
+	app.get('/api/v2.0/sync-mobile/comp/:start_date/:end_date', Middleware.v_2_0.VerifyToken, Controllers.v_2_0.Comp.sync_mobile);
+	//app.delete( '/api/v2.0/comp/:id', token_verify, CompController.delete );
+	app.get('/api/v2.0/comp', Middleware.v_2_0.VerifyToken, Controllers.v_2_0.Comp.find);
+	//app.post( '/api/v2.0/comp', CompController.create );
+	app.get('/api/v2.0/comp/:id', Controllers.v_2_0.Comp.find_one);
+	//app.put( '/api/v2.0/comp/:id', CompController.update );
+
+	// Est
+	app.get('/api/v2.0/est/all', Middleware.v_2_0.VerifyToken, Controllers.v_2_0.Est.find_all);
+	app.get('/api/v2.0/est/q', Middleware.v_2_0.VerifyToken, Controllers.v_2_0.Est.find_all);
+	//app.post( '/api/v2.0/sync-tap/est', verifyToken, EstController.createOrUpdate );
+	app.get('/api/v2.0/sync-mobile/est/:start_date/:end_date', Middleware.v_2_0.VerifyToken, Controllers.v_2_0.Est.sync_mobile);
+	app.get('/api/v2.0/est', Middleware.v_2_0.VerifyToken, Controllers.v_2_0.Est.find);
+	//app.post( '/api/v2.0/est', EstController.create );
+	app.get('/api/v2.0/est/:id', Middleware.v_2_0.VerifyToken, Controllers.v_2_0.Est.find_one);
+	//app.put( '/api/v2.0/est/:id', EstController.update );
+	//app.delete( '/api/v2.0/est/:id', EstController.delete );
+
+	// Land Use
+	app.get('/api/v2.0/land-use/all', Middleware.v_2_0.VerifyToken, Controllers.v_2_0.LandUse.find_all);
+	app.get('/api/v2.0/land-use/q', Middleware.v_2_0.VerifyToken, Controllers.v_2_0.LandUse.find_all);
+	app.get('/api/v2.0/report/land-use/:id', Middleware.v_2_0.VerifyToken, Controllers.v_2_0.LandUse.findOneForReport);
+	app.get('/api/v2.0/land-use/q', Middleware.v_2_0.VerifyToken, Controllers.v_2_0.LandUse.find_all);
+	app.get('/api/v2.0/land-use', Middleware.v_2_0.VerifyToken, Controllers.v_2_0.LandUse.find);
+	//app.post( '/api/v2.0/sync-tap/land-use', token_verify, LandUseController.createOrUpdate );
+	app.get('/api/v2.0/sync-mobile/land-use/:start_date/:end_date', Middleware.v_2_0.VerifyToken, Controllers.v_2_0.LandUse.sync_mobile);
+
+	// Region
+	app.get('/api/v2.0/region/all', Controllers.v_2_0.Region.find_all);
+	app.get('/api/v2.0/region/q', Controllers.v_2_0.Region.find_all);
+	//app.post( '/api/v2.0/sync-tap/region', Middleware.v_2_0.VerifyToken, Controllers.v_2_0.Region.createOrUpdate );
+	app.get('/api/v2.0/sync-mobile/region/:start_date/:end_date', Middleware.v_2_0.VerifyToken, Controllers.v_2_0.Region.sync_mobile);
+	//app.post( '/api/v2.0/region', Middleware.v_1_0.VerifyToken, Controllers.v_2_0.Region.create );
+	app.get('/api/v2.0/region', Middleware.v_2_0.VerifyToken, Controllers.v_2_0.Region.find);
+	//app.get( '/api/v2.0/region/:id', Middleware.v_2_0.VerifyToken, Controllers.v_2_0.Region.findOne );
+	//app.put( '/api/v2.0/region/:id', Middleware.v_2_0.VerifyToken, Controllers.v_2_0.Region.update );
+	//app.delete( '/api/v2.0/region/:id', Middleware.v_2_0.VerifyToken, Controllers.v_2_0.Region.delete );
 	/*
 	 |--------------------------------------------------------------------------
 	 | API Versi 1.2
@@ -130,15 +210,15 @@ module.exports = (app) => {
 	app.get('/api/v1.2/sync-mobile/land-use/:start_date/:end_date', Middleware.v_1_1.VerifyToken, Controllers.v_1_1.LandUse.sync_mobile);
 
 	// Region
-	app.get('/api/v1.2/region/all', Controllers.v_1_1.Region.find_all);
-	app.get('/api/v1.2/region/q', Controllers.v_1_1.Region.find_all);
-	//app.post( '/api/v1.2/sync-tap/region', Middleware.v_1_1.VerifyToken, Controllers.v_1_1.Region.createOrUpdate );
-	app.get('/api/v1.2/sync-mobile/region/:start_date/:end_date', Middleware.v_1_1.VerifyToken, Controllers.v_1_1.Region.sync_mobile);
-	//app.post( '/api/v1.2/region', Middleware.v_1_0.VerifyToken, Controllers.v_1_1.Region.create );
-	app.get('/api/v1.2/region', Middleware.v_1_1.VerifyToken, Controllers.v_1_1.Region.find);
-	//app.get( '/api/v1.2/region/:id', Middleware.v_1_1.VerifyToken, Controllers.v_1_1.Region.findOne );
-	//app.put( '/api/v1.2/region/:id', Middleware.v_1_1.VerifyToken, Controllers.v_1_1.Region.update );
-	//app.delete( '/api/v1.2/region/:id', Middleware.v_1_1.VerifyToken, Controllers.v_1_1.Region.delete );
+	app.get('/api/v1.2/region/all', Controllers.v_1_2.Region.find_all);
+	app.get('/api/v1.2/region/q', Controllers.v_1_2.Region.find_all);
+	//app.post( '/api/v1.2/sync-tap/region', Middleware.v_1_2.VerifyToken, Controllers.v_1_2.Region.createOrUpdate );
+	app.get('/api/v1.2/sync-mobile/region/:start_date/:end_date', Middleware.v_1_2.VerifyToken, Controllers.v_1_2.Region.sync_mobile);
+	//app.post( '/api/v1.2/region', Middleware.v_1_0.VerifyToken, Controllers.v_1_2.Region.create );
+	app.get('/api/v1.2/region', Middleware.v_1_2.VerifyToken, Controllers.v_1_2.Region.find);
+	//app.get( '/api/v1.2/region/:id', Middleware.v_1_2.VerifyToken, Controllers.v_1_2.Region.findOne );
+	//app.put( '/api/v1.2/region/:id', Middleware.v_1_2.VerifyToken, Controllers.v_1_2.Region.update );
+	//app.delete( '/api/v1.2/region/:id', Middleware.v_1_2.VerifyToken, Controllers.v_1_2.Region.delete );
 
 	/*
 	 |--------------------------------------------------------------------------
