@@ -75,39 +75,39 @@ module.exports = (app) => {
 	 | API Versi 1.2
 	 |--------------------------------------------------------------------------
 	 */
-	app.get('/api/v1.1/afdeling/all', Middleware.v_1_2.VerifyToken, Controllers.v_1_2.Afdeling.find_all);
-	app.get('/api/v1.1/afdeling/q', Middleware.v_1_2.VerifyToken, Controllers.v_1_2.Afdeling.find_all);
+	app.get('/api/v1.2/afdeling/all', Middleware.v_1_2.VerifyToken, Controllers.v_1_2.Afdeling.find_all);
+	app.get('/api/v1.2/afdeling/q', Middleware.v_1_2.VerifyToken, Controllers.v_1_2.Afdeling.find_all);
 	//app.post( '/sync-tap/afdeling', AfdelingController.createOrUpdate );
-	app.get('/api/v1.1/sync-mobile/afdeling/:start_date/:end_date', Middleware.v_1_2.VerifyToken, Controllers.v_1_2.Afdeling.sync_mobile);
-	app.get('/api/v1.1/afdeling', Middleware.v_1_2.VerifyToken, Controllers.v_1_2.Afdeling.find);
-	//app.post( 'api/v1.1/afdeling', AfdelingController.create );
-	app.get('/api/v1.1/afdeling/:id', Controllers.v_1_2.Afdeling.find_one);
+	app.get('/api/v1.2/sync-mobile/afdeling/:start_date/:end_date', Middleware.v_1_2.VerifyToken, Controllers.v_1_2.Afdeling.sync_mobile);
+	app.get('/api/v1.2/afdeling', Middleware.v_1_2.VerifyToken, Controllers.v_1_2.Afdeling.find);
+	//app.post( 'api/v1.2/afdeling', AfdelingController.create );
+	app.get('/api/v1.2/afdeling/:id', Controllers.v_1_2.Afdeling.find_one);
 	//app.put( '/afdeling/:id', AfdelingController.update );
 	//app.delete( '/afdeling/:id', AfdelingController.delete );
 
 	// Block
-	app.get('/api/v1.1/block/all', Controllers.v_1_2.Block.find_all);
-	app.get('/api/v1.1/block/all/raw', Controllers.v_1_2.Block.findAllRaw);
-	app.get('/api/v1.1/block/q', Controllers.v_1_2.Block.find_all);
-	//app.post( '/api/v1.1/sync-tap/block', BlockController.createOrUpdate );
-	app.get('/api/v1.1/sync-mobile/block/:start_date/:end_date', Middleware.v_1_2.VerifyToken, Controllers.v_1_2.Block.sync_mobile);
-	app.get('/api/v1.1/block', Middleware.v_1_2.VerifyToken, Controllers.v_1_2.Block.find);
-	//app.post( '/api/v1.1/block', BlockController.create );
-	app.get('/api/v1.1/block/:id', Controllers.v_1_2.Block.find_one);
-	//app.put( '/api/v1.1/block/:id', BlockController.update );
-	//app.delete( '/api/v1.1/block/:id', BlockController.delete );
-	app.post('/api/v1.1/geom/design/block', Middleware.v_1_2.VerifyToken, Controllers.v_1_2.Block.find_one_geom);
+	app.get('/api/v1.2/block/all', Controllers.v_1_2.Block.find_all);
+	app.get('/api/v1.2/block/all/raw', Controllers.v_1_2.Block.findAllRaw);
+	app.get('/api/v1.2/block/q', Controllers.v_1_2.Block.find_all);
+	//app.post( '/api/v1.2/sync-tap/block', BlockController.createOrUpdate );
+	app.get('/api/v1.2/sync-mobile/block/:start_date/:end_date', Middleware.v_1_2.VerifyToken, Controllers.v_1_2.Block.sync_mobile);
+	app.get('/api/v1.2/block', Middleware.v_1_2.VerifyToken, Controllers.v_1_2.Block.find);
+	//app.post( '/api/v1.2/block', BlockController.create );
+	app.get('/api/v1.2/block/:id', Controllers.v_1_2.Block.find_one);
+	//app.put( '/api/v1.2/block/:id', BlockController.update );
+	//app.delete( '/api/v1.2/block/:id', BlockController.delete );
+	app.post('/api/v1.2/geom/design/block', Middleware.v_1_2.VerifyToken, Controllers.v_1_2.Block.find_one_geom);
 
 	// Comp
-	app.get('/api/v1.1/comp/all', Controllers.v_1_2.Comp.find_all);
-	app.get('/api/v1.1/comp/q', Controllers.v_1_2.Comp.find_all);
-	//app.post( '/api/v1.1/sync-tap/comp', token_verify, CompController.createOrUpdate );
-	app.get('/api/v1.1/sync-mobile/comp/:start_date/:end_date', Middleware.v_1_2.VerifyToken, Controllers.v_1_2.Comp.sync_mobile);
-	//app.delete( '/api/v1.1/comp/:id', token_verify, CompController.delete );
-	app.get('/api/v1.1/comp', Middleware.v_1_2.VerifyToken, Controllers.v_1_2.Comp.find);
-	//app.post( '/api/v1.1/comp', CompController.create );
-	app.get('/api/v1.1/comp/:id', Controllers.v_1_2.Comp.find_one);
-	//app.put( '/api/v1.1/comp/:id', CompController.update );
+	app.get('/api/v1.2/comp/all', Controllers.v_1_2.Comp.find_all);
+	app.get('/api/v1.2/comp/q', Controllers.v_1_2.Comp.find_all);
+	//app.post( '/api/v1.2/sync-tap/comp', token_verify, CompController.createOrUpdate );
+	app.get('/api/v1.2/sync-mobile/comp/:start_date/:end_date', Middleware.v_1_2.VerifyToken, Controllers.v_1_2.Comp.sync_mobile);
+	//app.delete( '/api/v1.2/comp/:id', token_verify, CompController.delete );
+	app.get('/api/v1.2/comp', Middleware.v_1_2.VerifyToken, Controllers.v_1_2.Comp.find);
+	//app.post( '/api/v1.2/comp', CompController.create );
+	app.get('/api/v1.2/comp/:id', Controllers.v_1_2.Comp.find_one);
+	//app.put( '/api/v1.2/comp/:id', CompController.update );
 
 	// Est
 	app.get('/api/v1.2/est/all', Middleware.v_1_2.VerifyToken, Controllers.v_1_2.Est.find_all);
