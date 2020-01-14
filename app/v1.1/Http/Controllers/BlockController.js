@@ -374,7 +374,12 @@ exports.findAllRaw = (req, res) => {
 			BLOCK_NAME: 1,
 			WERKS_AFD_BLOCK_CODE: 1,
 			LATITUDE_BLOCK: 1,
-			LONGITUDE_BLOCK: 1
+			LONGITUDE_BLOCK: 1,
+			START_VALID: 1,
+			END_VALID: 1,
+			INSERT_TIME: 1,
+			DELETE_TIME: 1,
+			UPDATE_TIME: 1
 		})
 		.sort({
 			WERKS: 1,
@@ -404,7 +409,12 @@ exports.findAllRaw = (req, res) => {
 						"WERKS_AFD_CODE": dt.WERKS_AFD_CODE,
 						"WERKS_AFD_BLOCK_CODE": dt.WERKS_AFD_BLOCK_CODE,
 						"LATITUDE_BLOCK": dt.LATITUDE_BLOCK,
-						"LONGITUDE_BLOCK": dt.LONGITUDE_BLOCK
+						"LONGITUDE_BLOCK": dt.LONGITUDE_BLOCK,
+						"START_VALID": dt.START_VALID,
+						"END_VALID": dt.END_VALID,
+						"INSERT_TIME": dt.INSERT_TIME,
+						"DELETE_TIME": dt.DELETE_TIME,
+						"UPDATE_TIME": dt.UPDATE_TIME
 					});
 				});
 			}
