@@ -7,14 +7,14 @@
  |
  */
  	// Models
- 	const LandUseModel = require( _directory_base + '/app/v1.1/Http/Models/LandUseModel.js' );
- 	const ViewLandUseModel = require( _directory_base + '/app/v1.1/Http/Models/ViewLandUseModel.js' );
+ 	const LandUseModel = require( _directory_base + '/app/v1.2/Http/Models/LandUseModel.js' );
+ 	const ViewLandUseModel = require( _directory_base + '/app/v1.2/Http/Models/ViewLandUseModel.js' );
 
  	// Modules
 	const Validator = require( 'ferds-validator');
  	
 	// Libraries
- 	const HelperLib = require( _directory_base + '/app/v1.1/Http/Libraries/HelperLib.js' );
+ 	const HelperLib = require( _directory_base + '/app/v1.2/Http/Libraries/HelperLib.js' );
 
  /*
  |--------------------------------------------------------------------------
@@ -142,6 +142,193 @@
 				} );
 			} );
 
+		};
+
+		// Create or update data
+		// Untuk proses sync menggunakan cronjob dari database Oracle ke MongoDB (TAP_DW)
+		exports.createOrUpdate = ( req, res ) => {
+
+			if( !req.body.REGION_CODE || !req.body.COMP_CODE || !req.body.WERKS || !req.body.AFD_CODE || !req.body.AFD_NAME || !req.body.BLOCK_CODE || !req.body.BLOCK_NAME ) {
+				return res.send({
+					status: false,
+					message: 'Invalid input',
+					data: {}
+				});
+			}
+
+			LandUseModel.findOne( { 
+				REGION_CODE: req.body.REGION_CODE,
+				COMP_CODE: req.body.COMP_CODE,
+				WERKS: req.body.WERKS,
+				AFD_CODE: req.body.AFD_CODE,
+				BLOCK_CODE: req.body.BLOCK_CODE
+			} ).then( data => {
+
+				// Kondisi belum ada data, create baru dan insert ke Sync List
+				if( !data ) {
+
+					const set = new LandUseModel( {
+						NATIONAL 				: req.body.NATIONAL || "",
+						REGION_CODE 			: req.body.REGION_CODE || "",
+						COMP_CODE 				: req.body.COMP_CODE || "",
+						WERKS 					: req.body.WERKS || "", 
+						SUB_BA_CODE 			: req.body.SUB_BA_CODE || "",
+						KEBUN_CODE 				: req.body.KEBUN_CODE || "",
+						AFD_CODE 				: req.body.AFD_CODE || "",
+						AFD_NAME 				: req.body.AFD_NAME || "",
+						WERKS_AFD_CODE 			: req.body.WERKS + req.body.AFD_CODE,
+						BLOCK_CODE 				: req.body.BLOCK_CODE || "",
+						BLOCK_NAME 				: req.body.BLOCK_NAME || "",
+						WERKS_AFD_BLOCK_CODE 	: req.body.WERKS + req.body.AFD_CODE + req.body.BLOCK_CODE,
+						LAND_USE_CODE 			: req.body.LAND_USE_CODE || "",
+						LAND_USE_NAME 			: req.body.LAND_USE_NAME|| "",
+						LAND_USE_CODE_GIS 		: req.body.LAND_USE_CODE_GIS || "",
+						SPMON 					: date.convert( req.body.SPMON, 'YYYYMMDDhhmmss' ),
+						LAND_CAT 				: req.body.LAND_CAT || "",
+						LAND_CAT_L1_CODE 		: req.body.LAND_CAT_L1_CODE || "",
+						LAND_CAT_L1 			: req.body.LAND_CAT_L1 || "",
+
+						LAND_CAT_L2_CODE 		: req.body.LAND_CAT_L2_CODE || "",
+						MATURITY_STATUS 		: req.body.MATURITY_STATUS || "",
+						SCOUT_STATUS 			: req.body.SCOUT_STATUS || "",
+						AGES 					: req.body.AGES || "",
+						HA_SAP 					: req.body.HA_SAP || "",
+						PALM_SAP 				: req.body.PALM_SAP || "",
+						SPH_SAP 				: req.body.SPH_SAP || "",
+						HA_GIS 					: req.body.HA_GIS || "",
+						PALM_GIS 				: req.body.PALM_GIS || "",
+						SPH_GIS 				: req.body.SPH_GIS || "",
+
+						INSERT_TIME 			: date.convert( 'now', 'YYYYMMDDhhmmss' ),
+						UPDATE_TIME 			: 0,
+						DELETE_TIME 			: 0
+					} );
+
+					set.save()
+					.then( data => {
+						
+						if ( !data ) {
+							res.send({
+								status: true,
+								message: 'Error',
+								data: []
+							});
+						}
+
+						res.send({
+							status: true,
+							message: 'Success',
+							data: []
+						});
+					} ).catch( err => {
+						if( err.kind === 'ObjectId' ) {
+							return res.send( {
+								status: false,
+								message: "Error ObjectId",
+								data: []
+							} );
+						}
+						return res.send( {
+							status: false,
+							message: "Error retrieving data",
+							data: []
+						} );
+					} );
+				}
+				// Kondisi data sudah ada, check value, jika sama tidak diupdate, jika beda diupdate dan dimasukkan ke Sync List
+				else {
+					if ( 
+						data.SPMON != date.convert( req.body.SPMON, 'YYYYMMDD' )
+					) {
+						LandUseModel.findOneAndUpdate( { 
+							REGION_CODE: req.body.REGION_CODE,
+							COMP_CODE: req.body.COMP_CODE,
+							WERKS: req.body.WERKS,
+							AFD_CODE: req.body.AFD_CODE,
+							BLOCK_CODE: req.body.BLOCK_CODE
+						}, {
+							NATIONAL 				: req.body.NATIONAL || "",
+							SUB_BA_CODE 			: req.body.SUB_BA_CODE || "",
+							KEBUN_CODE 				: req.body.KEBUN_CODE || "",
+							AFD_NAME 				: req.body.AFD_NAME || "",
+							WERKS_AFD_CODE 			: req.body.WERKS + req.body.AFD_CODE,
+							BLOCK_NAME 				: req.body.BLOCK_NAME || "",
+							WERKS_AFD_BLOCK_CODE 	: req.body.WERKS + req.body.AFD_CODE + req.body.BLOCK_CODE,
+							LAND_USE_CODE 			: req.body.LAND_USE_CODE || "",
+							LAND_USE_NAME 			: req.body.LAND_USE_NAME|| "",
+							LAND_USE_CODE_GIS 		: req.body.LAND_USE_CODE_GIS || "",
+							SPMON 					: date.convert( req.body.SPMON, 'YYYYMMDDhhmmss' ),
+							LAND_CAT 				: req.body.LAND_CAT || "",
+							LAND_CAT_L1_CODE 		: req.body.LAND_CAT_L1_CODE || "",
+							LAND_CAT_L1 			: req.body.LAND_CAT_L1 || "",
+
+							LAND_CAT_L2_CODE 		: req.body.LAND_CAT_L2_CODE || "",
+							MATURITY_STATUS 		: req.body.MATURITY_STATUS || "",
+							SCOUT_STATUS 			: req.body.SCOUT_STATUS || "",
+							AGES 					: req.body.AGES || "",
+							HA_SAP 					: req.body.HA_SAP || "",
+							PALM_SAP 				: req.body.PALM_SAP || "",
+							SPH_SAP 				: req.body.SPH_SAP || "",
+							HA_GIS 					: req.body.HA_GIS || "",
+							PALM_GIS 				: req.body.PALM_GIS || "",
+							SPH_GIS 				: req.body.SPH_GIS || "",
+
+							UPDATE_TIME: date.convert( 'now', 'YYYYMMDDhhmmss' )
+						}, { new: true } )
+						.then( data => {
+							if( !data ) {
+								return res.send( {
+									status: false,
+									message: "Data error updating 2",
+									data: {}
+								} );
+							}
+							else {
+								res.send({
+									status: true,
+									message: 'Success',
+									data: {}
+								});
+							}
+						}).catch( err => {
+							if( err.kind === 'ObjectId' ) {
+								return res.send( {
+									status: false,
+									message: "Data not found 2",
+									data: {}
+								} );
+							}
+							return res.send( {
+								status: false,
+								message: "Data error updating",
+								data: {}
+							} );
+						});
+					}
+					else {
+						res.send( {
+							status: true,
+							message: 'Skip Update',
+							data: {}
+						} );
+					}
+				}
+				
+			} ).catch( err => {
+				if( err.kind === 'ObjectId' ) {
+					return res.status( 404 ).send({
+						status: false,
+						message: "Data not found 1",
+						data: {}
+					});
+				}
+
+				return res.status( 500 ).send({
+					status: false,
+					message: "Error retrieving Data",
+					data: {}
+				} );
+			} );
 		};
 
 		exports.find_all = ( req, res ) => {

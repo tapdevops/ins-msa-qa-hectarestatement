@@ -3,18 +3,18 @@
  | Variable
  |--------------------------------------------------------------------------
  */
-	const mongoose = require( 'mongoose' );
+const mongoose = require('mongoose');
 
 /*
  |--------------------------------------------------------------------------
  | Schema
  |--------------------------------------------------------------------------
  */
-	const ViewLandUseSchema = mongoose.Schema( {});
+const ViewLandUseSchema = mongoose.Schema({});
 
 /*
 |--------------------------------------------------------------------------
 | Module Exports
 |--------------------------------------------------------------------------
 */
-	module.exports = mongoose.model( 'ViewLandUse_v_1_1', ViewLandUseSchema, 'VIEW_LAND_USE' );
+module.exports = mongoose.model('ViewLandUse_v_1_2', ViewLandUseSchema, 'VIEW_LAND_USE');

@@ -7,17 +7,17 @@
  |
  */
  	// Models
- 	const AfdelingModel = require( _directory_base + '/app/v1.1/Http/Models/AfdelingModel.js' );
+ 	const AfdelingModel = require( _directory_base + '/app/v1.2/Http/Models/AfdelingModel.js' );
 
  	// Modules
 	const Validator = require( 'ferds-validator');
  	
 	// Libraries
- 	const HelperLib = require( _directory_base + '/app/v1.1/Http/Libraries/HelperLib.js' );
+ 	const HelperLib = require( _directory_base + '/app/v1.2/Http/Libraries/HelperLib.js' );
 
  /*
  |--------------------------------------------------------------------------
- | Versi 1.0
+ | Versi 1.1
  |--------------------------------------------------------------------------
  */
  	/**
@@ -35,7 +35,7 @@
 				});
 			}
 
-			const afdeling = new afdelingModel( {
+			const afdeling = new AfdelingModel( {
 				REGION_CODE: req.body.REGION_CODE || "",
 				COMP_CODE: req.body.COMP_CODE || "",
 				EST_CODE: req.body.EST_CODE || "",
@@ -65,6 +65,152 @@
 					data: {}
 				} );
 			} );
+		};
+
+		// Create or update data
+		exports.createOrUpdate = ( req, res ) => {
+
+			if( !req.body.REGION_CODE || !req.body.COMP_CODE || !req.body.EST_CODE || !req.body.WERKS || !req.body.AFD_CODE || !req.body.AFD_NAME || !req.body.WERKS_AFD_CODE  ) {
+				return res.send({
+					status: false,
+					message: 'Invalid input',
+					data: {}
+				});
+			}
+
+			AfdelingModel.findOne( { 
+				WERKS_AFD_CODE: req.body.WERKS_AFD_CODE,
+				START_VALID: date.convert( req.body.START_VALID, 'YYYYMMDD' )
+			} ).then( data => {
+
+				// Kondisi belum ada data, create baru dan insert ke Sync List
+				if( !data ) {
+
+					const set = new AfdelingModel( {
+						NATIONAL: req.body.NATIONAL || "",
+						REGION_CODE: req.body.REGION_CODE || "",
+						COMP_CODE: req.body.COMP_CODE || "",
+						EST_CODE: req.body.EST_CODE || "",
+						WERKS: req.body.WERKS || "",
+						AFD_CODE: req.body.AFD_CODE || "",
+						AFD_NAME: req.body.AFD_NAME || "",
+						WERKS_AFD_CODE: req.body.WERKS_AFD_CODE || "",
+						START_VALID: date.convert( req.body.START_VALID, 'YYYYMMDD' ),
+						END_VALID: date.convert( req.body.END_VALID, 'YYYYMMDD' ),
+						INSERT_TIME: date.convert( 'now', 'YYYYMMDDhhmmss' ),
+						DELETE_TIME: null,
+						UPDATE_TIME: null
+					} );
+
+					set.save()
+					.then( data => {
+						res.send({
+							status: true,
+							message: 'Success 2',
+							data: {}
+						});
+					} ).catch( err => {
+						res.send( {
+							status: false,
+							message: 'Some error occurred while creating data',
+							data: {}
+						} );
+					} );
+				}
+				// Kondisi data sudah ada, check value, jika sama tidak diupdate, jika beda diupdate dan dimasukkan ke Sync List
+				else {
+					
+					if ( 
+						data.REGION_CODE != req.body.REGION_CODE || 
+						data.COMP_CODE != req.body.COMP_CODE || 
+						data.EST_CODE != req.body.EST_CODE || 
+						data.AFD_NAME != req.body.AFD_NAME || 
+						data.END_VALID != date.convert( req.body.END_VALID, 'YYYYMMDD' )
+					) {
+
+						var data_update;
+						if ( date.convert( req.body.END_VALID, 'YYYYMMDD' ) == '99991231' ) {
+							data_update = {
+								REGION_CODE: req.body.REGION_CODE || "",
+								COMP_CODE: req.body.COMP_CODE || "",
+								EST_CODE: req.body.EST_CODE || "",
+								WERKS: req.body.WERKS || "",
+								AFD_NAME: req.body.AFD_NAME || "",
+								END_VALID: date.convert( req.body.END_VALID, 'YYYYMMDD' ),
+								UPDATE_TIME: date.convert( 'now', 'YYYYMMDDhhmmss' )
+							}
+						}
+						else {
+							data_update = {
+								REGION_CODE: req.body.REGION_CODE || "",
+								COMP_CODE: req.body.COMP_CODE || "",
+								EST_CODE: req.body.EST_CODE || "",
+								WERKS: req.body.WERKS || "",
+								AFD_NAME: req.body.AFD_NAME || "",
+								END_VALID: date.convert( req.body.END_VALID, 'YYYYMMDD' ),
+								DELETE_TIME: date.convert( 'now', 'YYYYMMDDhhmmss' )
+							}
+						}
+
+						AfdelingModel.findOneAndUpdate( { 
+							WERKS_AFD_CODE: req.body.WERKS_AFD_CODE,
+							START_VALID: date.convert( req.body.START_VALID, 'YYYYMMDD' )
+						}, data_update, { new: true } )
+						.then( data => {
+							if( !data ) {
+								return res.send( {
+									status: false,
+									message: "Data error updating 2 " + req.body.WERKS_AFD_CODE,
+									data: {}
+								} );
+							}
+							else {
+								res.send({
+									status: true,
+									message: 'Success',
+									data: {}
+								});
+							}
+						}).catch( err => {
+							if( err.kind === 'ObjectId' ) {
+								return res.send( {
+									status: false,
+									message: "Data not found 2",
+									data: {}
+								} );
+							}
+							return res.send( {
+								status: false,
+								message: "Data error updating",
+								data: {}
+							} );
+						});
+					}
+					else {
+						res.send( {
+							status: true,
+							message: 'Skip Update',
+							data: {}
+						} );
+					}
+				}
+				
+			} ).catch( err => {
+				if( err.kind === 'ObjectId' ) {
+					return res.send({
+						status: false,
+						message: "Data not found 1",
+						data: {}
+					});
+				}
+
+				return res.send({
+					status: false,
+					message: "Error retrieving Data",
+					data: {}
+				} );
+			} );
+
 		};
 
 	/**

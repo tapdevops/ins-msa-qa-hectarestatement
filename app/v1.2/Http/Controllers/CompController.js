@@ -7,17 +7,17 @@
  |
  */
  	// Models
- 	const CompModel = require( _directory_base + '/app/v1.1/Http/Models/CompModel.js' );
+ 	const CompModel = require( _directory_base + '/app/v1.2/Http/Models/CompModel.js' );
 
  	// Modules
 	const Validator = require( 'ferds-validator');
  	
 	// Libraries
- 	const HelperLib = require( _directory_base + '/app/v1.1/Http/Libraries/HelperLib.js' );
+ 	const HelperLib = require( _directory_base + '/app/v1.2/Http/Libraries/HelperLib.js' );
 
  /*
  |--------------------------------------------------------------------------
- | Versi 1.0
+ | Versi 1.1
  |--------------------------------------------------------------------------
  */
  	/**
@@ -138,6 +138,126 @@
 				} );
 			} );
 
+		};
+
+		// Create or update data
+		exports.createOrUpdate = ( req, res ) => {
+		
+			if( !req.body.REGION_CODE || !req.body.COMP_CODE || !req.body.COMP_NAME ) {
+				return res.send({
+					status: false,
+					message: 'Invalid input',
+					data: {}
+				});
+			}
+
+			CompModel.findOne( { 
+				COMP_CODE: req.body.COMP_CODE
+			} ).then( data => {
+				// Kondisi belum ada data, create baru dan insert ke Sync List
+				if( !data ) {
+					
+					const set = new CompModel( {
+						NATIONAL: req.body.NATIONAL || "",
+						REGION_CODE: req.body.REGION_CODE || "",
+						COMP_CODE: req.body.COMP_CODE || "",
+						COMP_NAME: req.body.COMP_NAME || "",
+						ADDRESS: req.body.ADDRESS || "",
+						INSERT_TIME: date.convert( 'now', 'YYYYMMDDhhmmss' ),
+						DELETE_TIME: null,
+						UPDATE_TIME: null
+					} );
+
+					set.save()
+					.then( data => {
+						res.send({
+							status: true,
+							message: 'Success 2',
+							data: {}
+						});
+					} ).catch( err => {
+						res.send( {
+							status: false,
+							message: 'Some error occurred while creating data',
+							data: {}
+						} );
+					} );
+					
+				}
+				// Kondisi data sudah ada, check value, jika sama tidak diupdate, jika beda diupdate dan dimasukkan ke Sync List
+				else {
+					
+					if ( 
+						data.NATIONAL != req.body.NATIONAL || 
+						data.REGION_CODE != req.body.REGION_CODE || 
+						data.COMP_CODE != req.body.COMP_CODE || 
+						data.COMP_NAME != req.body.COMP_NAME || 
+						data.ADDRESS != req.body.ADDRESS
+					) {
+
+						CompModel.findOneAndUpdate( { 
+							COMP_CODE: req.body.COMP_CODE
+						}, {
+							NATIONAL: req.body.NATIONAL || "",
+							REGION_CODE: req.body.REGION_CODE || "",
+							COMP_NAME: req.body.COMP_NAME || "",
+							ADDRESS: req.body.ADDRESS || "",
+							UPDATE_TIME: date.convert( 'now', 'YYYYMMDDhhmmss' )
+						}, { new: true } )
+						.then( data => {
+							if( !data ) {
+								return res.send( {
+									status: false,
+									message: "Data error updating 2",
+									data: {}
+								} );
+							}
+							else {
+								res.send({
+									status: true,
+									message: 'Success',
+									data: {}
+								});
+							}
+						}).catch( err => {
+							if( err.kind === 'ObjectId' ) {
+								return res.send( {
+									status: false,
+									message: "Data not found 2",
+									data: {}
+								} );
+							}
+							return res.send( {
+								status: false,
+								message: "Data error updating",
+								data: {}
+							} );
+						});
+					}
+					else {
+						res.send( {
+							status: true,
+							message: 'Skip Update',
+							data: {}
+						} );
+					}
+					
+				}
+			} ).catch( err => {
+				if( err.kind === 'ObjectId' ) {
+					return res.send({
+						status: false,
+						message: "Data not found 1",
+						data: {}
+					});
+				}
+
+				return res.send({
+					status: false,
+					message: "Error retrieving Data",
+					data: {}
+				} );
+			} );
 		};
 
 		exports.find_one = ( req, res ) => {
