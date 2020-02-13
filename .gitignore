@@ -1,2 +1,3 @@
 ./Dockerfile
 ./config/app.js
+/node_modules
