@@ -5,7 +5,7 @@
  */
 // Node Modules
 const RoutesVersioning = require('express-routes-versioning')();
-
+const cors = require('cors')
 // Controllers
 const Controllers = {
 	v_2_0: {
@@ -55,6 +55,16 @@ const Middleware = {
 	},
 	v_1_0: {
 		VerifyToken: require(_directory_base + '/app/v1.0/Http/Middleware/VerifyToken.js')
+	}
+}
+
+var corsOptions = {
+	origin: function (origin, callback) {
+		if (whitelist.indexOf(origin) !== -1) {
+		callback(null, true)
+		} else {
+		callback(new Error('Not allowed by CORS'))
+		}
 	}
 }
 
@@ -110,7 +120,7 @@ module.exports = (app) => {
 	app.post('/api/v2.0/geom/design/block', Middleware.v_2_0.VerifyToken, Controllers.v_2_0.Block.find_one_geom);
 
 	// Comp
-	app.get('/api/v2.0/comp/all', Controllers.v_2_0.Comp.find_all);
+	app.get('/api/v2.0/comp/all', cors(corsOptions), Controllers.v_2_0.Comp.find_all);
 	app.get('/api/v2.0/comp/q', Controllers.v_2_0.Comp.find_all);
 	//app.post( '/api/v2.0/sync-tap/comp', token_verify, CompController.createOrUpdate );
 	app.get('/api/v2.0/sync-mobile/comp/:start_date/:end_date', Middleware.v_2_0.VerifyToken, Controllers.v_2_0.Comp.sync_mobile);
