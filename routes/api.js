@@ -57,7 +57,7 @@ const Middleware = {
 		VerifyToken: require(_directory_base + '/app/v1.0/Http/Middleware/VerifyToken.js')
 	}
 }
-
+var whitelist = ['http://apis.tap-agri.com/mobileinspectiondev/ins-msa-dev-hectarestatement/']
 var corsOptions = {
 	origin: function (origin, callback) {
 		if (whitelist.indexOf(origin) !== -1) {
