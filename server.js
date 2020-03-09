@@ -17,6 +17,8 @@
 	const body_parser = require( 'body-parser' );
 	const express = require( 'express' );
 	const mongoose = require( 'mongoose' );
+	const cors = require('cors')
+
 
 	// Primary Variable
 	const app = express();
@@ -54,6 +56,9 @@
 		console.log( "\tService \t: " + config.app.name + " (" + config.app.env + ")" );
 		console.log( "\tPort \t\t: " + config.app.port[config.app.env] );
 	} );
+	//allowing cors
+	app.use(cors());
+	app.options('*', cors());
 
 	// Routing
 	require( './routes/api.js' )( app );
