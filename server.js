@@ -56,9 +56,6 @@
 		console.log( "\tService \t: " + config.app.name + " (" + config.app.env + ")" );
 		console.log( "\tPort \t\t: " + config.app.port[config.app.env] );
 	} );
-	//allowing cors
-	app.use(cors());
-	app.options('*', cors());
 
 	// Routing
 	require( './routes/api.js' )( app );
