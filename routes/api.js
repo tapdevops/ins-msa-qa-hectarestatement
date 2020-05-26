@@ -6,7 +6,6 @@
 // Node Modules
 const RoutesVersioning = require('express-routes-versioning')();
 const cors = require('cors')
-
 // Controllers
 const Controllers = {
 	v_2_0: {
@@ -56,6 +55,11 @@ const Middleware = {
 	},
 	v_1_0: {
 		VerifyToken: require(_directory_base + '/app/v1.0/Http/Middleware/VerifyToken.js')
+	}
+}
+var corsOptions = {
+	origin: function (origin, callback) {
+		callback(null, true)	
 	}
 }
 

@@ -17,6 +17,8 @@
 	const body_parser = require( 'body-parser' );
 	const express = require( 'express' );
 	const mongoose = require( 'mongoose' );
+	const cors = require('cors')
+
 
 	// Primary Variable
 	const app = express();
@@ -57,4 +59,9 @@
 
 	// Routing
 	require( './routes/api.js' )( app );
+
+	const timeout = require('connect-timeout');
+	//set timeout 5 minutes
+	app.use(timeout('300s'));
+
 	module.exports = app;
