@@ -38,7 +38,7 @@ exports.createOrUpdate = (req, res) => {
 		!req.body.WERKS_AFD_BLOCK_CODE ||
 		!req.body.START_VALID ||
 		!req.body.END_VALID ||
-		!req.body.TOPOGRAFI
+		!req.body.TOPOGRAPHY
 	) {
 		return res.send({
 			status: false,
@@ -74,7 +74,7 @@ exports.createOrUpdate = (req, res) => {
 				INSERT_TIME: date.convert('now', 'YYYYMMDDhhmmss'),
 				DELETE_TIME: null,
 				UPDATE_TIME: null,
-				TOPOGRAFI: req.body.TOPOGRAFI
+				TOPOGRAPHY: req.body.TOPOGRAPHY
 			});
 
 			set.save()
@@ -106,7 +106,7 @@ exports.createOrUpdate = (req, res) => {
 				data.LATITUDE_BLOCK != req.body.LATITUDE_BLOCK ||
 				data.LONGITUDE_BLOCK != req.body.LONGITUDE_BLOCK ||
 				data.END_VALID != date.convert(req.body.END_VALID, 'YYYYMMDD'),
-				data.TOPOGRAFI != req.body.TOPOGRAFI
+				data.TOPOGRAPHY != req.body.TOPOGRAPHY
 			) {
 
 				var data_update;
@@ -125,7 +125,7 @@ exports.createOrUpdate = (req, res) => {
 						LONGITUDE_BLOCK: req.body.LONGITUDE_BLOCK || "",
 						END_VALID: date.convert(req.body.END_VALID, 'YYYYMMDD'),
 						UPDATE_TIME: date.convert('now', 'YYYYMMDDhhmmss'),
-						TOPOGRAFI: req.body.TOPOGRAFI
+						TOPOGRAPHY: req.body.TOPOGRAPHY
 					}
 				}
 				else {
@@ -143,7 +143,7 @@ exports.createOrUpdate = (req, res) => {
 						LONGITUDE_BLOCK: req.body.LONGITUDE_BLOCK || "",
 						END_VALID: date.convert(req.body.END_VALID, 'YYYYMMDD'),
 						DELETE_TIME: date.convert('now', 'YYYYMMDDhhmmss'),
-						TOPOGRAFI: req.body.TOPOGRAFI
+						TOPOGRAPHY: req.body.TOPOGRAPHY
 					}
 				}
 
