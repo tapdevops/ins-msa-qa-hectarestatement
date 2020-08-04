@@ -7,7 +7,7 @@
  |
  */
  	// Models
- 	const BlockModel = require( _directory_base + '/app/v1.0/Http/Models/BlockModel.js' );
+ 	const BlockModel = require( _directory_base + '/app/v2.1/Http/Models/BlockModel.js' );
 
  	// Modules
  	const Terminal = require( 'child_process' ).execSync;
@@ -160,7 +160,8 @@
 				!req.body.AFD_CODE || 
 				!req.body.WERKS_AFD_BLOCK_CODE ||
 				!req.body.START_VALID ||
-				!req.body.END_VALID
+				!req.body.END_VALID ||
+				!req.body.TOPOGRAPHY
 			) {
 				return res.send({
 					status: false,
@@ -195,7 +196,8 @@
 						END_VALID: HelperLib.date_format( req.body.END_VALID, 'YYYYMMDD' ),
 						INSERT_TIME: HelperLib.date_format( 'now', 'YYYYMMDDhhmmss' ),
 						DELETE_TIME: null,
-						UPDATE_TIME: null
+						UPDATE_TIME: null,
+						TOPOGRAPHY: req.body.TOPOGRAPHY
 					} );
 
 					set.save()
@@ -226,7 +228,8 @@
 						data.BLOCK_NAME != req.body.BLOCK_NAME || 
 						data.LATITUDE_BLOCK != req.body.LATITUDE_BLOCK || 
 						data.LONGITUDE_BLOCK != req.body.LONGITUDE_BLOCK || 
-						data.END_VALID != HelperLib.date_format( req.body.END_VALID, 'YYYYMMDD' )
+						data.END_VALID != HelperLib.date_format( req.body.END_VALID, 'YYYYMMDD' ) ||
+						data.TOPOGRAPHY != req.body.TOPOGRAPHY
 					) {
 
 						var data_update;
@@ -244,7 +247,8 @@
 								LATITUDE_BLOCK: req.body.LATITUDE_BLOCK || "",
 								LONGITUDE_BLOCK: req.body.LONGITUDE_BLOCK || "",
 								END_VALID: HelperLib.date_format( req.body.END_VALID, 'YYYYMMDD' ),
-								UPDATE_TIME: HelperLib.date_format( 'now', 'YYYYMMDDhhmmss' )
+								UPDATE_TIME: HelperLib.date_format( 'now', 'YYYYMMDDhhmmss' ),
+								TOPOGRAPHY: req.body.TOPOGRAPHY
 							}
 						}
 						else {
@@ -261,7 +265,8 @@
 								LATITUDE_BLOCK: req.body.LATITUDE_BLOCK || "",
 								LONGITUDE_BLOCK: req.body.LONGITUDE_BLOCK || "",
 								END_VALID: HelperLib.date_format( req.body.END_VALID, 'YYYYMMDD' ),
-								DELETE_TIME: HelperLib.date_format( 'now', 'YYYYMMDDhhmmss' )
+								DELETE_TIME: HelperLib.date_format( 'now', 'YYYYMMDDhhmmss' ),
+								TOPOGRAPHY: req.body.TOPOGRAPHY
 							}
 						}
 
