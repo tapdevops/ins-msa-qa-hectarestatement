@@ -107,9 +107,9 @@ module.exports = (app) => {
 	//tambahan 1 field TOPOGRAFI ketika sync data block dari ldap ke mongodb
 	app.post('/api/v2.1/sync-tap/block', Middleware.v_1_0.VerifyToken, Controllers.v_2_1.Block.createOrUpdate);
 	//tambahan 1 field TOPOGRAFI ketika sync data block dari nodejs ke mobile
-	app.get('/sync-mobile/block/:start_date/:end_date', Middleware.v_1_0.VerifyToken, Controllers.v_2_1.Block.sync_mobile);
+	app.get('/api/v2.1/sync-mobile/block/:start_date/:end_date', Middleware.v_1_0.VerifyToken, Controllers.v_2_1.Block.sync_mobile);
 	//tambahan 1 field TOPOGRAFI ketika sync data block dari nodejs ke mobile
-	app.get('/block', Middleware.v_1_0.VerifyToken, Controllers.v_2_1.Block.find);
+	app.get('/api/v2.1/block', Middleware.v_1_0.VerifyToken, Controllers.v_2_1.Block.find);
 	/*
 	 |--------------------------------------------------------------------------
 	 | API Versi 2.0
