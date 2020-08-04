@@ -77,7 +77,7 @@ const BlockSchema = mongoose.Schema({
 			return null;
 		}
 	},
-	TOPOGRAFI: String,
+	TOPOGRAPHY: String,
 });
 
 /*
