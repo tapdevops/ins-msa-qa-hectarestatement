@@ -97,7 +97,8 @@
 				WERKS_AFD_CODE: 1,
 				WERKS_AFD_BLOCK_CODE: 1,
 				LATITUDE_BLOCK: 1,
-				LONGITUDE_BLOCK: 1
+				LONGITUDE_BLOCK: 1,
+				TOPOGRAPHY: 1
 			} )
 			.then( data => {
 				if( !data ) {
@@ -122,7 +123,8 @@
 							"WERKS_AFD_CODE": dt.WERKS_AFD_CODE,
 							"WERKS_AFD_BLOCK_CODE": dt.WERKS_AFD_BLOCK_CODE,
 							"LATITUDE_BLOCK": dt.LATITUDE_BLOCK,
-							"LONGITUDE_BLOCK": dt.LONGITUDE_BLOCK
+							"LONGITUDE_BLOCK": dt.LONGITUDE_BLOCK,
+							"TOPOGRAPHY": dt.TOPOGRAPHY
 						} );
 					} );
 				}
@@ -631,7 +633,8 @@
 				LONGITUDE_BLOCK: 1,
 				INSERT_TIME: 1,
 				DELETE_TIME: 1,
-				UPDATE_TIME: 1
+				UPDATE_TIME: 1,
+				TOPOGRAPHY: 1
 			} )
 			.then( data_insert => {
 				var temp_insert = [];
@@ -654,7 +657,8 @@
 							WERKS_AFD_CODE: data.WERKS_AFD_CODE,
 							WERKS_AFD_BLOCK_CODE: data.WERKS_AFD_BLOCK_CODE,
 							LATITUDE_BLOCK: data.LATITUDE_BLOCK,
-							LONGITUDE_BLOCK: data.LONGITUDE_BLOCK
+							LONGITUDE_BLOCK: data.LONGITUDE_BLOCK,
+							TOPOGRAPHY: data.TOPOGRAPHY
 						} );
 					}
 
@@ -672,7 +676,8 @@
 							WERKS_AFD_CODE: data.WERKS_AFD_CODE,
 							WERKS_AFD_BLOCK_CODE: data.WERKS_AFD_BLOCK_CODE,
 							LATITUDE_BLOCK: data.LATITUDE_BLOCK,
-							LONGITUDE_BLOCK: data.LONGITUDE_BLOCK
+							LONGITUDE_BLOCK: data.LONGITUDE_BLOCK,
+							TOPOGRAPHY: data.TOPOGRAPHY
 						} );
 					}
 					if ( data.UPDATE_TIME >= start_date && data.UPDATE_TIME <= end_date ) {
@@ -689,7 +694,8 @@
 							WERKS_AFD_CODE: data.WERKS_AFD_CODE,
 							WERKS_AFD_BLOCK_CODE: data.WERKS_AFD_BLOCK_CODE,
 							LATITUDE_BLOCK: data.LATITUDE_BLOCK,
-							LONGITUDE_BLOCK: data.LONGITUDE_BLOCK
+							LONGITUDE_BLOCK: data.LONGITUDE_BLOCK,
+							TOPOGRAPHY: data.TOPOGRAPHY
 						} );
 					}
 				} );
