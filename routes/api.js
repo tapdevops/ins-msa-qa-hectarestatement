@@ -8,6 +8,9 @@ const RoutesVersioning = require('express-routes-versioning')();
 const cors = require('cors')
 // Controllers
 const Controllers = {
+	v_2_1: {
+		Block: require(_directory_base + '/app/v2.1/Http/Controllers/BlockController.js'),
+	},
 	v_2_0: {
 		Afdeling: require(_directory_base + '/app/v2.0/Http/Controllers/AfdelingController.js'),
 		Block: require(_directory_base + '/app/v2.0/Http/Controllers/BlockController.js'),
@@ -85,7 +88,13 @@ module.exports = (app) => {
 			}
 		})
 	});
-
+	/*
+	 |--------------------------------------------------------------------------
+	 | API Versi 2.1
+	 |--------------------------------------------------------------------------
+	 */
+	//tambahan 1 field TOPOGRAFI ketika sync data block dari ldap ke mongodb
+	app.post('/api/v2.1/sync-tap/block', Middleware.v_1_0.VerifyToken, Controllers.v_2_1.Block.createOrUpdate);
 	/*
 	 |--------------------------------------------------------------------------
 	 | API Versi 2.0
