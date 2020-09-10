@@ -152,14 +152,13 @@
 
 		// Create or update data
 		exports.createOrUpdate = ( req, res ) => {
-
 			if ( 
 				!req.body.REGION_CODE || 
-				!req.body.COMP_CODE || 
-				!req.body.EST_CODE || 
-				!req.body.WERKS || 
-				!req.body.JUMLAH_TPH || 
-				!req.body.AFD_CODE || 
+				!req.body.COMP_CODE  ||
+				!req.body.EST_CODE ||
+				!req.body.WERKS  ||
+				!req.body.JUMLAH_TPH ||
+				!req.body.AFD_CODE ||  
 				!req.body.WERKS_AFD_BLOCK_CODE ||
 				!req.body.START_VALID ||
 				!req.body.END_VALID ||
@@ -237,6 +236,7 @@
 						data.END_VALID != HelperLib.date_format( req.body.END_VALID, 'YYYYMMDD' ) || 
 						data.REF_INDUK_NAME != req.body.REF_INDUK_NAME ||
 						data.REF_INDUK_CODE != req.body.REF_INDUK_CODE ||
+						data.DELETE_TIME != req.body.DELETE_TIME ||
 						data.TOPOGRAPHY != req.body.TOPOGRAPHY
 					) {
 
@@ -553,6 +553,10 @@
 			var ref_role = auth.REFFERENCE_ROLE;
 			var location_code_final = [];
 			var key = [];
+			let query = {};
+				query["END_VALID"] = {
+					$gte: parseInt(start_date.substring(0, 8))
+				}
 			if ( ref_role != 'ALL' ) {
 				location_code_group.forEach( function( data ) {
 					console.log( "DATA: ", data );
@@ -670,7 +674,7 @@
 						} );
 					}
 
-					if ( data.INSERT_TIME >= start_date && data.INSERT_TIME <= end_date ) {
+					if ( data.INSERT_TIME >= start_date && data.INSERT_TIME <= end_date && data.INSERT_TIME > data.DELETE_TIME ) {
 						temp_insert.push( {
 							REGION_CODE: data.REGION_CODE,
 							COMP_CODE: data.COMP_CODE,
