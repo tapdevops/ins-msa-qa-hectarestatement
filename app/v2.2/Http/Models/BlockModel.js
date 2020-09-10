@@ -30,8 +30,8 @@ const BlockSchema = mongoose.Schema({
 	BLOCK_NAME: String,
 	WERKS_AFD_CODE: String,
 	WERKS_AFD_BLOCK_CODE: String,
-	REF_BLOCK_INDUK_CODE: String,
-	REF_BLOCK_INDUK_NAME: String,
+	REF_INDUK_CODE: String,
+	REF_INDUK_NAME: String,
 	LATITUDE_BLOCK: String,
 	LONGITUDE_BLOCK: String,
 	START_VALID: {
