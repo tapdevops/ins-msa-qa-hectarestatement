@@ -87,4 +87,4 @@ const BlockSchema = mongoose.Schema({
 | Module Exports
 |--------------------------------------------------------------------------
 */
-module.exports = mongoose.model('Block_v_2_1', BlockSchema, 'TM_BLOCK');
+module.exports = mongoose.model('Block_v_2_2', BlockSchema, 'TM_BLOCK');
