@@ -164,8 +164,8 @@
 				!req.body.START_VALID ||
 				!req.body.END_VALID ||
 				!req.body.DELETE_TIME ||
-				!req.body.REF_BLOCK_INDUK_CODE ||
-				!req.body.REF_BLOCK_INDUK_NAME ||
+				!req.body.REF_INDUK_CODE ||
+				!req.body.REF_INDUK_NAME ||
 				!req.body.TOPOGRAPHY
 			) {
 				return res.send({
@@ -196,8 +196,8 @@
 						WERKS_AFD_BLOCK_CODE: req.body.WERKS_AFD_BLOCK_CODE || "",
 						LATITUDE_BLOCK: req.body.LATITUDE_BLOCK || "",
 						LONGITUDE_BLOCK: req.body.LONGITUDE_BLOCK || "",
-						REF_BLOCK_INDUK_NAME: req.body.REF_BLOCK_INDUK_NAME || "",
-						REF_BLOCK_INDUK_CODE: req.body.REF_BLOCK_INDUK_CODE || "",
+						REF_INDUK_NAME: req.body.REF_INDUK_NAME || "",
+						REF_INDUK_CODE: req.body.REF_INDUK_CODE || "",
 						START_VALID: HelperLib.date_format( req.body.START_VALID, 'YYYYMMDD' ),
 						END_VALID: HelperLib.date_format( req.body.END_VALID, 'YYYYMMDD' ),
 						INSERT_TIME: HelperLib.date_format( 'now', 'YYYYMMDDhhmmss' ),
@@ -234,7 +234,9 @@
 						data.BLOCK_NAME != req.body.BLOCK_NAME || 
 						data.LATITUDE_BLOCK != req.body.LATITUDE_BLOCK || 
 						data.LONGITUDE_BLOCK != req.body.LONGITUDE_BLOCK || 
-						data.END_VALID != HelperLib.date_format( req.body.END_VALID, 'YYYYMMDD' ) ||
+						data.END_VALID != HelperLib.date_format( req.body.END_VALID, 'YYYYMMDD' ) || 
+						data.REF_INDUK_NAME != req.body.REF_INDUK_NAME ||
+						data.REF_INDUK_CODE != req.body.REF_INDUK_CODE ||
 						data.TOPOGRAPHY != req.body.TOPOGRAPHY
 					) {
 
@@ -252,8 +254,8 @@
 								BLOCK_NAME: req.body.BLOCK_NAME || "",
 								LATITUDE_BLOCK: req.body.LATITUDE_BLOCK || "",
 								LONGITUDE_BLOCK: req.body.LONGITUDE_BLOCK || "",
-								REF_BLOCK_INDUK_NAME: req.body.REF_BLOCK_INDUK_NAME || "",
-								REF_BLOCK_INDUK_CODE: req.body.REF_BLOCK_INDUK_CODE || "",
+								REF_INDUK_NAME: req.body.REF_INDUK_NAME || "",
+								REF_INDUK_CODE: req.body.REF_INDUK_CODE || "",
 								END_VALID: HelperLib.date_format( req.body.END_VALID, 'YYYYMMDD' ),
 								UPDATE_TIME: HelperLib.date_format( 'now', 'YYYYMMDDhhmmss' ),
 								DELETE_TIME: HelperLib.date_format( req.body.DELETE_TIME, 'YYYYMMDDhhmmss' ),
@@ -273,8 +275,8 @@
 								BLOCK_NAME: req.body.BLOCK_NAME || "",
 								LATITUDE_BLOCK: req.body.LATITUDE_BLOCK || "",
 								LONGITUDE_BLOCK: req.body.LONGITUDE_BLOCK || "",
-								REF_BLOCK_INDUK_NAME: req.body.REF_BLOCK_INDUK_NAME || "",
-								REF_BLOCK_INDUK_CODE: req.body.REF_BLOCK_INDUK_CODE || "",
+								REF_INDUK_NAME: req.body.REF_INDUK_NAME || "",
+								REF_INDUK_CODE: req.body.REF_INDUK_CODE || "",
 								END_VALID: HelperLib.date_format( req.body.END_VALID, 'YYYYMMDD' ),
 								DELETE_TIME: HelperLib.date_format( req.body.DELETE_TIME, 'YYYYMMDDhhmmss' ),
 								TOPOGRAPHY: req.body.TOPOGRAPHY
