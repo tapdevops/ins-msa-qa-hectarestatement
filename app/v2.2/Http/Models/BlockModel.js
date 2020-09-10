@@ -22,7 +22,7 @@ const BlockSchema = mongoose.Schema({
 		set: v => Math.floor(v),
 		alias: 'i',
 		default: function () {
-			return null;
+			return 0;
 		}
 	},
 	AFD_CODE: String,
