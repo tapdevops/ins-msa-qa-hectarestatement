@@ -240,10 +240,12 @@
 						data.REF_INDUK_NAME != req.body.REF_INDUK_NAME ||
 						data.REF_INDUK_CODE != req.body.REF_INDUK_CODE ||
 						data.DELETE_TIME != req.body.DELETE_TIME ||
+						data.WERKS_AFD_BLOCK_CODE != req.body.WERKS_AFD_BLOCK_CODE ||
 						data.TOPOGRAPHY != req.body.TOPOGRAPHY
 					) {
 
 						var data_update;
+						let werksAfdBlockCode = req.body.WERKS + req.body.AFD_CODE + req.body.BLOCK_CODE;
 						if ( HelperLib.date_format( req.body.END_VALID, 'YYYYMMDD' ) == '99991231' ) {
 							data_update = {
 								NATIONAL: req.body.NATIONAL || "",
@@ -259,6 +261,7 @@
 								LONGITUDE_BLOCK: req.body.LONGITUDE_BLOCK || "",
 								REF_INDUK_NAME: req.body.REF_INDUK_NAME || "",
 								REF_INDUK_CODE: req.body.REF_INDUK_CODE || "",
+								WERKS_AFD_BLOCK_CODE: werksAfdBlockCode,
 								END_VALID: HelperLib.date_format( req.body.END_VALID, 'YYYYMMDD' ),
 								UPDATE_TIME: HelperLib.date_format( 'now', 'YYYYMMDDhhmmss' ),
 								DELETE_TIME: HelperLib.date_format( req.body.DELETE_TIME, 'YYYYMMDDhhmmss' ),
@@ -278,6 +281,7 @@
 								BLOCK_NAME: req.body.BLOCK_NAME || "",
 								LATITUDE_BLOCK: req.body.LATITUDE_BLOCK || "",
 								LONGITUDE_BLOCK: req.body.LONGITUDE_BLOCK || "",
+								WERKS_AFD_BLOCK_CODE: werksAfdBlockCode,
 								REF_INDUK_NAME: req.body.REF_INDUK_NAME || "",
 								REF_INDUK_CODE: req.body.REF_INDUK_CODE || "",
 								END_VALID: HelperLib.date_format( req.body.END_VALID, 'YYYYMMDD' ),
