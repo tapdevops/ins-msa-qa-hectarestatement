@@ -162,6 +162,7 @@
 				!req.body.WERKS_AFD_BLOCK_CODE ||
 				!req.body.START_VALID ||
 				!req.body.END_VALID ||
+				!req.body.BLOCK_CODE ||
 				!req.body.DELETE_TIME ||
 				!req.body.REF_INDUK_CODE ||
 				!req.body.REF_INDUK_NAME ||
@@ -173,7 +174,7 @@
 					data: {}
 				});
 			}
-
+			let werksAfdBlockCode = req.body.WERKS + req.body.AFD_CODE + req.body.BLOCK_CODE;
 			BlockModel.findOne( { 
 				// WERKS_AFD_BLOCK_CODE: req.body.WERKS_AFD_BLOCK_CODE,
 				WERKS: req.body.WERKS,
@@ -195,7 +196,7 @@
 						BLOCK_CODE: req.body.BLOCK_CODE || "",
 						BLOCK_NAME: req.body.BLOCK_NAME || "",
 						WERKS_AFD_CODE: req.body.WERKS_AFD_CODE || "",
-						WERKS_AFD_BLOCK_CODE: req.body.WERKS_AFD_BLOCK_CODE || "",
+						WERKS_AFD_BLOCK_CODE: werksAfdBlockCode || "",
 						LATITUDE_BLOCK: req.body.LATITUDE_BLOCK || "",
 						LONGITUDE_BLOCK: req.body.LONGITUDE_BLOCK || "",
 						REF_INDUK_NAME: req.body.REF_INDUK_NAME || "",
@@ -240,7 +241,7 @@
 						data.REF_INDUK_NAME != req.body.REF_INDUK_NAME ||
 						data.REF_INDUK_CODE != req.body.REF_INDUK_CODE ||
 						data.DELETE_TIME != req.body.DELETE_TIME ||
-						data.WERKS_AFD_BLOCK_CODE != req.body.WERKS_AFD_BLOCK_CODE ||
+						data.WERKS_AFD_BLOCK_CODE != werksAfdBlockCode ||
 						data.TOPOGRAPHY != req.body.TOPOGRAPHY
 					) {
 
