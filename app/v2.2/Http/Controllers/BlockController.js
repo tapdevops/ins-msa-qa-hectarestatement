@@ -152,6 +152,7 @@
 
 		// Create or update data
 		exports.createOrUpdate = ( req, res ) => {
+			console.log(req.body);
 			if ( 
 				!req.body.REGION_CODE || 
 				!req.body.COMP_CODE  ||
@@ -292,7 +293,11 @@
 						}
 
 						BlockModel.findOneAndUpdate( { 
-							WERKS_AFD_BLOCK_CODE: req.body.WERKS_AFD_BLOCK_CODE,
+							// WERKS_AFD_BLOCK_CODE: req.body.WERKS_AFD_BLOCK_CODE,
+							// START_VALID: HelperLib.date_format( req.body.START_VALID, 'YYYYMMDD' )
+							WERKS: req.body.WERKS,
+							AFD_CODE: req.body.AFD_CODE,
+							BLOCK_CODE: req.body.BLOCK_CODE,
 							START_VALID: HelperLib.date_format( req.body.START_VALID, 'YYYYMMDD' )
 						}, data_update, { new: true } )
 						.then( data => {
