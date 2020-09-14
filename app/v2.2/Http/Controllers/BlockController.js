@@ -177,7 +177,7 @@
 			BlockModel.findOne( { 
 				// WERKS_AFD_BLOCK_CODE: req.body.WERKS_AFD_BLOCK_CODE,
 				WERKS: req.body.WERKS,
-				AFD_BLOCK_CODE: req.body.AFD_CODE,
+				AFD_CODE: req.body.AFD_CODE,
 				BLOCK_CODE: req.body.BLOCK_CODE,
 				START_VALID: HelperLib.date_format( req.body.START_VALID, 'YYYYMMDD' )
 			} ).then( data => {
