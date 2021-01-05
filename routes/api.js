@@ -99,7 +99,6 @@ module.exports = (app) => {
 				name: config.app.name,
 				port: config.app.port[config.app.env],
 				environment: config.app.env 
-				
 			}
 		})
 	});
