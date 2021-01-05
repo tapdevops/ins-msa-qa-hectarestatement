@@ -98,8 +98,7 @@ module.exports = (app) => {
 			application: {
 				name: config.app.name,
 				port: config.app.port[config.app.env],
-				environment: config.app.env,
-				tanggal: "2019-09-25"
+				environment: config.app.env
 			}
 		})
 	});
