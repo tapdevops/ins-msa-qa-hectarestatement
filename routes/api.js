@@ -98,7 +98,7 @@ module.exports = (app) => {
 			application: {
 				name: config.app.name,
 				port: config.app.port[config.app.env],
-				environment: config.app.env
+				environment: config.app.env 
 			}
 		})
 	});
