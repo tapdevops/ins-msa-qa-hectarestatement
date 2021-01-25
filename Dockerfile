@@ -17,7 +17,7 @@ RUN npm install -g geojson-reducer
 COPY . /usr/src/app
 
 # Setup port
-EXPOSE 5009
+EXPOSE 4009
 
 # Running command
 CMD [ "node", "server.js" ]
