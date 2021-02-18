@@ -537,6 +537,7 @@
 		exports.sync_mobile = ( req, res ) => {
 
 			var auth = req.auth;
+			var query = {};
 			var start_date = HelperLib.date_format( req.params.start_date, 'YYYYMMDDhhmmss' );
 			var end_date = HelperLib.date_format( req.params.end_date, 'YYYYMMDDhhmmss' );
 			var location_code_group = auth.LOCATION_CODE.split( ',' );

@@ -10,7 +10,8 @@ const cors = require('cors')
 const Controllers = {
 	v_2_2: {
 		Block: require(_directory_base + '/app/v2.2/Http/Controllers/BlockController.js'),
-		Tph: require(_directory_base + '/app/v2.2/Http/Controllers/TphController.js')
+		Tph: require(_directory_base + '/app/v2.2/Http/Controllers/TphController.js'),
+		Road: require(_directory_base + '/app/v2.2/Http/Controllers/RoadController.js')
 	},
 	v_2_1: {
 		Block: require(_directory_base + '/app/v2.1/Http/Controllers/BlockController.js'),
@@ -107,7 +108,10 @@ module.exports = (app) => {
  |--------------------------------------------------------------------------
  | API Versi 2.2
  |--------------------------------------------------------------------------
- */
+ 	*/
+	// get Road
+	app.get('/api/v2.2/road',  Middleware.v_2_0.VerifyToken, Controllers.v_2_2.Road.getRoad)
+
 	// register TPH
 	app.post('/api/v2.2/tph', Middleware.v_2_0.VerifyToken, Controllers.v_2_2.Tph.create)
 	// read
