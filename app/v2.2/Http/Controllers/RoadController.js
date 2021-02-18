@@ -48,7 +48,12 @@ exports.getRoad = (req, res) => {
             {
                 $project: {
                     "_id": 0,
-                    "_v": 0
+                    "ID": 1,               
+                    "ROAD_CODE": 1,
+                    "ROAD_NAME": 1,
+                    "STATUS_PEKERASAAN": 1,
+                    "STATUS_AKTIF": 1,
+
                 }
             },
             {
