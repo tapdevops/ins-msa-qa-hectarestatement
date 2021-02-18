@@ -63,7 +63,7 @@ exports.getRoad = (req, res) => {
                         result.push({
                             ROAD_CODE: dt.ROAD_CODE,
                             ROAD_NAME: dt.ROAD_NAME,
-                            STATUS_PEKERASAAN: dt.STATUS_PEKERASAAN,
+                            STATUS_PEKERASAN: dt.STATUS_PEKERASAN,
                             STATUS_AKTIF: dt.STATUS_AKTIF,
                         })
                     })
@@ -252,7 +252,7 @@ exports.syncMobile = (req, res) => {
                     temp_delete.push({
                         ROAD_CODE: data.ROAD_CODE,
                         ROAD_NAME: data.ROAD_NAME,
-                        STATUS_PEKERASAAN: data.STATUS_PEKERASAAN,
+                        STATUS_PEKERASAN: data.STATUS_PEKERASAN,
                         STATUS_AKTIF: data.STATUS_AKTIF,
                     });
                 }
@@ -261,7 +261,7 @@ exports.syncMobile = (req, res) => {
                     temp_insert.push({
                         ROAD_CODE: data.ROAD_CODE,
                         ROAD_NAME: data.ROAD_NAME,
-                        STATUS_PEKERASAAN: data.STATUS_PEKERASAAN,
+                        STATUS_PEKERASAN: data.STATUS_PEKERASAN,
                         STATUS_AKTIF: data.STATUS_AKTIF,
                     });
                 }
@@ -269,7 +269,7 @@ exports.syncMobile = (req, res) => {
                     temp_update.push({
                         ROAD_CODE: data.ROAD_CODE,
                         ROAD_NAME: data.ROAD_NAME,
-                        STATUS_PEKERASAAN: data.STATUS_PEKERASAAN,
+                        STATUS_PEKERASAN: data.STATUS_PEKERASAN,
                         STATUS_AKTIF: data.STATUS_AKTIF,
                     });
                 }

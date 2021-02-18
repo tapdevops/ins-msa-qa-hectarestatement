@@ -24,7 +24,7 @@ const RoadSchema = mongoose.Schema({
     BLOCK_CODE: String,
     ROAD_CODE: String,
     ROAD_NAME: String,
-    STATUS_PEKERASAAN: {
+    STATUS_PEKERASAN: {
 		type: Number,
 		get: v => Math.floor(v),
 		set: v => Math.floor(v),
