@@ -111,6 +111,7 @@ module.exports = (app) => {
  	*/
 	// get Road
 	app.get('/api/v2.2/road',  Middleware.v_2_0.VerifyToken, Controllers.v_2_2.Road.getRoad)
+	app.get('/api/v2.2/sync-mobile/road/:start_date/:end_date',  Middleware.v_2_0.VerifyToken, Controllers.v_2_2.Road.syncMobile)
 
 	// register TPH
 	app.post('/api/v2.2/tph', Middleware.v_2_0.VerifyToken, Controllers.v_2_2.Tph.create)
