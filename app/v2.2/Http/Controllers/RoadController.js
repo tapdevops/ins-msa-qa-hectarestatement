@@ -1,10 +1,11 @@
 const RoadModel = require(_directory_base + '/app/v2.2/Http/Models/RoadModel.js');
+const RegionModel = require(_directory_base + '/app/v2.2/Http/Models/RegionModel.js');
 const HelperLib = require(_directory_base + '/app/v1.0/Http/Libraries/HelperLib.js');
 
-exports.getRoad = (req, res) => {
+exports.getRoad = async (req, res) => {
     try {
         const { LOCATION_CODE_GROUP, REFFERENCE_ROLE } = req.auth
-        var match, a, wrks, w, afd, projection
+        var match, a, wrks, w, afd
         switch (REFFERENCE_ROLE) {
             case ('BA_CODE'):
                 a = LOCATION_CODE_GROUP.map(wrks => {
@@ -39,11 +40,27 @@ exports.getRoad = (req, res) => {
             case ('COMP_CODE'):
                 match = { COMPANY_CODE: { $in: LOCATION_CODE_GROUP } }
                 break;
+            case ('REGION_CODE'):
+                let compCodes = await RegionModel.aggregate([
+                    {
+                        $project: {
+                            _id: 0,
+                            REGION_CODE: 1,
+                            COMP_CODE: 1
+                        }
+                    },
+                    { $match: { REGION_CODE: { $in: LOCATION_CODE_GROUP } } }])
+                if (compCodes.length > 0) {
+                    var compCode = compCodes.map(cc => cc.COMP_CODE)
+                }
+                match = { COMPANY_CODE: { $in: compCode } }
+                break;
             default:
                 match = {}
                 break;
         }
         console.log(req.auth);
+        console.log(compCode);
         console.log(match);
         RoadModel.aggregate([
             {
@@ -92,7 +109,7 @@ exports.getRoad = (req, res) => {
     }
 }
 
-exports.syncMobile = (req, res) => {
+exports.syncMobile = async (req, res) => {
     try {
         const { LOCATION_CODE_GROUP, REFFERENCE_ROLE } = req.auth
         var match, a, wrks, w, afd, projection
@@ -210,6 +227,47 @@ exports.syncMobile = (req, res) => {
 
                 }
                 break;
+            case ("REGION_CODE"):
+                let compCodes = await RegionModel.aggregate([
+                    {
+                        $project: {
+                            _id: 0,
+                            REGION_CODE: 1,
+                            COMP_CODE: 1
+                        }
+                    },
+                    { $match: { REGION_CODE: { $in: LOCATION_CODE_GROUP } } }])
+                if (compCodes.length > 0) {
+                    var compCode = compCodes.map(cc => cc.COMP_CODE)
+                }
+                match = {
+                    $and: [
+                        { "COMPANY_CODE": { $in: compCode } },
+                        {
+                            $or: [
+                                {
+                                    CREATED_AT: {
+                                        $gte: Number(start_date),
+                                        $lte: Number(end_date)
+                                    }
+                                },
+                                {
+                                    UPDATED_AT: {
+                                        $gte: Number(start_date),
+                                        $lte: Number(end_date)
+                                    }
+                                },
+                                {
+                                    DELETED_AT: {
+                                        $gte: Number(start_date),
+                                        $lte: Number(end_date)
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+                break;
             default:
                 match = {
                     $and: [
@@ -239,7 +297,7 @@ exports.syncMobile = (req, res) => {
                 }
                 break;
         }
-        console.log(match);
+        console.log(compCode);
         RoadModel.aggregate([
             {
                 $match: match

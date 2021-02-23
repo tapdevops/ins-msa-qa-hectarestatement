@@ -64,6 +64,7 @@
 				case 'REGION_CODE':
 					key = ref_role;
 					query[key] = location_code_final;
+					console.log(location_code_final);
 				break;
 				case 'COMP_CODE':
 					key = ref_role;
@@ -82,6 +83,7 @@
 					query[key] = 'NATIONAL';
 				break;
 			}
+			console.log(query);
 
 			BlockModel.find( query )
 			.select( {
