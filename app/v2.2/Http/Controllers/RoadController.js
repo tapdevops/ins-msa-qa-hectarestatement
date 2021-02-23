@@ -61,6 +61,10 @@ exports.getRoad = (req, res) => {
                 if (data.length > 0) {
                     data.map(dt => {
                         result.push({
+                            COMP_CODE: dt.COMPANY_CODE,
+                            WERKS: dt.WERKS,
+                            AFD_CODE: dt.AFDELING_CODE,
+                            BLOCK_CODE: dt.BLOCK_CODE,
                             ROAD_CODE: dt.ROAD_CODE,
                             ROAD_NAME: dt.ROAD_NAME,
                             STATUS_PEKERASAN: dt.STATUS_PEKERASAN,
@@ -250,6 +254,10 @@ exports.syncMobile = (req, res) => {
 
                 if (data.DELETED_AT >= start_date && data.DELETED_AT <= end_date) {
                     temp_delete.push({
+                        COMP_CODE: data.COMPANY_CODE,
+                        WERKS: data.WERKS,
+                        AFD_CODE: data.AFDELING_CODE,
+                        BLOCK_CODE: data.BLOCK_CODE,
                         ROAD_CODE: data.ROAD_CODE,
                         ROAD_NAME: data.ROAD_NAME,
                         STATUS_PEKERASAN: data.STATUS_PEKERASAN,
@@ -259,6 +267,10 @@ exports.syncMobile = (req, res) => {
 
                 if (data.CREATED_AT > start_date && data.CREATED_AT < end_date) {
                     temp_insert.push({
+                        COMP_CODE: data.COMPANY_CODE,
+                        WERKS: data.WERKS,
+                        AFD_CODE: data.AFDELING_CODE,
+                        BLOCK_CODE: data.BLOCK_CODE,
                         ROAD_CODE: data.ROAD_CODE,
                         ROAD_NAME: data.ROAD_NAME,
                         STATUS_PEKERASAN: data.STATUS_PEKERASAN,
@@ -267,6 +279,10 @@ exports.syncMobile = (req, res) => {
                 }
                 if (data.UPDATED_AT >= start_date && data.UPDATED_AT <= end_date) {
                     temp_update.push({
+                        COMP_CODE: data.COMPANY_CODE,
+                        WERKS: data.WERKS,
+                        AFD_CODE: data.AFDELING_CODE,
+                        BLOCK_CODE: data.BLOCK_CODE,
                         ROAD_CODE: data.ROAD_CODE,
                         ROAD_NAME: data.ROAD_NAME,
                         STATUS_PEKERASAN: data.STATUS_PEKERASAN,
