@@ -30,7 +30,7 @@
 	 * --------------------------------------------------------------------------
 	 */
 		exports.find = ( req, res ) => {
-
+			console.log(req.body);
 			url_query = req.query;
 			var url_query_length = Object.keys( url_query ).length;
 			var auth = req.auth;
@@ -83,7 +83,6 @@
 					query[key] = 'NATIONAL';
 				break;
 			}
-			console.log(query);
 
 			BlockModel.find( query )
 			.select( {
@@ -154,7 +153,9 @@
 
 		// Create or update data
 		exports.createOrUpdate = ( req, res ) => {
-			console.log(req.body);
+			const {WERKS, AFD_CODE, BLOCK_CODE} = req.body
+			console.log(WERKS, AFD_CODE, BLOCK_CODE);
+			console.log(HelperLib.date_format( 'now', 'YYYYMMDDhhmmss' ));
 			if ( 
 				!req.body.REGION_CODE || 
 				!req.body.COMP_CODE  ||
@@ -664,6 +665,7 @@
 				TOPOGRAPHY: 1
 			} )
 			.then( data_insert => {
+				console.log(data_insert);
 				var temp_insert = [];
 				var temp_update = [];
 				var temp_delete = [];
@@ -685,7 +687,8 @@
 							WERKS_AFD_BLOCK_CODE: data.WERKS_AFD_BLOCK_CODE,
 							LATITUDE_BLOCK: data.LATITUDE_BLOCK,
 							LONGITUDE_BLOCK: data.LONGITUDE_BLOCK,
-							TOPOGRAPHY: data.TOPOGRAPHY
+							TOPOGRAPHY: data.TOPOGRAPHY,
+							UPDATE_TIME: data.UPDATE_TIME
 						} );
 					}
 
@@ -704,7 +707,8 @@
 							WERKS_AFD_BLOCK_CODE: data.WERKS_AFD_BLOCK_CODE,
 							LATITUDE_BLOCK: data.LATITUDE_BLOCK,
 							LONGITUDE_BLOCK: data.LONGITUDE_BLOCK,
-							TOPOGRAPHY: data.TOPOGRAPHY
+							TOPOGRAPHY: data.TOPOGRAPHY,
+							UPDATE_TIME: data.UPDATE_TIME
 						} );
 					}
 					if ( data.UPDATE_TIME >= start_date && data.UPDATE_TIME <= end_date ) {
@@ -722,7 +726,8 @@
 							WERKS_AFD_BLOCK_CODE: data.WERKS_AFD_BLOCK_CODE,
 							LATITUDE_BLOCK: data.LATITUDE_BLOCK,
 							LONGITUDE_BLOCK: data.LONGITUDE_BLOCK,
-							TOPOGRAPHY: data.TOPOGRAPHY
+							TOPOGRAPHY: data.TOPOGRAPHY,
+							UPDATE_TIME: data.UPDATE_TIME
 						} );
 					}
 				} );
